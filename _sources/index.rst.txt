@@ -9,7 +9,7 @@ Welcome to MView's documentation!
 
 .. raw:: html
 
-    <h2>Please The <a class="reference download internal" href=".\README.pdf">MView Getting Started Guide</a>.</h2>
+    <h2>Please See The <a class="reference download internal" href=".\README.pdf">MView Getting Started Guide</a>.</h2>
 
 .. toctree::
    :maxdepth: 4
