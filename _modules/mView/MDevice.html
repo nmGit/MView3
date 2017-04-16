@@ -169,62 +169,55 @@
 <span class="sd">  only one generic device driver needs to be created for one interface </span>
 <span class="sd">  (RS232, LabRad Servers, HDF5 files, etc.) and it can then be applied </span>
 <span class="sd">  to all devices that use the same interface.</span>
-<span class="sd">  </span>
-<span class="sd">  Constructor arguments:</span>
-<span class="sd">        </span>
-<span class="sd">  :param name: The name of the device</span>
-<span class="sd">    </span>
 <span class="sd">  &#39;&#39;&#39;</span>
-    <span class="c1"># Signal sent to main thread which triggers a MDeviceContainerWidget GUI update.</span>
     <span class="n">updateSignal</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
     <span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-    <span class="n">lockLogSettings</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">defaultLogLocation</span> <span class="o">=</span> <span class="kc">None</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Initializes the device:</span>
 <span class="sd">        </span>
-<span class="sd">           1. Sets the frame title. 1.</span>
-<span class="sd">           2. Sets the refresh rate. 2.</span>
-<span class="sd">          </span>
-<span class="sd">           Function arguments:</span>
-<span class="sd">               </span>
-<span class="sd">           :param name: The name of the device</span>
-<span class="sd">            </span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">    1. Sets the frame title. 1.</span>
+<span class="sd">    2. Sets the refresh rate. 2.</span>
+<span class="sd">   </span>
+<span class="sd">    Function arguments:</span>
+<span class="sd">        </span>
+<span class="sd">    :param name: The name of the device</span>
+<span class="sd">    </span>
+<span class="sd">   &#39;&#39;&#39;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MDevice</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockLoggingSettings</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lock_logging_settings&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default_log_location&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="c1"># Create a new MFrame</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lockLogSettings</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lock_log_settings&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">);</span>
-       
-        <span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default_log_location&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">web</span><span class="o">.</span><span class="n">devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span> <span class="o">=</span> <span class="n">MFrame</span><span class="p">()</span>
+        <span class="c1">#print &quot;Setting title to:&quot;, name, args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="nb">print</span> <span class="s2">&quot;init&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;lock_log_settings:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lockLogSettings</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refreshRate</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">container</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datachest</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settingResultIndices</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hardParams</span> <span class="o">=</span> <span class="p">{}</span>
+        
+  
         <span class="bp">self</span><span class="o">.</span><span class="n">doneLoading</span> <span class="o">=</span> <span class="kc">False</span>
         
+        <span class="c1">#self.memory_tracker = tracker.SummaryTracker()</span>
 <div class="viewcode-block" id="MDevice.log"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Tell the device whether to log data or not</span>
 <span class="sd">        </span>
-<span class="sd">        :param log (boolean): Boolean, whether or not to log. NOTE: This can be overridden</span>
-<span class="sd">        using the GUI menus.</span>
+<span class="sd">        :param log: Boolean</span>
 <span class="sd">        </span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">enableDataLogging</span><span class="p">(</span><span class="n">log</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">log</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 <div class="viewcode-block" id="MDevice.isLogging"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.isLogging">[docs]</a>    <span class="k">def</span> <span class="nf">isLogging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Getter for whether or not datalogging is enabled for this device.</span>
-<span class="sd">            </span>
-<span class="sd">          :rtype: Boolean indicating whether or not data is being logged.</span>
-<span class="sd">          </span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        </span>
+<span class="sd">      :rtype: boolean</span>
+<span class="sd">      </span>
+<span class="sd">   &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">isDataLogging</span><span class="p">()</span></div>
         
 <div class="viewcode-block" id="MDevice.setContainer"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.setContainer">[docs]</a>    <span class="k">def</span> <span class="nf">setContainer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
@@ -291,8 +284,8 @@
 <span class="sd">   &#39;&#39;&#39;</span>
         <span class="c1"># Automatically refresh node data in callQuery</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refreshNodeDataInCallQuery</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;auto_refresh_node&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">refreshNodeDataInCallQuery</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;will not automatically refresh node data&quot;</span>
+        <span class="c1">#if not self.refreshNodeDataInCallQuery:</span>
+            <span class="c1">#print self, &quot;will not automatically refresh node data&quot;</span>
         <span class="c1"># traceback.print_stack()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">onBegin</span><span class="p">()</span>
         <span class="c1">#self.frame.setReadingIndex(self.settingResultIndices)</span>
@@ -308,13 +301,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">callQuery</span><span class="p">()</span></div>
 <div class="viewcode-block" id="MDevice.configureDataLogging"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.configureDataLogging">[docs]</a>    <span class="k">def</span> <span class="nf">configureDataLogging</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isLogging</span><span class="p">():</span>
-                <span class="nb">print</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;is datalogging&quot;</span>
+                <span class="c1">#print self, &quot;is datalogging&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;chest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataChestWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;lock_settings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lockLogSettings</span>
-                <span class="nb">print</span> <span class="s2">&quot;Set lock settings on&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;to:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lockLogSettings</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;lock_logging_settings&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lockLoggingSettings</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span>
+                    <span class="c1"># If the current directory is a subdirectory of the default,</span>
+                    <span class="c1"># then that is ok and the current directory should not be changed.</span>
+                    <span class="nb">print</span> <span class="s2">&quot;current location:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+                    <span class="nb">print</span> <span class="s2">&quot;default:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span>
+                    <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="p">):</span>
+                        <span class="nb">print</span> <span class="s2">&quot;Paths not ok&quot;</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultLogLocation</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">datachest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;chest&#39;</span><span class="p">]</span></div>
 <div class="viewcode-block" id="MDevice.onBegin"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.onBegin">[docs]</a>    <span class="k">def</span> <span class="nf">onBegin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Called at the end of MDevice.begin(). This is called before </span>
@@ -499,28 +498,21 @@
         <span class="n">precision</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;precision&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">show</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">units</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">addParameter</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">precision</span><span class="p">))</span>
-        
-        <span class="c1">#print &quot;args:&quot;, args</span>
-        <span class="c1">#print &quot;kwargs:&quot;, kwargs</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onAddParameter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">setParamVisibility</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">show</span><span class="p">)</span>
-        <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Too Few arguments. Needs (name, units, precision).&quot;</span><span class="p">)</span>
-       
-        
-        <span class="c1"># print &quot;params to be added:&quot;, params</span>
-        <span class="c1"># The kwarg &#39;log&#39; is can override the default</span>
+        <span class="n">precision</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;precision&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">log</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">isLogging</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">addParameter</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">precision</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setReadingIndex</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPrecision</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setUnit</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">onAddParameter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">setParamVisibility</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">show</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">()[</span><span class="s1">&#39;channels&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">log</span></div>
-        
-
-        
-<div class="viewcode-block" id="MDevice.logData"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.logData">[docs]</a>    <span class="k">def</span> <span class="nf">logData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">channels</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">channels</span><span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataLoggingInfo</span><span class="p">[</span><span class="s1">&#39;channels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">channels</span>
+  
+<div class="viewcode-block" id="MDevice.logData"><a class="viewcode-back" href="../../mView.MDevice.html#mView.MDevice.MDevice.logData">[docs]</a>    <span class="k">def</span> <span class="nf">logData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enable or disable datalogging for the device.&quot;&quot;&quot;</span>
+        <span class="c1">#if channels!= None:</span>
+        <span class="c1">#    self.frame.DataLoggingInfo[&#39;channels&#39;] = channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">enableDataLogging</span><span class="p">(</span><span class="n">b</span><span class="p">)</span></div>
         
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

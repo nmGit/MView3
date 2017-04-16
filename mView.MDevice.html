@@ -171,15 +171,6 @@ we create two instances of the RS232 device driver. This means that
 only one generic device driver needs to be created for one interface 
 (RS232, LabRad Servers, HDF5 files, etc.) and it can then be applied 
 to all devices that use the same interface.</p>
-<p>Constructor arguments:</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; The name of the device</td>
-</tr>
-</tbody>
-</table>
 <dl class="method">
 <dt id="mView.MDevice.MDevice.addButton">
 <code class="descname">addButton</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mView/MDevice.html#MDevice.addButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mView.MDevice.MDevice.addButton" title="Permalink to this definition">¶</a></dt>
@@ -230,11 +221,6 @@ function with which the refresh rate can be configured.</p>
 <dl class="method">
 <dt id="mView.MDevice.MDevice.configureDataLogging">
 <code class="descname">configureDataLogging</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mView/MDevice.html#MDevice.configureDataLogging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mView.MDevice.MDevice.configureDataLogging" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="mView.MDevice.MDevice.defaultLogLocation">
-<code class="descname">defaultLogLocation</code><em class="property"> = None</em><a class="headerlink" href="#mView.MDevice.MDevice.defaultLogLocation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -306,7 +292,7 @@ function with which the refresh rate can be configured.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">Boolean indicating whether or not data is being logged.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
 </tr>
 </tbody>
 </table>
@@ -324,12 +310,7 @@ function with which the refresh rate can be configured.</p>
 
 <dl class="attribute">
 <dt id="mView.MDevice.MDevice.lock">
-<code class="descname">lock</code><em class="property"> = &lt;thread.lock object at 0x0000000005A42350&gt;</em><a class="headerlink" href="#mView.MDevice.MDevice.lock" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="mView.MDevice.MDevice.lockLogSettings">
-<code class="descname">lockLogSettings</code><em class="property"> = False</em><a class="headerlink" href="#mView.MDevice.MDevice.lockLogSettings" title="Permalink to this definition">¶</a></dt>
+<code class="descname">lock</code><em class="property"> = &lt;thread.lock object at 0x0000000004AF8F70&gt;</em><a class="headerlink" href="#mView.MDevice.MDevice.lock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -340,17 +321,17 @@ function with which the refresh rate can be configured.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong></strong><strong>(</strong><strong>boolean</strong><strong>)</strong><strong></strong> (<a class="reference internal" href="#mView.MDevice.MDevice.log" title="mView.MDevice.MDevice.log"><em>log</em></a>) &#8211; Boolean, whether or not to log. NOTE: This can be overridden</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>log</strong> &#8211; Boolean</td>
 </tr>
 </tbody>
 </table>
-<p>using the GUI menus.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="mView.MDevice.MDevice.logData">
-<code class="descname">logData</code><span class="sig-paren">(</span><em>b</em>, <em>channels=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mView/MDevice.html#MDevice.logData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mView.MDevice.MDevice.logData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">logData</code><span class="sig-paren">(</span><em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mView/MDevice.html#MDevice.logData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mView.MDevice.MDevice.logData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable datalogging for the device.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="mView.MDevice.MDevice.onAddParameter">

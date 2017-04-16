@@ -231,15 +231,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lineSelect</span> <span class="o">=</span> <span class="n">MCheckableComboBox</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lineSelect</span><span class="o">.</span><span class="n">setSizeAdjustPolicy</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">autoscaleCheckBox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Auto Ranging&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">autoscaleCheckBox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Auto Ranging&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoscaleCheckBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoscaleCheckBox</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">refreshColors</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Randomize Colors&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">refreshColors</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Randomize Colors&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refreshColors</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">generateColors</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setY100</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;100% Y Axis&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setY100</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Auto Y Axis&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setY100</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yAxTo100</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Lock Y Axis&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setX100</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Auto X Axis&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setX100</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xAxTo100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Lock Y Axis&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lockYAxisClicked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Lock X Axis&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lockXAxisClicked</span><span class="p">)</span>
+
         
         <span class="n">buttonLayout1</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
         <span class="n">buttonLayout1</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hideButton</span><span class="p">)</span>
@@ -259,7 +266,9 @@
         <span class="n">buttonLayout3</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">()</span>
         <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoscaleCheckBox</span><span class="p">)</span>
         <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="p">)</span>
+        <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="p">)</span>
         <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setY100</span><span class="p">)</span>
+        <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setX100</span><span class="p">)</span>
         <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">refreshColors</span><span class="p">)</span>
         <span class="n">buttonLayout3</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         
@@ -276,6 +285,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">refreshColors</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropdownFont</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropdownFont</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setY100</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropdownFont</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropdownFont</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setX100</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropdownFont</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span> <span class="o">=</span> <span class="kc">False</span>
         
         <span class="n">mainLayout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">()</span>
@@ -457,10 +468,30 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">processRangeChangeSig</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">autoscaleCheckBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">yAxTo100</span><span class="p">()</span></div>
-    
+            <span class="bp">self</span><span class="o">.</span><span class="n">yAxTo100</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xAxTo100</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="mGraph.yAxTo100"><a class="viewcode-back" href="../../mView.MGrapher.html#mView.MGrapher.mGraph.yAxTo100">[docs]</a>    <span class="k">def</span> <span class="nf">yAxTo100</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">enableAutoRange</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="mGraph.xAxTo100"><a class="viewcode-back" href="../../mView.MGrapher.html#mView.MGrapher.mGraph.xAxTo100">[docs]</a>    <span class="k">def</span> <span class="nf">xAxTo100</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">enableAutoRange</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span></div>
+<div class="viewcode-block" id="mGraph.lockXAxisClicked"><a class="viewcode-back" href="../../mView.MGrapher.html#mView.MGrapher.mGraph.lockXAxisClicked">[docs]</a>    <span class="k">def</span> <span class="nf">lockXAxisClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+      
+        <span class="bp">self</span><span class="o">.</span><span class="n">processRangeChangeSig</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rangeChanged</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processRangeChangeSig</span> <span class="o">=</span> <span class="kc">True</span></div>
+<div class="viewcode-block" id="mGraph.lockYAxisClicked"><a class="viewcode-back" href="../../mView.MGrapher.html#mView.MGrapher.mGraph.lockYAxisClicked">[docs]</a>    <span class="k">def</span> <span class="nf">lockYAxisClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockYAx</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lockXAx</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processRangeChangeSig</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rangeChanged</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processRangeChangeSig</span> <span class="o">=</span> <span class="kc">True</span></div>
 <div class="viewcode-block" id="mGraph.show"><a class="viewcode-back" href="../../mView.MGrapher.html#mView.MGrapher.mGraph.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">togglePlot</span><span class="p">()</span></div>

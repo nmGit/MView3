@@ -211,7 +211,7 @@
     <span class="c1"># splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)</span>
     <span class="c1"># splash.show()</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+    <span class="c1">#atexit.register(self.stop)</span>
         
 
         <span class="n">web</span><span class="o">.</span><span class="n">gui</span> <span class="o">=</span> <span class="bp">self</span>
