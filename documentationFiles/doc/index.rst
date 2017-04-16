@@ -3,10 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
    
-For an in-depth explanation, please see :download:`A Detailed Example <README.pdf>`.
+For an in-depth explanation, please see :download:`A Detailed Example pdf<.\README.pdf>`.
 
+ 
 Welcome to MView's documentation!
 ===============================
+
+.. raw:: html
+
+    <h2>Please The <a class="reference download internal" href=".\README.pdf">MView Getting Started Guide</a>.</h2>
 
 .. toctree::
    :maxdepth: 4
