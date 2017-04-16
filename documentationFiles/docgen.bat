@@ -1,1 +1,0 @@
-sphinx-build C:\Users\Noah\OneDrive\mcDermott\MView\documentationFiles\doc C:\Users\Noah\OneDrive\mcDermott\MView\docs
