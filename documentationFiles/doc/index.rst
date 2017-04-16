@@ -2,6 +2,8 @@
    sphinx-quickstart on Mon Mar 27 15:17:37 2017.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
+   
+For an in-depth explanation, please see :download:`A Detailed Example <README.pdf>`.
 
 Welcome to MView's documentation!
 ===============================
