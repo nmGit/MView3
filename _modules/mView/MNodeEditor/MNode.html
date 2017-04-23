@@ -158,18 +158,16 @@
     <span class="c1"># Attribute that lets MView find this MNode</span>
     
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        
+        <span class="sd">&#39;&#39;&#39;Initialize the new node.&#39;&#39;&#39;</span>
         <span class="n">web</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        
-
         <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="c1">#self.begin()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">anchors</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callAnchorAdded</span>  <span class="o">=</span> <span class="kc">False</span>
         
 <div class="viewcode-block" id="MNode.begin"><a class="viewcode-back" href="../../../mView.MNodeEditor.MNode.html#mView.MNodeEditor.MNode.MNode.begin">[docs]</a>    <span class="k">def</span> <span class="nf">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="o">*</span><span class="n">args</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39; Create a new node&#39;&#39;&#39;</span>
-        <span class="c1">#print &quot;wrong begin called&quot;</span>
+        <span class="sd">&#39;&#39;&#39; Create a new node. Calls onBegin of </span>
+<span class="sd">       child if child has overridden onBegin().</span>
+<span class="sd">   &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">onBegin</span><span class="p">()</span>
         <span class="k">pass</span></div>
 <div class="viewcode-block" id="MNode.onBegin"><a class="viewcode-back" href="../../../mView.MNodeEditor.MNode.html#mView.MNodeEditor.MNode.MNode.onBegin">[docs]</a>    <span class="k">def</span> <span class="nf">onBegin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

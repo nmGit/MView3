@@ -453,7 +453,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
         <span class="c1">#self.lock.release()</span>
         <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">getNode</span><span class="p">()</span>        
-        
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">refreshNodeDataInCallQuery</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">getNode</span><span class="p">()</span><span class="o">.</span><span class="n">refreshData</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">datachest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">doneLoading</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> 
@@ -462,8 +463,7 @@
             <span class="k">except</span><span class="p">:</span>
                 <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
                 
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">refreshNodeDataInCallQuery</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">getNode</span><span class="p">()</span><span class="o">.</span><span class="n">refreshData</span><span class="p">()</span>
+
 
         <span class="k">if</span> <span class="n">web</span><span class="o">.</span><span class="n">gui</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">web</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">MAlert</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">web</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">MAlert</span><span class="o">.</span><span class="n">monitorReadings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
