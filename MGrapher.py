@@ -61,14 +61,21 @@ class mGraph(QtGui.QWidget):
 
         frameLayout.addWidget(self.win)
 
+        self.v2 = pg.ViewBox()
+       # self.p = pg.PlotItem(title=self.title, axisItems={
+       #                           'bottom': TimeAxisItem(orientation='bottom')})
+
+        self.v2.setMouseMode(self.v2.RectMode)
+
         self.p = self.win.addPlot(title=self.title, axisItems={
-                                  'bottom': TimeAxisItem(orientation='bottom')})
+                                  'bottom': TimeAxisItem(orientation='bottom')}, viewBox = self.v2)
 
         self.p.addLegend()
         self.p.showGrid(x=True, y=True, alpha=0.5)
 
         self.p.sigRangeChanged.connect(self.rangeChanged)
         self.processRangeChangeSig = False
+
         pen = pg.mkPen(cosmetic=True, width=2, color=(
             np.random.random() * 255, np.random.random() * 255, np.random.random() * 255))
         self.textPen = QtGui.QPen()
@@ -213,6 +220,11 @@ class mGraph(QtGui.QWidget):
         frame = device.getFrame()
 
         self.setupUnits()
+
+
+
+
+
         # units.append(units[0])
         # self.p.showAxis('right')
 
@@ -283,6 +295,7 @@ class mGraph(QtGui.QWidget):
         for pa in self.viewboxes:
             pa.setGeometry(self.p.vb.sceneBoundingRect())
             pa.linkedViewChanged(self.p.vb, pa.XAxis)
+
         maxtime = kwargs.get('time', 'last_valid')
         autoRange = kwargs.get('autoRange', False)
 

@@ -341,7 +341,7 @@ class MFrame:
     def setDataChestWrapper(self, wrapper):
         self.dataChestWrapper = wrapper
 
-    def enableDataLogging(self, b):
+    def masterEnableDataLogging(self, b):
         self.datalogsettingsDict['logData'] = b
 
     def isDataLogging(self):
@@ -407,8 +407,11 @@ class MFrame:
 #        self.readings.append(None)
         order = len(self.parameters)
 
-        self.parameters[params[0]] = {"name": params[0], "reading": None,
-                                      "units": params[1], "precision": params[2], "out_of_range": False}
+        self.parameters[params[0]] = {"name": params[0],
+                                      "reading": None,
+                                      "units": params[1],
+                                      "precision": params[2],
+                                      "out_of_range": False}
         self.paramKeyOrder.append(params[0])
         # print "---------- add parameter NICKNAMES WAS SET", self.parameters
 

@@ -264,7 +264,7 @@ class MGui(QtGui.QMainWindow):
         self.MAlert = MAlert.MAlert()
         self.MAlert.begin()
 
-    def startGui(self, title, tele, autostart=True):
+    def startGui(self, title, tele = None, autostart=True):
         """Start the GUI."""
         # print "Starting GUI."
         # Used as the name of the dataChest data title.
