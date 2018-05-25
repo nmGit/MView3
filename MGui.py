@@ -22,21 +22,16 @@ __status__ = "Beta"
 
 import sys
 sys.dont_write_bytecode = True
-import math
-import atexit
-import traceback
-from functools import partial
 from PyQt4 import QtCore, QtGui
-import time
+
 from NotifierGUI import NotifierGUI
 from MConfigGui import ConfigGui
 from MDataSetConfigGUI import DataSetConfigGUI
 from MPersistentData import MPersistentData
-from MWeb import web
-import MGrapher
+
 import MAlert
 from MWeb import web
-from MNodeEditor.MNodeEditorHandler import MNodeEditorHandler
+
 from MDeviceContainerWidget import MDeviceContainerWidget
 import __main__
 
