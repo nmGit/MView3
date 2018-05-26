@@ -221,35 +221,6 @@ class mGraph(QtGui.QWidget):
 
         self.setupUnits()
 
-
-
-
-
-        # units.append(units[0])
-        # self.p.showAxis('right')
-
-        # axes.append(self.p.getAxis('right'))
-        #axes[-1].setLabel(text= "Test", units = "test units")
-
-        # for unit in frame.getUnits():
-        # if unit not in units:
-        # print "found new unit:", unit
-
-        # pa = pg.ViewBox()
-        # ax = pg.AxisItem('right')
-        # self.p.layout.addItem(ax, 2, 2+len(units))
-        # self.p.scene().addItem(pa)
-        # ax.linkToView(pa)
-        # pa.setXLink(self.p)
-
-        # self.viewboxes.append(pa)
-        # units.append(unit)
-        # axes.append(ax)
-        # ax.setZValue(-10000)
-        # ax.setLabel(text= "Test", units = "test units")
-        # pa.show()
-        # ax.show()
-        # self.p.vb.sigResized.connect(self.plot)
     def setupUnits(self):
 
         frame = self.device.getFrame()
@@ -303,15 +274,16 @@ class mGraph(QtGui.QWidget):
         self.setupUnits()
         if maxtime == 'last_valid':
             maxtime = self.lastValidTime
+        # data = self.device.getFrame().getDataSet().getData()
         data = self.device.getFrame().getDataSet().getData()
+        #print data
+        # if maxtime is not None:
+        #     self.lastValidTime = maxtime
+        #     abstime = time.time() - maxtime
+        #     data = [elem for elem in data if elem[0] > abstime]
+        # times = [elem[0] for elem in data]
 
-        if maxtime is not None:
-            self.lastValidTime = maxtime
-            abstime = time.time() - maxtime
-            data = [elem for elem in data if elem[0] > abstime]
-        times = [elem[0] for elem in data]
-
-        data = np.transpose(data)
+        # data = np.transpose(data)
         # print "data:", data
         # print "Data to be plotted:", data
         i = 0
@@ -326,35 +298,26 @@ class mGraph(QtGui.QWidget):
                 [0], pen=self.pen, name=varNames[i].replace('_', ' ')))
             i = i + 1
             self.generateColors()
-        currMax = None
-        currMin = None
+        # currMax = None
+        # currMin = None
         for i, col in enumerate(data[1:]):
             if self.lineSelect.isChecked(i):
                 self.curves[i].setData(times, col, antialias=False)
                 self.curves[i].setVisible(True)
-                thisMax = max(col)
-                thisMin = min(col)
-                if thisMax > currMax or currMax is None:
-                    currMax = thisMax
-                if thisMin < currMin or currMin is None:
-                    currMin = thisMin
+                # thisMax = max(col)
+                # thisMin = min(col)
+                # if thisMax > currMax or currMax is None:
+                #     currMax = thisMax
+                # if thisMin < currMin or currMin is None:
+                #     currMin = thisMin
             else:
                 self.curves[i].setVisible(False)
-        self.currMin = currMin
-        self.currMax = currMax
+        # self.currMin = currMin
+        # self.currMax = currMax
         if self.autoscaleCheckBox.isChecked():
-            #self.p.setXRange(times[0],times[-1], padding=0)
-            # for pa in self.viewboxes:
             self.p.autoRange()
-            # pa.enableAutoRange(True)
             self.autoscaleCheckBox.setChecked(True)
             self.processRangeChangeSig = False
-#                try:
-#                    #print "currmin", currMin
-#                    #print "currmax", currMax
-#                    #self.p.setRange(xRange=[times[0],times[-1]], yRange = [currMin, currMax])
-#                except:
-#                    pass
             self.processRangeChangeSig = True
 
     def rangeChanged(self):

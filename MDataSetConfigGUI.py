@@ -8,6 +8,8 @@ from MPopUp import PopUp
 import atexit
 import time
 import re
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+
 
 
 class DataSetConfigGUI(QtGui.QDialog):
@@ -134,7 +136,10 @@ class DataSetSettings(QtGui.QWidget):
                 title = QtGui.QLabel(str(device) + ": ")
                 title.setFont(font)
                 grid.addWidget(title, row, 0)
-                location = QtGui.QLabel(str(device.getFrame().DataLoggingInfo()['location']))
+                location = QtGui.QLabel(
+                    str(device.getFrame().DataLoggingInfo()['location']) +
+                    str(device.getFrame().DataLoggingInfo()['name'])
+                                        )
                 self.locationLabels.append(location)
                 grid.addWidget(location, row, 1)
                 button = QtGui.QPushButton("Browse...", self)
@@ -217,7 +222,9 @@ class DataSetSettings(QtGui.QWidget):
 
             device.getFrame().DataLoggingInfo()['name'] = name
             device.getFrame().DataLoggingInfo()['location'] = location
-            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(device.getFrame().DataLoggingInfo()['name'])
+ #           print "MDataset config thread",int(QThread.currentThreadId())
+#            device.db_params_updated_signal.emit(device.getFrame().DataLoggingInfo()['name'])
+            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + "\\" + name)
 
         else:
             dir = QtGui.QFileDialog.getExistingDirectory(self, "Save Data In...",
@@ -235,7 +242,7 @@ class DataSetSettings(QtGui.QWidget):
                     self.configGui.advancedSettingsWidget.locationLabels[i].setText(location)
                     device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(
                         device.getFrame().DataLoggingInfo()['name'])
-        grid.itemAtPosition(row, 1).widget().setText(location)
+        grid.itemAtPosition(row, 1).widget().setText(location + "\\" + name)
         # else:
             # print "DATA_CHEST_ROOT Directory must be a parent directory of datalogging location."
         #grid.itemAtPosition(row, 2).widget().setText(dir.replace(root, ''))

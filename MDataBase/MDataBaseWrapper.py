@@ -12,16 +12,21 @@ import time
 from MDataBase import MDataBase
 from PyQt4 import QtGui, QtCore
 import traceback
-class MDataBaseWrapper(QtCore.QThread):
-
-    db_params_updated_signal = QtCore.pyqtSignal(str, name="db_params_updated_signal")
-
+from MWeb import web
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+class MDataBaseWrapper(QThread):
+    db_params_updated_signal =pyqtSignal(str, name="db_params_updated_signal")
+    db_close_signal = pyqtSignal(name = "db_close_signal")
     def __init__(self, device):
         super(MDataBaseWrapper, self).__init__()
+
+        print "initializing MDataBase Wrapper",int(QThread.currentThreadId())
+        traceback.print_stack()
         self.device = device
         self.db = None
 
         self.db_params_updated_signal.connect(self.openDb)
+        self.db_close_signal.connect(self.close)
 
         log_location = self.device.getFrame().DataLoggingInfo()['location']
         # Make sure logging is enabled
@@ -31,9 +36,10 @@ class MDataBaseWrapper(QtCore.QThread):
             return
 
         self.openDb(time.strftime("%Y_%B_%d"))
+        self.restore_state()
 
     def save(self):
-
+        print "MDataBaseWrapper saving.. thread id:", int(QThread.currentThreadId())
         try:
             # TODO:Optimize, doesn't need to be done everytime
             columns = self.device.getParameters().keys()
@@ -53,7 +59,7 @@ class MDataBaseWrapper(QtCore.QThread):
                 rows.append(self.device.getReading(param))
                 rows.append(self.device.getUnit(param))
 
-            rows.insert(0,datetime.now().strftime("%m/%d/%Y %H:%M:%S.%f"))
+            rows.insert(0,datetime.now().strftime("%m/%d/%Y_%H:%M:%S.%f"))
             #print "Rows:", rows
             if not self.db.save(str(self.device), columns, rows):
                 if not self.db.does_table_exist(str(self.device)):
@@ -107,12 +113,20 @@ class MDataBaseWrapper(QtCore.QThread):
             self.device.getFrame().DataLoggingInfo()['channels'] = channels
         self.device.getFrame().DataLoggingInfo()['location'] = location
         pass
-    def query(self, field, *args):
-        return self.db.query(field, *args)
+
+    def query(self, fields, *args):
+        return self.db.query(str(self.device), fields, *args)
         
     def configure_data_sets(self):
         pass
 
     def close(self):
-        self.conn.commit()
-        self.conn.close()
+        print "Closing database..."
+        self.save_state()
+        #self.db_close_signal.emit()
+
+        if self.db:
+            self.db.closeDataSet()
+   # def __threadSafeClose(self):
+
+

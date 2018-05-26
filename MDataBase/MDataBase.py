@@ -14,8 +14,8 @@ import traceback
 
 class MDataBase:
     def __init__(self, db_path):
-        print "Connecting to database located at:", db_path
-        self.conn = sqlite3.connect(db_path)
+        print "Connecting to database located at:", str(db_path)
+        self.conn = sqlite3.connect(str(db_path))
         self.cursor = self.conn.cursor()
 
     def save(self, table_name, column_names, value_names):
@@ -36,7 +36,7 @@ class MDataBase:
                     vals = values
                     )
                 )
-            print self.cursor.fetchall()
+            #print self.cursor.fetchall()
             self.conn.commit()
             return True
         except:
@@ -66,6 +66,44 @@ class MDataBase:
         self.cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND NAME='{tn}'".format(tn=table_name))
         return (1==self.cursor.fetchall()[0][0])
 
+    def query(self, table_name, columns, *args):
+        field = columns.replace(' ','_')
+        if args == "last":
+            if type(field) is not list and field != '*':
+                raise ValueError('MDataBase: If arg is "last" then field must be a list of columns.')
+
+            self.cursor.execute(
+                "SELECT {cn}"
+                "   FROM {tn}"
+                "   WHERE {fd} = (SELECT MAX(PK) FROM {tn}".format(
+                    fd = field,
+                    cn=str(fields).replace('[', '').replace(']', ''),
+                    tn=table_name
+                )
+            )
+        elif args == "all":
+            if type(field) is not list and field != '*':
+                raise ValueError('MDataBase: If arg is "all" then field must be a list of columns.')
+
+            self.cursor.execute(
+                "SELECT {cn} FROM {tn}".format(
+                    cn=str(fields).replace('[', '').replace(']', ''),
+                    tn=table_name.replace(" ", "_")
+                )
+            )
+        elif args == "range":
+            if type(field) is not list and field != '*':
+                raise ValueError('MDataBase: If arg is "range" then field must be a list of columns.')
+
+            self.cursor.execute(
+                "SELECT {cn}"
+                "   FROM {tn}"
+                "   WHERE {k} = {t}".format(
+                    cn=str(fields).replace('[', '').replace(']', ''),
+                    tn=table_name,
+                    k = args[1]
+                )
+            )
     def saveState(self):
         pass
     def restoreState(self):

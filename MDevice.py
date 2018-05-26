@@ -21,6 +21,7 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 from MFrame import MFrame
+from PyQt4 import QtCore
 from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 import threading
 from MDataBase.MDataBase import MDataBase
@@ -45,6 +46,10 @@ class MDevice(QThread):
   '''
     updateSignal = pyqtSignal()
     lock = threading.Lock()
+
+
+    begin_signal = pyqtSignal(name = "begin_signal")
+    #db_close_signal = QtCore.pyqtSignal(name = "db_close_signal")
 
     def __init__(self, name, *args, **kwargs):
         '''Initializes the device:
@@ -74,6 +79,8 @@ class MDevice(QThread):
         self.settingResultIndices = []
 
         self.doneLoading = False
+
+
 
         #self.memory_tracker = tracker.SummaryTracker()
     def log(self, log):
@@ -153,8 +160,13 @@ class MDevice(QThread):
         # print "stopping device thread..."
         self.keepGoing = False
         # print "device thread stopped."
+        self.device_stop_signal.emit()
 
         self.close()
+
+    def __threadSafeClose(self):
+        if self.frame.DataLoggingInfo()['chest']:
+            self.frame.DataLoggingInfo()['chest'].close()
 
     def plot(self, plot):
         self.frame.setHasPlot(plot)
@@ -169,7 +181,7 @@ class MDevice(QThread):
         # traceback.print_stack()
         self.onBegin()
         # self.frame.setReadingIndex(self.settingResultIndices)
-        self.configureDataLogging()
+        #self.configureDataLogging()
         # Each device NEEDS to run on a different thread
         # than the main thread (which ALWAYS runs the GUI).
         # This thread is responsible for querying the devices.
@@ -177,8 +189,11 @@ class MDevice(QThread):
 #        # If the main thread stops, stop the child thread.
 #        self.deviceThread.daemon = True
 #        # Start the thread.
+        self.configureDataLogging()
         self.start()
         #self.callQuery()
+    def __threadSafeBegin(self):
+        self.configureDataLogging()
 
     def configureDataLogging(self):
         if self.isLogging():
@@ -374,6 +389,9 @@ class MDevice(QThread):
         function with which the refresh rate can be configured.
         '''
         # print "-----------------------------------"
+#        self.device_stop_signal.connect(self.__threadSafeClose)
+ #       self.db_params_updated_signal.connect(self.__configureDataLogging)
+  #      self.begin_signal.connect(self.__threadSafeBegin)
         while True:
 
             # self.lock.acquire()
@@ -386,7 +404,10 @@ class MDevice(QThread):
                 try:
                     t1 = time.time()
                     if self.frame.isDataLogging():
+
+                        print "MDevice:", str(self),"thread id:",int(QThread.currentThreadId())
                         self.datachest.save()
+                        pass
                     t2 = time.time()
                 except:
                     traceback.print_exc()
