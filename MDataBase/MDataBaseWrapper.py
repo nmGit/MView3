@@ -17,17 +17,18 @@ from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 class MDataBaseWrapper(QThread):
     db_params_updated_signal =pyqtSignal(str, name="db_params_updated_signal")
     db_close_signal = pyqtSignal(name = "db_close_signal")
+    db_save_signal = pyqtSignal(name = "db_save_signal")
     def __init__(self, device):
         super(MDataBaseWrapper, self).__init__()
 
-        print "initializing MDataBase Wrapper",int(QThread.currentThreadId())
-        traceback.print_stack()
+        #print "initializing MDataBase Wrapper",int(QThread.currentThreadId())
+        #traceback.print_stack()
         self.device = device
         self.db = None
 
         self.db_params_updated_signal.connect(self.openDb)
         self.db_close_signal.connect(self.close)
-
+        self.db_save_signal.connect(self.__save)
         log_location = self.device.getFrame().DataLoggingInfo()['location']
         # Make sure logging is enabled
         if log_location == None:
@@ -39,7 +40,10 @@ class MDataBaseWrapper(QThread):
         self.restore_state()
 
     def save(self):
-        print "MDataBaseWrapper saving.. thread id:", int(QThread.currentThreadId())
+        self.db_save_signal.emit()
+
+    def __save(self):
+        #print "MDataBaseWrapper saving.. thread id:", int(QThread.currentThreadId())
         try:
             # TODO:Optimize, doesn't need to be done everytime
             columns = self.device.getParameters().keys()
@@ -73,10 +77,14 @@ class MDataBaseWrapper(QThread):
                     self.db.create_table(columns, column_types, str(self.device))
                 pass
         except:
-            traceback.print_exc()
-            if(self.db == None):
-                self.openDb(self.device.getFrame().DataLoggingInfo()['name'])
 
+            if(self.db == None):
+                #print "Opening database..."
+                #self.device.configureDataLogging()
+                #self.db_params_updated_signal.emit(self.device.getFrame().DataLoggingInfo()['name'])
+                pass
+            else:
+                traceback.print_exc()
     def openDb(self, db_name):
         log_location = self.device.getFrame().DataLoggingInfo()['location']
 

@@ -60,8 +60,8 @@ class DataSetConfigGUI(QtGui.QDialog):
 
     def okClicked(self):
         # Take a look at what changed
-        root = os.environ['DATA_CHEST_ROOT']
-        root = root.replace("/","\\")
+        #root = os.environ['DATA_CHEST_ROOT']
+        #root = root.replace("/","\\")
         for i, device in enumerate(web.devices):
             # print "Data logging info:",device.getFrame().DataLoggingInfo()
             # If any changes were made, reinitialize the datalogger.
@@ -224,7 +224,7 @@ class DataSetSettings(QtGui.QWidget):
             device.getFrame().DataLoggingInfo()['location'] = location
  #           print "MDataset config thread",int(QThread.currentThreadId())
 #            device.db_params_updated_signal.emit(device.getFrame().DataLoggingInfo()['name'])
-            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + "\\" + name)
+            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(name)
 
         else:
             dir = QtGui.QFileDialog.getExistingDirectory(self, "Save Data In...",

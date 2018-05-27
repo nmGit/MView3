@@ -405,7 +405,7 @@ class MDevice(QThread):
                     t1 = time.time()
                     if self.frame.isDataLogging():
 
-                        print "MDevice:", str(self),"thread id:",int(QThread.currentThreadId())
+                        #print "MDevice:", str(self),"thread id:",int(QThread.currentThreadId())
                         self.datachest.save()
                         pass
                     t2 = time.time()
