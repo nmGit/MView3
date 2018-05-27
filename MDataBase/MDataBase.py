@@ -15,6 +15,7 @@ import traceback
 class MDataBase:
     def __init__(self, db_path):
         print "Connecting to database located at:", str(db_path)
+        #traceback.print_stack()
         self.conn = sqlite3.connect(str(db_path))
         self.cursor = self.conn.cursor()
 

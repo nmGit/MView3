@@ -138,6 +138,7 @@ class DataSetSettings(QtGui.QWidget):
                 grid.addWidget(title, row, 0)
                 location = QtGui.QLabel(
                     str(device.getFrame().DataLoggingInfo()['location']) +
+                    '\\' +
                     str(device.getFrame().DataLoggingInfo()['name'])
                                         )
                 self.locationLabels.append(location)
@@ -199,8 +200,11 @@ class DataSetSettings(QtGui.QWidget):
                     chest.configureDataSets()
                     location = str(
                         device.getFrame().DataLoggingInfo()['location'])
+                    name = str(
+                        device.getFrame().DataLoggingInfo()['name']
+                    )
                     self.configGui.advancedSettingsWidget.locationLabels[i].setText(
-                        location)
+                        location+'\\'+name)
             except:
                 print "ERROR:", device
                 traceback.print_exc()
@@ -216,15 +220,16 @@ class DataSetSettings(QtGui.QWidget):
             name = device.getFrame().DataLoggingInfo()['name']
             dir = QtGui.QFileDialog.getSaveFileName(self, "Save New Data Set...",
                                                     open_to, "")
-            dir = os.path.abspath(dir).rsplit('\\', 1)
-            location = dir[0]
-            name = dir[1]
-
+            dir = os.path.abspath(dir).rsplit('\\')
+            location = '\\'.join(dir[0:-1])
+            name = dir[-1]
+            print "New log location for", str(device), "is",location
+            print "\t Database name is", name
             device.getFrame().DataLoggingInfo()['name'] = name
             device.getFrame().DataLoggingInfo()['location'] = location
  #           print "MDataset config thread",int(QThread.currentThreadId())
 #            device.db_params_updated_signal.emit(device.getFrame().DataLoggingInfo()['name'])
-            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(name)
+            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + '\\' + name)
 
         else:
             dir = QtGui.QFileDialog.getExistingDirectory(self, "Save Data In...",

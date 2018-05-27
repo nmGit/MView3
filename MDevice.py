@@ -49,7 +49,7 @@ class MDevice(QThread):
 
 
     begin_signal = pyqtSignal(name = "begin_signal")
-    #db_close_signal = QtCore.pyqtSignal(name = "db_close_signal")
+
 
     def __init__(self, name, *args, **kwargs):
         '''Initializes the device:
@@ -160,8 +160,9 @@ class MDevice(QThread):
         # print "stopping device thread..."
         self.keepGoing = False
         # print "device thread stopped."
-        self.device_stop_signal.emit()
-
+        #self.device_stop_signal.emit()
+        if self.frame.DataLoggingInfo()['chest']:
+            self.frame.DataLoggingInfo()['chest'].close()
         self.close()
 
     def __threadSafeClose(self):

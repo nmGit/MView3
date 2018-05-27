@@ -205,8 +205,10 @@ class mGraph(QtGui.QWidget):
             curve.setPen(pen)
 
     def initialize(self):
-
-        varNames = self.device.getFrame().getDataSet().getVariables()
+        dataset = self.device.getFrame().getDataSet()
+        if dataset == None:
+            return
+        varNames = dataset.getVariables()
         varNames = [varNames[1][i][0] for i in range(len(varNames[1]))]
         for i, var in enumerate(varNames):
             #Qvar = QtCore.QString(var.replace('_',' '))
@@ -217,9 +219,9 @@ class mGraph(QtGui.QWidget):
         self.initialized = True
 
         device = self.device
-        frame = device.getFrame()
 
         self.setupUnits()
+
 
     def setupUnits(self):
 
@@ -356,6 +358,7 @@ class mGraph(QtGui.QWidget):
             self.togglePlot()
 
     def togglePlot(self):
+
         if not self.hidden:
             self.win.hide()
             self.oneMinButton.hide()
@@ -372,6 +375,8 @@ class mGraph(QtGui.QWidget):
             self.buttonFrame.hide()
             self.frame.hide()
         elif self.hidden:
+            if self.device.getFrame().getDataSet() == None:
+                return
             self.win.show()
             self.oneMinButton.show()
             self.tenMinButton.show()

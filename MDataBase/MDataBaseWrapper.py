@@ -23,12 +23,15 @@ class MDataBaseWrapper(QThread):
 
         #print "initializing MDataBase Wrapper",int(QThread.currentThreadId())
         #traceback.print_stack()
+
         self.device = device
         self.db = None
 
         self.db_params_updated_signal.connect(self.openDb)
-        self.db_close_signal.connect(self.close)
+        self.db_close_signal.connect(self.__close)
         self.db_save_signal.connect(self.__save)
+        self.restore_state()
+
         log_location = self.device.getFrame().DataLoggingInfo()['location']
         # Make sure logging is enabled
         if log_location == None:
@@ -37,7 +40,7 @@ class MDataBaseWrapper(QThread):
             return
 
         self.openDb(time.strftime("%Y_%B_%d"))
-        self.restore_state()
+
 
     def save(self):
         self.db_save_signal.emit()
@@ -85,11 +88,11 @@ class MDataBaseWrapper(QThread):
                 pass
             else:
                 traceback.print_exc()
-    def openDb(self, db_name):
+    def openDb(self, db_path):
         log_location = self.device.getFrame().DataLoggingInfo()['location']
 
 
-        db_path = log_location + "\\" + db_name
+
         self.db = MDataBase(db_path)
 
     def save_state(self):
@@ -131,8 +134,8 @@ class MDataBaseWrapper(QThread):
     def close(self):
         print "Closing database..."
         self.save_state()
-        #self.db_close_signal.emit()
-
+        self.db_close_signal.emit()
+    def __close(self):
         if self.db:
             self.db.closeDataSet()
    # def __threadSafeClose(self):
