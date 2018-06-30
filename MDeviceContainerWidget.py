@@ -200,12 +200,11 @@ class MDeviceContainerWidget(QtGui.QFrame):
             self.device.getFrame().setPlot(self.dc)
             self.grid.addWidget(self.dc, yPos, 0, yPos, 3)
 
-        if self.device.getFrame().isPlot() and \
-                self.device.getFrame().getDataSet() != None and\
-                self.device.getFrame().getPlot() != None:
+        if self.device.getFrame().isPlot() and self.device.getFrame().getPlot() != None:
+                #self.device.getFrame().getDataSet() != None and\
 
             # print "device container: device:", self.device
-            self.device.getFrame().getPlot().plot(time='last_valid')
+            self.device.getFrame().getPlot().plot(time='default')
         if not frame.isError():
 
             nicknames = self.device.getNicknames()

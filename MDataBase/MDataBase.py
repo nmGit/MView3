@@ -67,44 +67,77 @@ class MDataBase:
         self.cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND NAME='{tn}'".format(tn=table_name))
         return (1==self.cursor.fetchall()[0][0])
 
-    def query(self, table_name, columns, *args):
-        field = columns.replace(' ','_')
-        if args == "last":
-            if type(field) is not list and field != '*':
-                raise ValueError('MDataBase: If arg is "last" then field must be a list of columns.')
+    def query(self, table_name, columns = '*', *args):
+        #print "args:", args
 
-            self.cursor.execute(
-                "SELECT {cn}"
-                "   FROM {tn}"
-                "   WHERE {fd} = (SELECT MAX(PK) FROM {tn}".format(
-                    fd = field,
-                    cn=str(fields).replace('[', '').replace(']', ''),
-                    tn=table_name
-                )
-            )
-        elif args == "all":
-            if type(field) is not list and field != '*':
-                raise ValueError('MDataBase: If arg is "all" then field must be a list of columns.')
+        try:
 
-            self.cursor.execute(
-                "SELECT {cn} FROM {tn}".format(
-                    cn=str(fields).replace('[', '').replace(']', ''),
-                    tn=table_name.replace(" ", "_")
-                )
-            )
-        elif args == "range":
-            if type(field) is not list and field != '*':
-                raise ValueError('MDataBase: If arg is "range" then field must be a list of columns.')
+            field = [column.replace(' ','_') for column in columns]
+            table_name = table_name.replace(' ', '_')
+            if args[0] == "last":
+                if type(field) is not list and field != '*':
+                    raise ValueError('MDataBase: If arg is "last" then field must be a list of columns.')
 
-            self.cursor.execute(
-                "SELECT {cn}"
-                "   FROM {tn}"
-                "   WHERE {k} = {t}".format(
-                    cn=str(fields).replace('[', '').replace(']', ''),
-                    tn=table_name,
-                    k = args[1]
+                self.cursor.execute(
+                    "SELECT {cn}"
+                    "   FROM {tn}"
+                    "   WHERE PK = (SELECT MAX(PK) FROM {tn}".format(
+                        cn=str(field).replace('[', '').replace(']', '').replace("'",''),
+                        tn=table_name
+                    )
                 )
+                return self.cursor.fetchall()
+
+            elif args[0] == "all":
+                if type(field) is not list and field != '*':
+                    raise ValueError('MDataBase: If arg is "all" then field must be a list of columns.')
+
+                self.cursor.execute(
+                    "SELECT {cn} FROM {tn}".format(
+                        cn=str(fields).replace('[', '').replace(']', '').replace("'",''),
+                        tn=table_name.replace(" ", "_")
+                    )
+                )
+                return self.cursor.fetchall()
+
+            elif args[0] == "range":
+                if type(field) is not list and field != '*':
+                    raise ValueError('MDataBase: If arg is "range" then field must be a list of columns.')
+
+                self.cursor.execute(
+                    "SELECT {cn}"
+                    "   FROM {tn}"
+                    "   WHERE {k} > '{t1}' and {k} < '{t2}'".format(
+                        cn=str(field).replace('[', '').replace(']', '').replace("'",''),
+                        tn=table_name,
+                        k = args[1],
+                        t1 = args[2],
+                        t2 = args[3]
+                    )
+                )
+
+                return self.cursor.fetchall()
+                # print ("SELECT {cn}"
+                #     "   FROM {tn}"
+                #     "   WHERE {k} > '{t1}' and {k} < '{t2}'".format(
+                #         cn=str(field).replace('[', '').replace(']', '').replace("'",''),
+                #         tn=table_name,
+                #         k=args[1],
+                #         t1=args[2],
+                #         t2=args[3]))
+
+        except sqlite3.Error as e:
+            print "An error occurred:", e.args[0]
+    def getColumns(self, table_name):
+        table_name = table_name.replace(" ", "_")
+        self.cursor.execute(
+            "PRAGMA"
+            "   table_info({tn})".format(
+                tn = table_name
             )
+        )
+        return [i[1].encode('ascii') for i in self.cursor.fetchall()]
+
     def saveState(self):
         pass
     def restoreState(self):

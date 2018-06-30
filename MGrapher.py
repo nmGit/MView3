@@ -12,6 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+from logilab.common.registry import traced_selection
 
 __author__ = "Noah Meltzer"
 __copyright__ = "Copyright 2016, McDermott Group"
@@ -21,18 +22,18 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 import numpy as np
-import datetime as dt
+
 import sys
 import traceback
 from PyQt4 import QtGui, QtCore
 from functools import partial
 import pyqtgraph as pg
 import numpy as np
-import time
+import time as tm
 from dateStamp import *
 from dataChest import *
 from MCheckableComboBoxes import MCheckableComboBox
-import datetime
+from datetime import datetime
 import warnings
 
 
@@ -93,25 +94,25 @@ class mGraph(QtGui.QWidget):
         self.hideButton.clicked.connect(self.togglePlot)
         self.oneMinButton = QtGui.QPushButton("1 min")
         self.oneMinButton.clicked.connect(
-            partial(self.plot, time=60, autoRange=True))
+            partial(self.plot, start=60, autoRange=True))
         self.tenMinButton = QtGui.QPushButton("10 min")
         self.tenMinButton.clicked.connect(
-            partial(self.plot,  time=600, autoRange=True))
+            partial(self.plot,  start=600, autoRange=True))
         self.twoHrButton = QtGui.QPushButton("2 hr")
         self.twoHrButton.clicked.connect(
-            partial(self.plot, time=7200, autoRange=True))
+            partial(self.plot, start=7200, autoRange=True))
         self.twelveHrButton = QtGui.QPushButton("12 hr")
         self.twelveHrButton.clicked.connect(
-            partial(self.plot,  time=43200, autoRange=True))
+            partial(self.plot,  start=43200, autoRange=True))
         self.threeDayButton = QtGui.QPushButton("3 day")
         self.threeDayButton.clicked.connect(
-            partial(self.plot, time=259200, autoRange=True))
+            partial(self.plot, start=259200, autoRange=True))
         self.oneWkButton = QtGui.QPushButton("1 week")
         self.oneWkButton.clicked.connect(
-            partial(self.plot,  time=604800, autoRange=True))
+            partial(self.plot,  start=604800, autoRange=True))
         self.allButton = QtGui.QPushButton("All Time")
         self.allButton.clicked.connect(
-            partial(self.plot, time=None, autoRange=True))
+            partial(self.plot, start=None, autoRange=True))
         self.lineSelect = MCheckableComboBox()
         self.lineSelect.setSizeAdjustPolicy(0)
 
@@ -183,6 +184,10 @@ class mGraph(QtGui.QWidget):
         self.installEventFilter(self)
         self.togglePlot()
 
+
+        self.timespan = 60 * 60# default 1 minute
+
+
     def eventFilter(self, receiver, event):
         '''Filter out scroll events so that only pyqtgraph catches them'''
         if(event.type() == QtCore.QEvent.Wheel):
@@ -205,11 +210,12 @@ class mGraph(QtGui.QWidget):
             curve.setPen(pen)
 
     def initialize(self):
-        dataset = self.device.getFrame().getDataSet()
+        dataset = self.device.getFrame().getDataChestWrapper()
         if dataset == None:
             return
         varNames = dataset.getVariables()
-        varNames = [varNames[1][i][0] for i in range(len(varNames[1]))]
+       # print "varNames:", varNames
+
         for i, var in enumerate(varNames):
             #Qvar = QtCore.QString(var.replace('_',' '))
             self.lineSelect.addItem(var.replace('_', ' '))
@@ -226,42 +232,24 @@ class mGraph(QtGui.QWidget):
     def setupUnits(self):
 
         frame = self.device.getFrame()
-        try:
-            yLabel = frame.getDataSet().getParameter("y_label")
-        except:
-            warnings.warn(
-                "\'y_label\' is not a parameter of the data set for" + str(self.device) + ".")
-            yLabel = ''
-        vars = self.device.getFrame().getDataSet().getVariables()
-        try:
-            customUnits = frame.getDataSet().getParameter("custom_units")
-        except:
-            warnings.warn(
-                "\'custom_units\' is not a parameter of the data set for" + str(self.device) + ".")
-            customUnits = None
-        # print "vars:", vars
-        #nickname = vars[1][0][0].replace('_',' ')
-        if customUnits != None:
-            self.p.setLabel('left', text=str(yLabel) +
-                            "(" + str(customUnits) + ")")
+        vars = self.device.getFrame().getDataChestWrapper().getVariables()
+        yLabel = vars[0] # Assume that all params have the same unit for now.
 
-        elif vars[1][0][3] != None:
+        self.viewboxes = []
+        axes = []
+        units = self.device.getFrame().getDataChestWrapper().getUnits()[0]
+        axes.append(self.p.getAxis('left'))
 
-            self.viewboxes = []
-            axes = []
-            units = []
-            units.append(vars[1][0][3])
-
-            axes.append(self.p.getAxis('left'))
-
-            if units[0] != None:
-                axes[-1].setLabel(text=str(yLabel + "(" + units[0] + ")"))
-            else:
-                axes[-1].setLabel(text=str(yLabel))
+        if units != None:
+            axes[-1].setLabel(text=str(yLabel + "(" + units + ")"))
+        else:
+            axes[-1].setLabel(text=str(yLabel))
 
     def plot(self, **kwargs):
             # print "plotting"
-
+       # traceback.print_stack()
+        if self.hidden:
+            return
         if not self.initialized:
             self.initialize()
 
@@ -269,53 +257,57 @@ class mGraph(QtGui.QWidget):
             pa.setGeometry(self.p.vb.sceneBoundingRect())
             pa.linkedViewChanged(self.p.vb, pa.XAxis)
 
-        maxtime = kwargs.get('time', 'last_valid')
+        time = kwargs.get('mode','default')
+        maxtime = kwargs.get('end', 'now')
+        self.timespan = kwargs.get('start', self.timespan)
+
         autoRange = kwargs.get('autoRange', False)
 
         # If time was specified, then autorange
         self.setupUnits()
-        if maxtime == 'last_valid':
-            maxtime = self.lastValidTime
-        # data = self.device.getFrame().getDataSet().getData()
-        data = self.device.getFrame().getDataSet().getData()
-        #print data
-        # if maxtime is not None:
-        #     self.lastValidTime = maxtime
-        #     abstime = time.time() - maxtime
-        #     data = [elem for elem in data if elem[0] > abstime]
-        # times = [elem[0] for elem in data]
+        if time == 'range':
+            if maxtime == 'now':
+                maxtime = tm.time()
+            if mintime == 'all':
+                mintime = 0
+        elif time == 'default':
+            maxtime = tm.time()
+            mintime = maxtime - self.timespan
+            #mintime = maxtime - 60*60 # default 1 hour
 
-        # data = np.transpose(data)
-        # print "data:", data
-        # print "Data to be plotted:", data
+        elif type(time) is int:
+            maxtime = tm.time()
+            mintime = maxtime - time # default 1 hour
+
+
+        # data = self.device.getFrame().getDataSet().getData()
+        #print "maxtime:", maxtime, "mintime:", mintime
+        columns_to_request = ['capture_time']
+        columns_to_request.extend(self.device.getFrame().getDataChestWrapper().getVariables())
+
+        data = self.device.getFrame().getDataChestWrapper().query(columns_to_request, 'range', 'capture_time', mintime, maxtime)
+       # print "data is",data
+        if data == None:
+            print "no data!"
+            return
+        times = [col[0] for col in data]
         i = 0
 
-        while len(self.curves) < len(data) - 1:
-            # self.p.plot()
-
+        while len(self.curves) < len(columns_to_request) - 1:
             self.pen = pg.mkPen(cosmetic=True, width=2, color=(0, 0, 0))
-            varNames = self.device.getFrame().getDataSet().getVariables()
-            varNames = [varNames[1][y][0] for y in range(len(varNames[1]))]
-            self.curves.append(self.p.plot(
-                [0], pen=self.pen, name=varNames[i].replace('_', ' ')))
+            varNames = self.device.getFrame().getDataChestWrapper().getVariables()
+            print "varNames: ", varNames, i
+            self.curves.append(self.p.plot([0], pen=self.pen, name=varNames[i].replace('_', ' ')))
             i = i + 1
             self.generateColors()
-        # currMax = None
-        # currMin = None
-        for i, col in enumerate(data[1:]):
+        # TODO: Optimize  this
+        for i, col in enumerate(columns_to_request[1::]): # Skip capture_time column
+            #print "len cols\ttimes", len(col), len(times)
             if self.lineSelect.isChecked(i):
-                self.curves[i].setData(times, col, antialias=False)
+                self.curves[i].setData(times, [d[i+1] for d in data], antialias=False)
                 self.curves[i].setVisible(True)
-                # thisMax = max(col)
-                # thisMin = min(col)
-                # if thisMax > currMax or currMax is None:
-                #     currMax = thisMax
-                # if thisMin < currMin or currMin is None:
-                #     currMin = thisMin
             else:
                 self.curves[i].setVisible(False)
-        # self.currMin = currMin
-        # self.currMax = currMax
         if self.autoscaleCheckBox.isChecked():
             self.p.autoRange()
             self.autoscaleCheckBox.setChecked(True)
@@ -375,7 +367,7 @@ class mGraph(QtGui.QWidget):
             self.buttonFrame.hide()
             self.frame.hide()
         elif self.hidden:
-            if self.device.getFrame().getDataSet() == None:
+            if self.device.getFrame().getDataChestWrapper() == None:
                 return
             self.win.show()
             self.oneMinButton.show()
@@ -385,7 +377,7 @@ class mGraph(QtGui.QWidget):
             self.threeDayButton.show()
             self.oneWkButton.show()
             self.allButton.show()
-            self.plot(time='last_valid')
+            self.plot(time='default')
             self.lineSelect.show()
             self.hideButton.setText("Hide Plot")
             self.hidden = False
@@ -400,7 +392,7 @@ class TimeAxisItem(pg.AxisItem):
 
         super(TimeAxisItem, self).__init__(*args, **kwargs)
         # Timezone correction, take daylight savings into account.
-        self.timeOffset = -(time.mktime(time.gmtime()) - time.mktime(time.localtime()))+3600*time.localtime().tm_isdst
+        self.timeOffset = -(tm.mktime(tm.gmtime()) - tm.mktime(tm.localtime()))+3600*tm.localtime().tm_isdst
 
     def tickStrings(self, values, scale, spacing):
         # PySide's QTime() initialiser fails miserably and dismisses args/kwargs
@@ -414,4 +406,4 @@ TS_MULT_us = 1e6
 
 
 def int2dt(ts, ts_mult=TS_MULT_us):
-    return(datetime.datetime.utcfromtimestamp(float(ts)))
+    return(datetime.utcfromtimestamp(float(ts)))

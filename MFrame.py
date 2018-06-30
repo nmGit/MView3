@@ -329,17 +329,17 @@ class MFrame:
     def getPlotLength(self):
         return self.plotLength
 
-    def setDataSet(self, dataSet):
-        self.dataSet = dataSet
+    #def setDataSet(self, dataSet):
+     #   self.dataSet = dataSet
 
-    def getDataSet(self):
-        return self.dataSet
+    #def getDataSet(self):
+     #   return self.dataSet
 
     def getDataChestWrapper(self):
-        return self.dataChestWrapper
+        return self.datalogsettingsDict['chest']
 
     def setDataChestWrapper(self, wrapper):
-        self.dataChestWrapper = wrapper
+        self.datalogsettingsDict['chest']= wrapper
 
     def masterEnableDataLogging(self, b):
         self.datalogsettingsDict['logData'] = b

@@ -40,4 +40,4 @@ class grapher(MNode):
         self.timer.start(2000)
 
     def refreshPlot(self):
-        self.graph.plot(time='last_valid')
+        self.graph.plot(time='default')

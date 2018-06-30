@@ -38,8 +38,11 @@ class MDataBaseWrapper(QThread):
             self.device.log(False)
             print str(self.device), ": Datalogging not configured. This device's data logging will be turned off."
             return
+        try:
+            self.openDb()
+        except:
+            traceback.print_exc()
 
-        self.openDb(time.strftime("%Y_%B_%d"))
 
 
     def save(self):
@@ -66,7 +69,8 @@ class MDataBaseWrapper(QThread):
                 rows.append(self.device.getReading(param))
                 rows.append(self.device.getUnit(param))
 
-            rows.insert(0,datetime.now().strftime("%m/%d/%Y_%H:%M:%S.%f"))
+            #rows.insert(0,datetime.now().strftime("%m/%d/%Y_%H:%M:%S.%f"))
+            rows.insert(0, time.time())
             #print "Rows:", rows
             if not self.db.save(str(self.device), columns, rows):
                 if not self.db.does_table_exist(str(self.device)):
@@ -74,7 +78,7 @@ class MDataBaseWrapper(QThread):
                     # these entries unique enures that there can be no two measurements
                     # taken at the same time. More importantly, it speeds up indexing.
                     print "Database table not found. Creating one..."
-                    column_types = ['TEXT UNIQUE']
+                    column_types = ['REAL UNIQUE']
                     column_types.extend(['REAL','TEXT']*len(columns))
                     print "column types",column_types
                     self.db.create_table(columns, column_types, str(self.device))
@@ -82,18 +86,23 @@ class MDataBaseWrapper(QThread):
         except:
 
             if(self.db == None):
+                self.openDb()
                 #print "Opening database..."
                 #self.device.configureDataLogging()
                 #self.db_params_updated_signal.emit(self.device.getFrame().DataLoggingInfo()['name'])
                 pass
             else:
                 traceback.print_exc()
-    def openDb(self, db_path):
+    def getVariables(self):
+        return self.db.getColumns(str(self.device))[2::2]
+    def getUnits(self):
+        cols = self.db.getColumns(str(self.device))[3::2]
+        return cols;
+
+    def openDb(self):
         log_location = self.device.getFrame().DataLoggingInfo()['location']
-
-
-
-        self.db = MDataBase(db_path)
+        log_name = self.device.getFrame().DataLoggingInfo()['name']
+        self.db = MDataBase(log_location + '\\' + log_name)
 
     def save_state(self):
         dataname = self.device.getFrame().DataLoggingInfo()['name']
@@ -125,7 +134,9 @@ class MDataBaseWrapper(QThread):
         self.device.getFrame().DataLoggingInfo()['location'] = location
         pass
 
-    def query(self, fields, *args):
+    def query(self, fields = '*', *args):
+        #traceback.print_stack()
+        #print "wrapper args:", args
         return self.db.query(str(self.device), fields, *args)
         
     def configure_data_sets(self):
