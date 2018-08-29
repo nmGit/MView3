@@ -77,7 +77,7 @@ class NodeTree:
             # print "endAnchor:", endAnchor
             # print "anchor:", anchor
             if endAnchor != None:
-                pipe = MPipe(anchor, self.scene)
+                pipe = MPipe(anchor)
                 self.pipes.append(pipe)
                 self.pipes[-1].connect(endAnchor)
                 endAnchor.connect(self.pipes[-1])
@@ -86,7 +86,7 @@ class NodeTree:
             else:
                 if len(self.getPipes()) == 0:
                     # print "adding pipe"
-                    pipe = self.addPipe(MPipe(anchor, self.scene))
+                    pipe = self.addPipe(MPipe(anchor))
                 else:
                     # print "A pipe exists"
                     if self.getPipes()[-1].isUnconnected():
@@ -94,7 +94,7 @@ class NodeTree:
                         pipe = self.getPipes()[-1]
                     else:
                        # print "Creating pipe"
-                        pipe = self.addPipe(MPipe(anchor, self.scene))
+                        pipe = self.addPipe(MPipe(anchor))
 
                 anchor.pipeConnected(pipe)
                 anchor.parentNode().pipeConnected(anchor, pipe)

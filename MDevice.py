@@ -45,6 +45,7 @@ class MDevice(QThread):
   to all devices that use the same interface.
   '''
     updateSignal = pyqtSignal()
+    addParameterSignal = pyqtSignal(str)
     lock = threading.Lock()
 
 
@@ -249,7 +250,7 @@ class MDevice(QThread):
     are different). This function must return a tuple in 
     the form ((str) Parameter Name, (int)Precision, (str) units)
    '''
-        return (args[0], args[1], args[2])
+        return
 
     def setPrecisions(self, precisions):
         self.frame.setPrecisions(precisions)
@@ -466,6 +467,7 @@ class MDevice(QThread):
         self.onAddParameter(*args, **kwargs)
         self.frame.setParamVisibility(name, show)
         self.frame.DataLoggingInfo()['channels'][name] = log
+        self.addParameterSignal.emit(name)
 
     # def logData(self, b):
     #     """Enable or disable datalogging for the device."""

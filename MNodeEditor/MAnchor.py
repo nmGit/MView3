@@ -151,5 +151,8 @@ class MAnchor(object):
     def isConnected(self):
         return not self.getPipes() == []
 
+    def getTree(self):
+        return self.tree
+
     def __str__(self):
         return str(self.param)

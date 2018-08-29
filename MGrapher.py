@@ -187,6 +187,7 @@ class mGraph(QtGui.QWidget):
 
         self.timespan = 60 * 60# default 1 minute
 
+        self.device.addParameterSignal.connect(self.addComboBoxItem)
 
     def eventFilter(self, receiver, event):
         '''Filter out scroll events so that only pyqtgraph catches them'''
@@ -218,8 +219,7 @@ class mGraph(QtGui.QWidget):
 
         for i, var in enumerate(varNames):
             #Qvar = QtCore.QString(var.replace('_',' '))
-            self.lineSelect.addItem(var.replace('_', ' '))
-            self.lineSelect.setFont(self.dropdownFont)
+            self.addComboBoxItem(var)
             self.lineSelect.setChecked(i, True)
 
         self.initialized = True
@@ -228,6 +228,9 @@ class mGraph(QtGui.QWidget):
 
         self.setupUnits()
 
+    def addComboBoxItem(self, name):
+        self.lineSelect.addItem(name.replace('_', ' '))
+        self.lineSelect.setFont(self.dropdownFont)
 
     def setupUnits(self):
 
@@ -286,7 +289,8 @@ class mGraph(QtGui.QWidget):
         columns_to_request.extend(self.device.getFrame().getDataChestWrapper().getVariables())
 
         data = self.device.getFrame().getDataChestWrapper().query(columns_to_request, 'range', 'capture_time', mintime, maxtime)
-       # print "data is",data
+        data = np.array(data).astype(float)
+        #print "data is",data
         if data == None:
             print "no data!"
             return
@@ -296,7 +300,7 @@ class mGraph(QtGui.QWidget):
         while len(self.curves) < len(columns_to_request) - 1:
             self.pen = pg.mkPen(cosmetic=True, width=2, color=(0, 0, 0))
             varNames = self.device.getFrame().getDataChestWrapper().getVariables()
-            print "varNames: ", varNames, i
+            #print "varNames: ", varNames, i
             self.curves.append(self.p.plot([0], pen=self.pen, name=varNames[i].replace('_', ' ')))
             i = i + 1
             self.generateColors()
@@ -309,10 +313,13 @@ class mGraph(QtGui.QWidget):
             else:
                 self.curves[i].setVisible(False)
         if self.autoscaleCheckBox.isChecked():
-            self.p.autoRange()
-            self.autoscaleCheckBox.setChecked(True)
-            self.processRangeChangeSig = False
-            self.processRangeChangeSig = True
+            try:
+                self.p.autoRange()
+                self.autoscaleCheckBox.setChecked(True)
+                self.processRangeChangeSig = False
+                self.processRangeChangeSig = True
+            except:
+                pass
 
     def rangeChanged(self):
         if self.processRangeChangeSig:

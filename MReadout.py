@@ -61,14 +61,16 @@ class MReadout(QtGui.QWidget):
         self.label.setFont(font)
 
     def display(self, data):
+        if(data == None):
+            self.lcd.display("-")
 
-        try:
-            float(data)
-            self.lcd.display(data)
-            self.lcd.show()
-            self.label.hide()
-        except:
-
-            self.lcd.hide()
-            self.label.show()
-            self.label.setText(str(str(data)))
+        else:
+            try:
+                float(data)
+                self.lcd.display(data)
+                self.lcd.show()
+                self.label.hide()
+            except:
+                self.lcd.hide()
+                self.label.show()
+                self.label.setText(str(str(data)))

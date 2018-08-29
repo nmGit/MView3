@@ -21,12 +21,18 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 
-class NodeTreeGraphicsHandler:
-    def deletePipe(self, pipeToDel):
-        self.scene.removeItem(pipeToDel)
-
-    def setScene(self, scene):
-        self.scene = scene
-
-    def getScene(self):
-        return self.scene
+# class NodeTreeGraphicsHandler:
+#     def deletePipe(self, pipeToDel):
+#         self.scene.removeItem(pipeToDel)
+#
+#     def setScene(self, scene):
+#         self.scene = scene
+#
+#     def getScene(self):
+#         return self.scene
+#
+#     def setActivePipe(self, pipe):
+#         self.active_pipe = pipe
+#
+#     def getActivePipe(self, pipe):
+#         return self.active_pipe

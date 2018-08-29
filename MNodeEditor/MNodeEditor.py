@@ -3,8 +3,9 @@ import sys
 import time
 import gc
 from functools import partial
-from MNodes.MVirtualDeviceNode import MVirtualDeviceNode
+from MNodes.MDeviceNode import MDeviceNode
 from MNodes.MCompare import MCompare
+from MNodeEditorGraphicsItems.MNodeItem import MNodeGraphicsItem
 from MWeb import web
 import importlib
 import inspect
@@ -23,7 +24,7 @@ class NodeGui(QtGui.QDialog):
         lbl.setText("Logic Editor")
         mainLayout.addWidget(lbl)
 
-        #self.scene = QtGui.QGraphicsScene()
+        self.scene = QtGui.QGraphicsScene()
         # if(not tree.getScene()is None):
         # self.scene = tree.getScene()
         # else:
@@ -37,8 +38,11 @@ class NodeGui(QtGui.QDialog):
         self.backgroundBrush = QtGui.QBrush(QtGui.QColor(70, 80, 88))
         view.setBackgroundBrush(self.backgroundBrush)
 
-        # for device in self.devices:
-        # self.scene.addItem(MNode(device, self.scene, mode = 'labrad_device'))
+        for device in self.devices:
+            dn = MDeviceNode(device)
+            dn.begin()
+            self.scene.addItem(MNodeGraphicsItem(self, dn))
+
         # self.scene.addItem(MNode(device, self.scene, mode = 'output'))
         mainLayout.addWidget(view)
 
@@ -47,6 +51,20 @@ class NodeGui(QtGui.QDialog):
 
         mainLayout.addWidget(addDeviceBtn)
         self.setLayout(mainLayout)
+
+        self.active_pipe = None
+        self.active_anchor = None
+
+    def setActivePipe(self, pipe):
+        self.active_pipe = pipe
+
+    def getActivePipe(self):
+        return self.active_pipe
+
+    def getActiveAnchor(self):
+        return self.active_anchor
+    def setActiveAnchor(self, anchor):
+        self.active_anchor = anchor
 
     def addDevice(self):
         items = web.nodeFilenames

@@ -53,6 +53,8 @@ class MDataBaseWrapper(QThread):
         try:
             # TODO:Optimize, doesn't need to be done everytime
             columns = self.device.getParameters().keys()
+            #print "columns to save:",columns
+
             columns_with_units = []
             for col in columns:
                 columns_with_units.append(col)
@@ -82,7 +84,10 @@ class MDataBaseWrapper(QThread):
                     column_types.extend(['REAL','TEXT']*len(columns))
                     print "column types",column_types
                     self.db.create_table(columns, column_types, str(self.device))
-                pass
+                elif self.db.findNonExistentColumn(str(self.device), columns) is not None:
+                    col_to_add = self.db.findNonExistentColumn(str(self.device), columns)
+                    print "Adding column to database:", col_to_add
+                    self.db.addColumn(str(self.device), col_to_add, 'REAL')
         except:
 
             if(self.db == None):

@@ -41,7 +41,7 @@ class MDataBase:
             self.conn.commit()
             return True
         except:
-            traceback.print_exc()
+            #traceback.print_exc()
             return False
 
 
@@ -138,6 +138,24 @@ class MDataBase:
         )
         return [i[1].encode('ascii') for i in self.cursor.fetchall()]
 
+    def findNonExistentColumn(self, table_name, columns):
+        existing_columns = self.getColumns(table_name)
+        for column in columns:
+            if column in existing_columns:
+                pass
+            else:
+                return column
+        return None
+
+    def addColumn(self, table_name, column, type):
+        table_name = table_name.replace(" ", "_")
+        column = column.replace(" ", "_")
+        self.cursor.execute(
+            "ALTER TABLE '{tn}' ADD '{cn}' {ct}".format(tn = table_name,
+                                                        cn = column,
+                                                        ct = type)
+        )
+        print self.cursor.fetchall()
     def saveState(self):
         pass
     def restoreState(self):

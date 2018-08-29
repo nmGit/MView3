@@ -417,6 +417,7 @@ class MFrame:
 
     def setParamVisibility(self, param, visible):
         '''Set whether or not a parameter shows up on the GUI.'''
+      #  print "Added", param, "to visibility:", visible
         if param in self.parameters.keys():
             self.parameters[param]['visible'] = visible
         else:
@@ -425,6 +426,7 @@ class MFrame:
 
     def isParamVisible(self, param):
         '''Get the visibility of a parameter.'''
+      #  print "Checking if param", param, "is visible"
         return self.parameters[param]['visible']
 
     def getRawDataSet(self, param):

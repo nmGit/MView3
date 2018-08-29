@@ -14,6 +14,7 @@ class MDeviceContainerWidget(QtGui.QFrame):
     def __init__(self, device, parent=None):
         QtGui.QWidget.__init__(self, parent)
         device.updateSignal.connect(self.update)
+        device.addParameterSignal.connect(self.addParameter)
 
         device.setContainer(self)
 
@@ -134,11 +135,13 @@ class MDeviceContainerWidget(QtGui.QFrame):
         return self.topHBox
 
     def addParameter(self, param):
-        label = QtGui.QLabel('Untitled', self)
-        lcd = QtGui.QLCDNumber(self)
+        param = str(param) # will be passed in as a QString, but we need it to be just a normal string
+       # traceback.print_stack()
+        label = QtGui.QLabel(param, self)
+        lcd = MReadout(self)
         units = QtGui.QLabel('')
         self.params[param] = {}
-        if (not self.device.getFrame().isParamVisible(param)):
+        if not self.device.getFrame().isParamVisible(param):
             lcd.hide()
             label.hide()
             units.hide()
@@ -156,16 +159,16 @@ class MDeviceContainerWidget(QtGui.QFrame):
 
         self.params[param]["lcd_readout"] = lcd
         self.lcds.append(lcd)
-        lcd.setNumDigits(11)
-        lcd.setSegmentStyle(QtGui.QLCDNumber.Flat)
-        lcd.display("-")
-        lcd.setFrameShape(QtGui.QFrame.Panel)
-        lcd.setFrameShadow(QtGui.QFrame.Plain)
-        lcd.setLineWidth(web.ratio)
-        lcd.setMidLineWidth(100)
-        lcd.setStyleSheet("color:rgb(189, 195, 199);\n")
-        lcd.setFixedHeight(web.scrnHeight / 30)
-        lcd.setMinimumWidth(web.scrnWidth / 7)
+        lcd.getLCD().setNumDigits(11)
+        lcd.getLCD().setSegmentStyle(QtGui.QLCDNumber.Flat)
+        lcd.getLCD().display("-")
+        lcd.getLCD().setFrameShape(QtGui.QFrame.Panel)
+        lcd.getLCD().setFrameShadow(QtGui.QFrame.Plain)
+        lcd.getLCD().setLineWidth(web.ratio)
+        lcd.getLCD().setMidLineWidth(100)
+        lcd.getLCD().setStyleSheet("color:rgb(189, 195, 199);\n")
+        lcd.getLCD().setFixedHeight(web.scrnHeight / 30)
+        lcd.getLCD().setMinimumWidth(web.scrnWidth / 7)
         lcdHBox = QtGui.QHBoxLayout()
         lcdHBox.addStretch(0)
         lcdHBox.addWidget(lcd)
@@ -185,6 +188,8 @@ class MDeviceContainerWidget(QtGui.QFrame):
             self.hide()
             self.hidden = True
             # print "hidden"
+
+
 
     def update(self):
         # print "updating container of", self.device
@@ -209,15 +214,15 @@ class MDeviceContainerWidget(QtGui.QFrame):
 
             nicknames = self.device.getNicknames()
             parameters = self.device.getParameters()
-            while len(nicknames) > len(self.lcds):
-                # print "device:", self.device
-                # print "readings:", readings
-                # print "len(self.lcds:)", len(self.lcds)
-                # print "nicknames:", self.device.getFrame().nicknames
-                difference = len(readings) - len(self.lcds)
-                # print "difference:", difference
-                self.addParameter(
-                    self.device.getFrame().nicknames[-difference])
+#            while len(nicknames) > len(self.lcds):
+#                # print "device:", self.device
+##                # print "readings:", readings
+ #               # print "len(self.lcds:)", len(self.lcds)
+ #               # print "nicknames:", self.device.getFrame().nicknames
+ #               difference = len(nicknames) - len(self.lcds)
+ ##               # print "difference:", difference
+  #              self.addParameter(
+  #                  nicknames[-difference])
 
             # print "nicknames:", self.device.getFrame().nicknames
 
