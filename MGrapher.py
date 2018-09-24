@@ -236,8 +236,10 @@ class mGraph(QtGui.QWidget):
 
         frame = self.device.getFrame()
         vars = self.device.getFrame().getDataChestWrapper().getVariables()
-        yLabel = vars[0] # Assume that all params have the same unit for now.
-
+        if(len(vars) > 1):
+            yLabel = vars[0] # Assume that all params have the same unit for now.
+        else:
+            yLabel = "Dependent Variable"
         self.viewboxes = []
         axes = []
         units = self.device.getFrame().getDataChestWrapper().getUnits()[0]
@@ -291,9 +293,9 @@ class mGraph(QtGui.QWidget):
         data = self.device.getFrame().getDataChestWrapper().query(columns_to_request, 'range', 'capture_time', mintime, maxtime)
         data = np.array(data).astype(float)
         #print "data is",data
-        if data == None:
-            print "no data!"
-            return
+        # if data == None:
+        #     print "no data!"
+        #     return
         times = [col[0] for col in data]
         i = 0
 

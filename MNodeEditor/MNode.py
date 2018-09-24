@@ -31,11 +31,13 @@ from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 class MNode(QObject):
     # Attribute that lets MView find this MNode
 
+    MNodeUpdatedSignal = pyqtSignal()
     MNodeAnchorAddedSignal = pyqtSignal(str, str)
 
     def __init__(self, *args, **kwargs):
         '''Initialize the new node.'''
-        QObject.__init__(self)
+        super(MNode, self).__init__(None)
+       # QObject.__init__(self)
         web.nodes.append(self)
         self.tree = None
         self.anchors = []
@@ -70,6 +72,7 @@ class MNode(QObject):
         # print "node:", str(self), "refresh data called"
         try:
             self.onRefreshData()
+            self.MNodeUpdatedSignal.emit()
         except:
             traceback.print_exc()
             pass
@@ -142,4 +145,5 @@ class MNode(QObject):
 
     def setColor(self, r, g, b):
         pass
-
+    def connectAnchorAddedSignal(self, func):
+        self.MNodeAnchorAddedSignal.connect(func)

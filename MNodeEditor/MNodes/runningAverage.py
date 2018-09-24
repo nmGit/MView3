@@ -8,7 +8,7 @@ import time
 class runningAverage(MNode):
     def __init__(self, *args, **kwargs):
         super(runningAverage, self).__init__(None, *args, **kwargs)
-        self.begin()
+        #self.begin()
         self.window = 3
         self.data = []
 

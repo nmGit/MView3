@@ -33,7 +33,7 @@ class spikeFilter(MNode):
         # Initialize parent.
         super(spikeFilter, self).__init__(*args, **kwargs)
         # Begin parent.
-        self.begin()
+        #self.begin()
         # Set up variables to hold current and previous
         # reading
         self.prev = np.nan

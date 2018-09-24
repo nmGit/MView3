@@ -27,6 +27,7 @@ import sys
 import inspect
 from glob import glob
 from MWeb import web
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 
 class NodeTree:
@@ -39,6 +40,9 @@ class NodeTree:
         inspect.getfile(inspect.currentframe())))
 
     os.chdir(path + "\MNodes")
+
+    #node_added_signal = pyqtSignal(name = "node_added_to_tree_signal")
+
     # print os.getcwd()
     for file in glob("*.py"):
         web.nodeFilenames.append(file)
@@ -104,11 +108,15 @@ class NodeTree:
             # print "ERROR:",e
             self.deletePipe(self.pipes[-1])
 
+    def getNodeAddedSignal(self):
+        return self.node_added_signal
+
     def addNode(self, node):
         # node.setScene(self.scene)
         node.setTree(self)
         node.begin()
         self.nodes.append(node)
+        #self.node_added_signal.emit()
         return node
 
     def getNodes(self):

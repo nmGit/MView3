@@ -2,30 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="676e2c6d-5210-4775-80a3-26f5ac47d082" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortOpenSlotItem.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MCircleWidget.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/__init__.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MAlert.py" afterPath="$PROJECT_DIR$/MAlert.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDataBase/MDataBase.py" afterPath="$PROJECT_DIR$/MDataBase/MDataBase.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py" afterPath="$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDevice.py" afterPath="$PROJECT_DIR$/MDevice.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDeviceContainerWidget.py" afterPath="$PROJECT_DIR$/MDeviceContainerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MFrame.py" afterPath="$PROJECT_DIR$/MFrame.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDevices/Device.py" afterPath="$PROJECT_DIR$/MDevices/Device.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDevices/MVirtualDevice.py" afterPath="$PROJECT_DIR$/MDevices/MVirtualDevice.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MGrapher.py" afterPath="$PROJECT_DIR$/MGrapher.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MGui.py" afterPath="$PROJECT_DIR$/MGui.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MAnchor.py" afterPath="$PROJECT_DIR$/MNodeEditor/MAnchor.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNode.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNode.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditor.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditor.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeTreeItem.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeTreeItem.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditorHandler.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorHandler.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MPipeItem.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MPipeItem.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodeTree.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodeTree.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MPipe.py" afterPath="$PROJECT_DIR$/MNodeEditor/MPipe.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MReadout.py" afterPath="$PROJECT_DIR$/MReadout.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MWeb.py" afterPath="$PROJECT_DIR$/MWeb.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodes/runningAverage.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodes/runningAverage.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MNodeEditor/MNodes/spikeFilter.py" afterPath="$PROJECT_DIR$/MNodeEditor/MNodes/spikeFilter.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -42,41 +35,53 @@
     <splitter split-orientation="horizontal" split-proportion="0.47599086">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-          <file leaf-file-name="MAnchor.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MAnchor.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2616">
-                  <caret line="121" column="34" lean-forward="true" selection-start-line="121" selection-start-column="24" selection-end-line="121" selection-end-column="34" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MDataBase.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MDataBase/MDataBase.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="33">
-                  <caret line="59" column="33" lean-forward="true" selection-start-line="59" selection-start-column="33" selection-end-line="59" selection-end-column="33" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MPipe.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MPipe.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="714">
-                  <caret line="50" column="34" lean-forward="true" selection-start-line="50" selection-start-column="34" selection-end-line="50" selection-end-column="34" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MNodeTree.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="MNodeTree.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeTree.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="666">
-                  <caret line="96" column="56" lean-forward="false" selection-start-line="96" selection-start-column="56" selection-end-line="96" selection-end-column="56" />
+                <state relative-caret-position="3729">
+                  <caret line="119" column="0" lean-forward="false" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#843#866#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MGrapher.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MGrapher.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="7953">
+                  <caret line="241" column="22" lean-forward="false" selection-start-line="241" selection-start-column="22" selection-end-line="241" selection-end-column="22" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MDeviceContainerWidget.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MDeviceContainerWidget.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="6699">
+                  <caret line="211" column="0" lean-forward="false" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="testGui.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/../../MViewProjects/TestGui/testGui.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="1320">
+                  <caret line="40" column="0" lean-forward="false" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MVirtualDevice.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MDevices/MVirtualDevice.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="1386">
+                  <caret line="43" column="12" lean-forward="false" selection-start-line="43" selection-start-column="12" selection-end-line="43" selection-end-column="12" />
                   <folding />
                 </state>
               </provider>
@@ -85,8 +90,8 @@
           <file leaf-file-name="MNodeEditor.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditor.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1854">
-                  <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+                <state relative-caret-position="3399">
+                  <caret line="103" column="0" lean-forward="false" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
                   <folding>
                     <element signature="e#0#31#0" expanded="true" />
                   </folding>
@@ -94,75 +99,21 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MNodeItem.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="5214">
-                  <caret line="182" column="0" lean-forward="false" selection-start-line="182" selection-start-column="0" selection-end-line="182" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MAnchorItem.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="891">
-                  <caret line="53" column="32" lean-forward="false" selection-start-line="53" selection-start-column="32" selection-end-line="53" selection-end-column="32" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MDevice.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MDevice.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="120">
-                  <caret line="396" column="0" lean-forward="false" selection-start-line="396" selection-start-column="0" selection-end-line="396" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-        </leaf>
-      </split-first>
-      <split-second>
-        <leaf>
-          <file leaf-file-name="MDeviceNode.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="582">
-                  <caret line="87" column="0" lean-forward="false" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MNodeEditorHandler.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorHandler.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="790">
-                  <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="MGui.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MGui.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="942">
-                  <caret line="315" column="0" lean-forward="false" selection-start-line="315" selection-start-column="0" selection-end-line="315" selection-end-column="0" />
+                <state relative-caret-position="10494">
+                  <caret line="318" column="0" lean-forward="false" selection-start-line="318" selection-start-column="0" selection-end-line="318" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MNode.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNode.py">
+          <file leaf-file-name="MCompare.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-321">
-                  <caret line="71" column="0" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+                <state relative-caret-position="330">
+                  <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
                   <folding />
                 </state>
               </provider>
@@ -171,18 +122,76 @@
           <file leaf-file-name="MFrame.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MFrame.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="321">
-                  <caret line="367" column="26" lean-forward="false" selection-start-line="367" selection-start-column="22" selection-end-line="367" selection-end-column="26" />
+                <state relative-caret-position="693">
+                  <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#842#862#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MDevice.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/MDevice.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-8745">
+                  <caret line="109" column="0" lean-forward="true" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MAnchorPortItem.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py">
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
+          <file leaf-file-name="MNodeItem.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="712">
-                  <caret line="34" column="17" lean-forward="true" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="17" />
+                <state relative-caret-position="3762">
+                  <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#842#873#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MDataBaseWrapper.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="595">
+                  <caret line="109" column="0" lean-forward="false" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MDataBase.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MDataBase/MDataBase.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="4356">
+                  <caret line="135" column="0" lean-forward="false" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="spikeFilter.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/spikeFilter.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="1056">
+                  <caret line="35" column="9" lean-forward="false" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="runningAverage.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/runningAverage.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="495">
+                  <caret line="19" column="31" lean-forward="false" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
                   <folding>
                     <element signature="e#0#35#0" expanded="true" />
                   </folding>
@@ -190,12 +199,46 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="MNodeTreeItem.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeTreeItem.py">
+          <file leaf-file-name="MDataSetConfigGUI.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MDataSetConfigGUI.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="679">
-                  <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="37" selection-end-column="33" />
+                <state relative-caret-position="7425">
+                  <caret line="235" column="0" lean-forward="false" selection-start-line="235" selection-start-column="0" selection-end-line="235" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#23#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pydevd.py" pinned="false" current-in-tab="false">
+            <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="30954">
+                  <caret line="973" column="0" lean-forward="false" selection-start-line="973" selection-start-column="0" selection-end-line="973" selection-end-column="0" />
                   <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Device.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MDevices/Device.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="5412">
+                  <caret line="176" column="22" lean-forward="false" selection-start-line="176" selection-start-column="16" selection-end-line="176" selection-end-column="22" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="MDeviceNode.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="2079">
+                  <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#843#878#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -213,17 +256,7 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>directInputLayout</find>
-      <find>layout</find>
-      <find>QGraphicsProxy</find>
-      <find>anchorF</find>
-      <find>limitDict</find>
-      <find>frame</find>
-      <find>display</find>
-      <find>prepareGeometryChange</find>
-      <find>connect</find>
       <find>addParameterEvent</find>
-      <find>emit</find>
       <find>updateSignal</find>
       <find>addParameterSignal</find>
       <find>node</find>
@@ -240,9 +273,19 @@
       <find>MAnchorPort</find>
       <find>columns to</find>
       <find>NodeTreeGraphicsHandler</find>
-      <find>MNodeAnchorAddedSignal</find>
       <find>self.pipes</find>
       <find>node_editor</find>
+      <find>getPipes</find>
+      <find>pipe</find>
+      <find>scenePos</find>
+      <find>scene</find>
+      <find>QSizePolicy</find>
+      <find>self.scene</find>
+      <find>emit</find>
+      <find>connect</find>
+      <find>signal</find>
+      <find>MNodeAnchorAddedSignal</find>
+      <find>pyqtSignal</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Noah\Documents\MView\Py</dir>
@@ -265,28 +308,34 @@
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MDeviceItem.py" />
         <option value="$PROJECT_DIR$/MWeb.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/CircleWidget.py" />
-        <option value="$PROJECT_DIR$/../../MViewProjects/TestGui/testGui.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MCircleWidget.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortOpenSlotItem.py" />
         <option value="$PROJECT_DIR$/MAlert.py" />
         <option value="$PROJECT_DIR$/MFrame.py" />
         <option value="$PROJECT_DIR$/MDeviceContainerWidget.py" />
         <option value="$PROJECT_DIR$/MReadout.py" />
-        <option value="$PROJECT_DIR$/MDevice.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MNode.py" />
         <option value="$PROJECT_DIR$/MDataBase/MDataBase.py" />
         <option value="$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py" />
-        <option value="$PROJECT_DIR$/MGrapher.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MPipe.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MAnchor.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeTreeItem.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorHandler.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MPipe.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MPipeItem.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MAnchor.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py" />
+        <option value="$PROJECT_DIR$/MDevices/Device.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNode.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodeTree.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py" />
         <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditor.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py" />
-        <option value="$PROJECT_DIR$/MNodeEditor/MNodeTree.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodes/runningAverage.py" />
+        <option value="$PROJECT_DIR$/MNodeEditor/MNodes/spikeFilter.py" />
+        <option value="$PROJECT_DIR$/MDevices/MVirtualDevice.py" />
+        <option value="$PROJECT_DIR$/MGrapher.py" />
+        <option value="$PROJECT_DIR$/../../MViewProjects/TestGui/testGui.py" />
+        <option value="$PROJECT_DIR$/MDevice.py" />
       </list>
     </option>
   </component>
@@ -311,8 +360,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -409,8 +456,41 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MView" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MView" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MView" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="MDataBase" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="IDE Scripting" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyRootNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -654,23 +734,23 @@
     <frame x="-11" y="-11" width="3222" height="1762" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17093207" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25624013" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39974377" sideWeight="0.50110584" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.334401" sideWeight="0.48751974" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32991672" sideWeight="0.63380724" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39974377" sideWeight="0.49889416" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3292761" sideWeight="0.63380724" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11659193" sideWeight="0.48751974" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4023062" sideWeight="0.49889416" order="2" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -704,35 +784,19 @@
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MNodeEditor/MAnchor.py</url>
-          <line>122</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint suspend="THREAD" type="python-line">
-          <condition expression="str(self.node.device) == 'Dummy 2'" language="Python" />
-          <url>file://$PROJECT_DIR$/MNodeEditor/MAnchor.py</url>
-          <line>121</line>
-          <option name="timeStamp" value="18" />
+          <url>file://$PROJECT_DIR$/MNodeEditor/MNodeEditor.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MNodeEditor/MAnchor.py</url>
-          <line>79</line>
-          <option name="timeStamp" value="20" />
+          <url>file://$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py</url>
+          <line>12</line>
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py</url>
-          <line>32</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py</url>
-          <line>28</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py</url>
-          <line>22</line>
-          <option name="timeStamp" value="23" />
+          <url>file://$PROJECT_DIR$/MGrapher.py</url>
+          <line>292</line>
+          <option name="timeStamp" value="38" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -745,40 +809,18 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="24" />
+      <option name="time" value="44" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="key" language="Python" />
         <watch expression="web.limitDict" language="Python" />
         <watch expression="self" />
+        <watch expression="self.node" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../MViewProjects/TestGui/testGui.py" />
-    <entry file="file://C:/Python27/Lib/site-packages/h5py/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/grapher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1254">
-          <caret line="42" column="37" lean-forward="false" selection-start-line="42" selection-start-column="37" selection-end-line="42" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDevices/Mhdf5Device.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1485">
-          <caret line="51" column="40" lean-forward="false" selection-start-line="51" selection-start-column="40" selection-end-line="51" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/OneDrive/mcDermott/Graphical_programming/servers-Graphical_Programming/GUI/mView/MNodeEditorHandler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="31">
-          <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="29" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/OneDrive/mcDermott/Graphical_programming/servers-Graphical_Programming/GUI/mView/MNodeEditor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="844">
@@ -815,16 +857,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MLabradNode.py" />
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#35#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -837,35 +869,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="792">
           <caret line="27" column="14" lean-forward="false" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDevices/MDummyDevice.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#27#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortOpenSlotItem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#35#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../MViewProjects/TestGui/testGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="844">
-          <caret line="47" column="0" lean-forward="false" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -873,7 +876,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="402">
           <caret line="123" column="16" lean-forward="false" selection-start-line="123" selection-start-column="16" selection-end-line="123" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -881,7 +883,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="336">
           <caret line="81" column="16" lean-forward="false" selection-start-line="81" selection-start-column="16" selection-end-line="81" selection-end-column="16" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -889,7 +890,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2370">
           <caret line="181" column="33" lean-forward="false" selection-start-line="181" selection-start-column="33" selection-end-line="181" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -897,15 +897,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="370">
           <caret line="64" column="31" lean-forward="false" selection-start-line="64" selection-start-column="31" selection-end-line="64" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDevices/MVirtualDevice.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-245">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -913,23 +904,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="334">
           <caret line="66" column="8" lean-forward="false" selection-start-line="66" selection-start-column="8" selection-end-line="66" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDataSetConfigGUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="519">
-          <caret line="247" column="90" lean-forward="false" selection-start-line="247" selection-start-column="90" selection-end-line="247" selection-end-column="90" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MFrame.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="367" column="26" lean-forward="false" selection-start-line="367" selection-start-column="22" selection-end-line="367" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -937,7 +911,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="336">
           <caret line="619" column="0" lean-forward="false" selection-start-line="619" selection-start-column="0" selection-end-line="619" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -945,7 +918,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="336">
           <caret line="237" column="0" lean-forward="false" selection-start-line="237" selection-start-column="0" selection-end-line="237" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -953,7 +925,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="732">
           <caret line="427" column="0" lean-forward="false" selection-start-line="427" selection-start-column="0" selection-end-line="427" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -961,15 +932,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6573">
           <caret line="311" column="0" lean-forward="false" selection-start-line="311" selection-start-column="0" selection-end-line="311" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDeviceContainerWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="211" column="0" lean-forward="false" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -977,7 +939,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1920">
           <caret line="130" column="0" lean-forward="false" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -985,31 +946,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="547">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MGrapher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="302" column="13" lean-forward="false" selection-start-line="302" selection-start-column="13" selection-end-line="302" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="55" column="13" lean-forward="false" selection-start-line="55" selection-start-column="13" selection-end-line="55" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDataBase/MDataBase.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33">
-          <caret line="59" column="33" lean-forward="true" selection-start-line="59" selection-start-column="33" selection-end-line="59" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1017,23 +953,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1419">
           <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeTreeItem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="679">
-          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="37" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorHandler.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="790">
-          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1041,98 +960,241 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="143" column="0" lean-forward="false" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MDevice.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="396" column="0" lean-forward="false" selection-start-line="396" selection-start-column="0" selection-end-line="396" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-321">
-          <caret line="71" column="0" lean-forward="false" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="582">
-          <caret line="87" column="0" lean-forward="false" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MPipe.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="50" column="34" lean-forward="true" selection-start-line="50" selection-start-column="34" selection-end-line="50" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="942">
-          <caret line="315" column="0" lean-forward="false" selection-start-line="315" selection-start-column="0" selection-end-line="315" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MAnchor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2616">
-          <caret line="121" column="34" lean-forward="true" selection-start-line="121" selection-start-column="24" selection-end-line="121" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="891">
-          <caret line="53" column="32" lean-forward="false" selection-start-line="53" selection-start-column="32" selection-end-line="53" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5214">
-          <caret line="182" column="0" lean-forward="false" selection-start-line="182" selection-start-column="0" selection-end-line="182" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortItem.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="712">
-          <caret line="34" column="17" lean-forward="true" selection-start-line="34" selection-start-column="17" selection-end-line="34" selection-end-column="17" />
+        <state relative-caret-position="1254">
+          <caret line="41" column="111" lean-forward="false" selection-start-line="41" selection-start-column="111" selection-end-line="41" selection-end-column="111" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorPortOpenSlotItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNode.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4884">
+          <caret line="148" column="48" lean-forward="false" selection-start-line="148" selection-start-column="48" selection-end-line="148" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MPipe.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="792">
+          <caret line="24" column="34" lean-forward="false" selection-start-line="24" selection-start-column="34" selection-end-line="24" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MPipeItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1617">
+          <caret line="49" column="21" lean-forward="false" selection-start-line="49" selection-start-column="21" selection-end-line="49" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30954">
+          <caret line="973" column="0" lean-forward="false" selection-start-line="973" selection-start-column="0" selection-end-line="973" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeTreeItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1089">
+          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="37" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorHandler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1254">
+          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MAnchorItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="34" column="41" lean-forward="false" selection-start-line="34" selection-start-column="41" selection-end-line="34" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDevices/MDummyDevice.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="18" column="0" lean-forward="false" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MAnchor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3894">
+          <caret line="124" column="0" lean-forward="false" selection-start-line="124" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeTree.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3729">
+          <caret line="119" column="0" lean-forward="false" selection-start-line="119" selection-start-column="0" selection-end-line="119" selection-end-column="0" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#843#866#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1854">
-          <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+        <state relative-caret-position="3399">
+          <caret line="103" column="0" lean-forward="false" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeTree.py">
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MDeviceNode.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="96" column="56" lean-forward="false" selection-start-line="96" selection-start-column="56" selection-end-line="96" selection-end-column="56" />
+        <state relative-caret-position="2079">
+          <caret line="70" column="0" lean-forward="false" selection-start-line="70" selection-start-column="0" selection-end-line="70" selection-end-column="0" />
+          <folding>
+            <element signature="e#843#878#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/runningAverage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="19" column="31" lean-forward="false" selection-start-line="19" selection-start-column="31" selection-end-line="19" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/MCompare.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="11" column="16" lean-forward="false" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodes/spikeFilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1056">
+          <caret line="35" column="9" lean-forward="false" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDevices/Device.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5412">
+          <caret line="176" column="22" lean-forward="false" selection-start-line="176" selection-start-column="16" selection-end-line="176" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MNodeEditor/MNodeEditorGraphicsItems/MNodeItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3762">
+          <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+          <folding>
+            <element signature="e#842#873#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MFrame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#842#862#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDataSetConfigGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7425">
+          <caret line="235" column="0" lean-forward="false" selection-start-line="235" selection-start-column="0" selection-end-line="235" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDevices/MVirtualDevice.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1386">
+          <caret line="43" column="12" lean-forward="false" selection-start-line="43" selection-start-column="12" selection-end-line="43" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10494">
+          <caret line="318" column="0" lean-forward="false" selection-start-line="318" selection-start-column="0" selection-end-line="318" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDeviceContainerWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6699">
+          <caret line="211" column="0" lean-forward="false" selection-start-line="211" selection-start-column="0" selection-end-line="211" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MGrapher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7953">
+          <caret line="241" column="22" lean-forward="false" selection-start-line="241" selection-start-column="22" selection-end-line="241" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDataBase/MDataBase.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4356">
+          <caret line="135" column="0" lean-forward="false" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../MViewProjects/TestGui/testGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1320">
+          <caret line="40" column="0" lean-forward="false" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="109" column="0" lean-forward="false" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MDevice.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8745">
+          <caret line="109" column="0" lean-forward="true" selection-start-line="109" selection-start-column="0" selection-end-line="109" selection-end-column="0" />
           <folding />
         </state>
       </provider>

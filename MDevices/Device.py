@@ -173,7 +173,9 @@ class Device(MDevice):
         self.preferredUnits[name] = unit
 
     def connect(self):
-        """Connect to the device."""
+        """Connect to the device.
+        :rtype: object
+        """
         try:
             # Attempt to connect to the server given the connection
             # and the server name.

@@ -93,7 +93,9 @@ class MDevice(QThread):
         if log == False:
             for p in self.getParameters():
                 self.disableDataLogging(p)
-
+        else:
+            if(self.frame.getDataChestWrapper() == None):
+                self.configureDataLogging()
 
         self.frame.masterEnableDataLogging(log)
 
@@ -148,11 +150,14 @@ class MDevice(QThread):
 
     def addPlot(self, length=None, *args):
 
-        self.frame.addPlot(length)
-        # Datalogging must be enabled if we want to plot data.
-        self.log(True)
-        return self.frame.getPlot()
+        if(self.isLogging()):
+            self.frame.addPlot(length)
+            # Datalogging must be enabled if we want to plot data.
 
+            return self.frame.getPlot()
+        else:
+            raise Exception("Cannot add plot before enabling data logging.")
+            return None
     def getFrame(self):
         """Return the device's frame."""
         return self.frame
@@ -191,34 +196,34 @@ class MDevice(QThread):
 #        # If the main thread stops, stop the child thread.
 #        self.deviceThread.daemon = True
 #        # Start the thread.
-        self.configureDataLogging()
+
         self.start()
         #self.callQuery()
     def __threadSafeBegin(self):
         self.configureDataLogging()
 
     def configureDataLogging(self):
-        if self.isLogging():
-            # print self, "is datalogging"
-            self.frame.DataLoggingInfo()['name'] = self.name
 
-            self.frame.DataLoggingInfo()[
-                'lock_logging_settings'] = self.lockLoggingSettings
-            if self.defaultLogLocation != None:
-                # If the current directory is a subdirectory of the default,
-                # then that is ok and the current directory should not be
-                # changed.
-                print "current location:", self.frame.DataLoggingInfo()['location']
-                print "default:", self.defaultLogLocation
-                if not(self.defaultLogLocation in self.frame.DataLoggingInfo()['location']):
-                    print "Paths not ok"
+        # print self, "is datalogging"
+        self.frame.DataLoggingInfo()['name'] = self.name
 
-                    self.frame.DataLoggingInfo()[
-                        'location'] = self.defaultLogLocation
+        self.frame.DataLoggingInfo()[
+            'lock_logging_settings'] = self.lockLoggingSettings
+        if self.defaultLogLocation != None:
+            # If the current directory is a subdirectory of the default,
+            # then that is ok and the current directory should not be
+            # changed.
+            print "current location:", self.frame.DataLoggingInfo()['location']
+            print "default:", self.defaultLogLocation
+            if not(self.defaultLogLocation in self.frame.DataLoggingInfo()['location']):
+                print "Paths not ok"
 
-            self.frame.DataLoggingInfo()['chest'] = MDataBaseWrapper(self)
+                self.frame.DataLoggingInfo()[
+                    'location'] = self.defaultLogLocation
 
-            self.datachest = self.frame.DataLoggingInfo()['chest']
+        self.frame.DataLoggingInfo()['chest'] = MDataBaseWrapper(self)
+
+        self.datachest = self.frame.DataLoggingInfo()['chest']
 
     def onBegin(self):
         '''Called at the end of MDevice.begin(). This is called before 

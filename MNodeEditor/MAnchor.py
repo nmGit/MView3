@@ -31,6 +31,8 @@ from MReadout import MReadout
 
 
 class MAnchor(object):
+
+
     def __init__(self, name, node, index,  parent=None, **kwargs):
         # Get the keyword arguments
         self.type = kwargs.get('type', 'output')

@@ -31,7 +31,8 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
     node_editor = None
     title = None
     def __init__(self, node_editor, parent=None, *args, **kwargs):
-        QtGui.QGraphicsItem.__init__(self)
+        super(MNodeGraphicsItem, self).__init__(None)
+        #QtGui.QGraphicsObject.__init__(self)
         self.parent = parent
         self.node = parent
         self.node_editor = node_editor
@@ -40,7 +41,7 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
         self.nodeFrame = QtGui.QFrame()
         self.anchors = []
      #   self.node.device.addParameterSignal.connect(self.addParameter)
-        self.node.MNodeAnchorAddedSignal.connect(self.addAnchorExistingAnchorFromName)
+        self.node.connectAnchorAddedSignal(self.addAnchorExistingAnchorFromName)
         self.begin(**kwargs)
 
     def begin(self,   **kwargs):
@@ -50,6 +51,7 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
         self.setAcceptsHoverEvents(True)
 
         self.node_editor.scene.addItem(self)
+        self.setScene(self.node_editor.scene)
         self.anchorLayout = QtGui.QVBoxLayout()
         self.nodeLayout = QtGui.QVBoxLayout()
         self.nodeGraphicsLayout = QtGui.QGraphicsGridLayout()
@@ -64,6 +66,7 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
         self.nodeLayout.addWidget(self.label)
         self.nodeFrame.setLayout(self.nodeLayout)
         self.nodeLayout.addLayout(self.anchorLayout)
+        self.nodeFrame.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding,QtGui.QSizePolicy.MinimumExpanding)
         #self.nodeLayout.addWidget(self.label)
         pProxy = QtGui.QGraphicsProxyWidget(self)
         pProxy.setWidget(self.nodeFrame)
@@ -101,12 +104,14 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
 
         self.nodeBrush = QtGui.QBrush(QtGui.QColor(*self.color))
 
+        #self.node_editor.getScene().addItem(self)
+
     def getNodeWidget(self):
         return self.nodeFrame
 
     def getNodeLayout(self):
         return self.nodeLayout
-    def addAnchorExistingAnchorFromName(self, anchorName):
+    def addAnchorExistingAnchorFromName(self, anchorName, anchorType):
         self.addAnchor(self.node.getAnchorByName(anchorName))
 
     def addAnchor(self, anchor, **kwargs):
@@ -179,8 +184,10 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
     def addNewParameterEvent(self, event):
         text, ok = QtGui.QInputDialog.getText(self.node_editor, "New Parameter", "Enter a name for the new parameter:")
         self.node.addAnchor(name = text, type = 'input')
+
     def getNodeEditor(self):
         return self.node_editor
+
     def boundingRect(self):
         return self.rect
 

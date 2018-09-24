@@ -5,6 +5,7 @@ import gc
 from functools import partial
 from MNodes.MDeviceNode import MDeviceNode
 from MNodes.MCompare import MCompare
+from MNodes.MCompare import MCompare
 from MNodeEditorGraphicsItems.MNodeItem import MNodeGraphicsItem
 from MWeb import web
 import importlib
@@ -53,7 +54,7 @@ class NodeGui(QtGui.QDialog):
         self.setLayout(mainLayout)
 
         self.active_pipe = None
-        self.active_anchor = None
+        self.active_anchor = (None, None)
 
     def setActivePipe(self, pipe):
         self.active_pipe = pipe
@@ -63,9 +64,10 @@ class NodeGui(QtGui.QDialog):
 
     def getActiveAnchor(self):
         return self.active_anchor
-    def setActiveAnchor(self, anchor):
-        self.active_anchor = anchor
-
+    def setActiveAnchor(self, anchor, anchorGraphicsItem):
+        self.active_anchor = (anchor, anchorGraphicsItem)
+    def getScene(self):
+        return self.scene
     def addDevice(self):
         items = web.nodeFilenames
         formattedItems = []
@@ -79,6 +81,7 @@ class NodeGui(QtGui.QDialog):
             self, "Add Node", "Select Node:", formattedItems, editable=False)
 
         if ok:
+
             #import MNodes.MCompare
             newNodeModule = importlib.import_module(
                 str('MNodeEditor.MNodes.' + str(item)))
@@ -90,8 +93,12 @@ class NodeGui(QtGui.QDialog):
                     # print "looking at:", item, obj.__name__
                     pass
                 if inspect.isclass(obj) and item == obj.__name__:
-                    newNodeClass = obj
+                    newNodeClass = obj()
+                    #newNodeClass = MCompare()
+                    self.tree.addNode(newNodeClass)
+                    self.scene.addItem(MNodeGraphicsItem(self, newNodeClass))
                     # print "obj:", obj
-                    self.tree.addNode(obj())
+                   # self.tree.addNode(obj)
+                    #self.scene.addItem(MNodeGraphicsItem(self, newNodeClass))
                     # print "importing type:", str(newNodeClass)
                     break

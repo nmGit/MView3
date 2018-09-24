@@ -25,17 +25,23 @@ from PyQt4 import QtGui, QtCore, Qt
 from MWeb import web
 from MReadout import MReadout
 import MAnchorPortItem
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 class MAnchorItem(QtGui.QFrame):
     def __init__(self, graphicsNode, anchor, parent=None, *args, **kwargs):
         QtGui.QFrame.__init__(self, parent)
         print "Adding anchor"
 
+        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding,QtGui.QSizePolicy.MinimumExpanding)
+
         self.anchorLayout = QtGui.QHBoxLayout()
         self.setLayout(self.anchorLayout)
 
         self.graphicsNode = graphicsNode
 
+        self.anchor = anchor
+
+        self.anchor.node.MNodeUpdatedSignal.connect(self.refresh)
         self.scene = graphicsNode.scene
 
         self.directInput = None
@@ -82,7 +88,7 @@ class MAnchorItem(QtGui.QFrame):
         self.okDirectInput.setMaximumWidth(width + 10)
         self.okDirectInput.setMaximumHeight(height + 5)
 
-        self.lcd.hide()
+        self.lcd.show()
         self.directInput.hide()
         self.okDirectInput.hide()
 
@@ -131,38 +137,39 @@ class MAnchorItem(QtGui.QFrame):
                 return value
         return None
     def directInputHandler(self, type,  callback):
-        # print "type:", type
-        try:
-            value = self.validate(type, callback())
-        except:
-             self.directInput.setStyleSheet( "background:rgb(255,0,0);")
-             traceback.print_exc()
-             return
-        # print "value:", value
-        self.directInput.setStyleSheet( "background:rgb(255,255,255);")
-
-        if self.pipe != None and self.type == 'output':
-            self.pipe.setData(value)
-        else:
-            self.directInputData = value
-        self.data = directInputData
-        self.parentNode().refreshData()
+        pass
+        # # print "type:", type
+        # try:
+        #     value = self.validate(type, callback())
+        # except:
+        #      self.directInput.setStyleSheet( "background:rgb(255,0,0);")
+        #      traceback.print_exc()
+        #      return
+        # # print "value:", value
+        # self.directInput.setStyleSheet( "background:rgb(255,255,255);")
+        #
+        # if self.pipe != None and self.type == 'output':
+        #     self.pipe.setData(value)
+        # else:
+        #     self.directInputData = value
+        # self.data = directInputData
+        # self.parentNode().refreshData()
     def getLcd(self):
         return self.lcd
     def refresh(self):
-        self.getLcd().display(self.data)
-        self.labelWidget.setText(text)
+        self.getLcd().display(self.anchor.getData())
+
     def setColor(self, color):
         self.nodeBrush = QtGui.QBrush(color)
 
     def getGlobalLocation(self):
-        if self.type == 'output':
-            loc =  QtCore.QPoint(self.getLocalLocation().x()+self.scenePos().x(),self.getLocalLocation().y()+self.scenePos().y())
-        elif self.type == 'input':
-            loc = QtCore.QPoint(self.getLocalLocation().x()+self.scenePos().x(),self.getLocalLocation().y()+self.scenePos().y())
+
+      #  loc =  QtCore.QPoint(self.graphicsNode.scenePos().x()
+      #                       ,self.graphicsNode.scenePos().y())
+        loc =  self.pos() + self.graphicsNode.scenePos() + self.port.pos() + QtCore.QPoint(self.port.size().width()/2, self.port.size().height()/2)
         return loc
     def getLocalLocation(self):
-        return QtCore.QPoint(self.posX+10,self.posY+10)
+        return QtCore.QPoint(self.port.posX,self.port.posY)
     def paint(self, painter, option, widget):
        # print "painting..."
         if self.type == 'output':
@@ -189,24 +196,27 @@ class MAnchorItem(QtGui.QFrame):
 
     def mousePressEvent(self, event):
        # print "Anchor clicked!"
-        if self.isConnected():
-            self.tree.deletePipe(self.pipe)
-            if self.directInput != None:
-                self.directInput.show()
-                self.okDirectInput.show()
-                self.lcd.hide()
-        else:
-            self.tree.connect(self)
-            if self.directInput != None:
-                self.directInput.hide()
-                self.okDirectInput.hide()
-                self.lcd.show()
+       #  if self.isConnected():
+       #      self.tree.deletePipe(self.pipe)
+       #      if self.directInput != None:
+       #          self.directInput.show()
+       #          self.okDirectInput.show()
+       #          self.lcd.hide()
+       #  else:
+       #      self.tree.connect(self.anchor)
+       #      if self.directInput != None:
+       #          self.directInput.hide()
+       #          self.okDirectInput.hide()
+       #          self.lcd.show()
 
         self.update()
         self.setSelected(True)
         QtGui.QGraphicsItem.mousePressEvent(self, event)
 
-    # def hoverEnterEvent(self, event):
+    def mouseMoveEvent(self, event):
+        QtGui.QFrame.mouseMoveEvent(self, event)
+
+        # def hoverEnterEvent(self, event):
     #     self.textPen.setStyle(QtCore.Qt.DotLine)
     #     QtGui.QGraphicsItem.hoverEnterEvent(self, event)
     #
