@@ -21,8 +21,8 @@ class MDataBase:
 
     def save(self, table_name, column_names, value_names):
 
-        values = [str(v) for v in value_names]
-        values = "'"+"','".join(values)+"'"
+        values = ["'"+str(v)+"'" if v != None else 'NULL' for v in value_names]
+        values = ",".join(values)
 
         columns = ",".join(column_names)
         table_name = table_name.replace(" ", "_")

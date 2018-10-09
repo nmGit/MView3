@@ -124,8 +124,8 @@ class MDataBaseWrapper(QThread):
         channels = web.persistentData.persistentDataAccess(None, 'DataLoggingInfo', str(self.device), 'channels')
         location = web.persistentData.persistentDataAccess(None, 'DataLoggingInfo', str(self.device),  'location')
         #Do a sanity check
-        #print "device:", self.device
-        #print "restoring location of", self.device, location
+       # print "device:", self.device
+        print "restoring location of", self.device, location
         for nickname in self.device.getFrame().getNicknames():
             if channels == None or nickname not in channels.keys():
                 channels = self.device.getFrame().DataLoggingInfo()['channels']

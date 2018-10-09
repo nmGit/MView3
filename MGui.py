@@ -87,7 +87,6 @@ class MGui(QtGui.QMainWindow):
     # splash.show()
 
     def __init__(self):
-        # atexit.register(self.stop)
 
         web.gui = self
         self.devices = []

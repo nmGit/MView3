@@ -125,12 +125,12 @@ class mGraph(QtGui.QWidget):
         self.setY100.clicked.connect(self.yAxTo100)
         self.setX100 = QtGui.QPushButton("Auto X Axis")
         self.setX100.clicked.connect(self.xAxTo100)
-        self.lockYAx = QtGui.QCheckBox("Lock Y Axis")
-        self.lockYAx.setChecked(True)
-        self.lockYAx.clicked.connect(self.lockYAxisClicked)
-        self.lockXAx = QtGui.QCheckBox("Lock X Axis")
-        self.lockXAx.setChecked(False)
-        self.lockXAx.clicked.connect(self.lockXAxisClicked)
+        # self.lockYAx = QtGui.QCheckBox("Lock Y Axis")
+        # self.lockYAx.setChecked(True)
+        # self.lockYAx.clicked.connect(self.lockYAxisClicked)
+        # self.lockXAx = QtGui.QCheckBox("Lock X Axis")
+        # self.lockXAx.setChecked(False)
+        # self.lockXAx.clicked.connect(self.lockXAxisClicked)
 
         buttonLayout1 = QtGui.QHBoxLayout()
         buttonLayout1.addWidget(self.hideButton)
@@ -149,8 +149,8 @@ class mGraph(QtGui.QWidget):
 
         buttonLayout3 = QtGui.QHBoxLayout()
         buttonLayout3.addWidget(self.autoscaleCheckBox)
-        buttonLayout3.addWidget(self.lockYAx)
-        buttonLayout3.addWidget(self.lockXAx)
+        # buttonLayout3.addWidget(self.lockYAx)
+        # buttonLayout3.addWidget(self.lockXAx)
         buttonLayout3.addWidget(self.setY100)
         buttonLayout3.addWidget(self.setX100)
         buttonLayout3.addWidget(self.refreshColors)
@@ -167,9 +167,9 @@ class mGraph(QtGui.QWidget):
         self.dropdownFont.setPointSize(12)
         self.autoscaleCheckBox.setFont(self.dropdownFont)
         self.refreshColors.setFont(self.dropdownFont)
-        self.lockYAx.setFont(self.dropdownFont)
+#        self.lockYAx.setFont(self.dropdownFont)
         self.setY100.setFont(self.dropdownFont)
-        self.lockXAx.setFont(self.dropdownFont)
+ #       self.lockXAx.setFont(self.dropdownFont)
         self.setX100.setFont(self.dropdownFont)
         self.initialized = False
 
@@ -291,6 +291,7 @@ class mGraph(QtGui.QWidget):
         columns_to_request.extend(self.device.getFrame().getDataChestWrapper().getVariables())
 
         data = self.device.getFrame().getDataChestWrapper().query(columns_to_request, 'range', 'capture_time', mintime, maxtime)
+
         data = np.array(data).astype(float)
         #print "data is",data
         # if data == None:
@@ -324,19 +325,22 @@ class mGraph(QtGui.QWidget):
                 pass
 
     def rangeChanged(self):
-        if self.processRangeChangeSig:
-            self.autoscaleCheckBox.setChecked(False)
-        if self.lockYAx.isChecked():
-            self.yAxTo100()
-
-        if self.lockXAx.isChecked():
-            self.xAxTo100()
+        pass
+        if self.processRangeChangeSig and self.autoscaleCheckBox.isChecked():
+             self.autoscaleCheckBox.setChecked(False)
+        # if self.lockYAx.isChecked():
+        #     self.yAxTo100()
+        #
+        # if self.lockXAx.isChecked():
+        #     self.xAxTo100()
 
     def yAxTo100(self):
-        self.p.enableAutoRange(axis='y')
+        pass
+        #self.p.enableAutoRange(axis='y')
 
     def xAxTo100(self):
-        self.p.enableAutoRange(axis='x')
+        pass
+        #self.p.enableAutoRange(axis='x')
 
     def lockXAxisClicked(self):
 
