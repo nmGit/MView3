@@ -7,6 +7,7 @@ from functools import partial
 import traceback
 from pprint import pprint
 import numpy as np
+import time
 
 
 class MDeviceContainerWidget(QtGui.QFrame):
@@ -192,6 +193,7 @@ class MDeviceContainerWidget(QtGui.QFrame):
 
 
     def update(self):
+
         # print "updating container of", self.device
         frame = self.device.getFrame()
 
@@ -209,7 +211,10 @@ class MDeviceContainerWidget(QtGui.QFrame):
                 #self.device.getFrame().getDataSet() != None and\
 
             # print "device container: device:", self.device
+            t1 = time.time()
             self.device.getFrame().getPlot().plot(time='default')
+            t2 = time.time()
+            print str(self.device), "Time to update device container:", t2 - t1
         if not frame.isError():
 
             nicknames = self.device.getNicknames()
@@ -295,3 +300,4 @@ class MDeviceContainerWidget(QtGui.QFrame):
                     self.params[key]["lcd_readout"].hide()
                     self.params[key]["nickname_label"].hide()
                     self.params[key]["unit_label"].hide()
+

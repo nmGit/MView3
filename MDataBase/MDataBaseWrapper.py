@@ -49,22 +49,20 @@ class MDataBaseWrapper(QThread):
         self.db_save_signal.emit()
 
     def __save(self):
-        #print "MDataBaseWrapper saving.. thread id:", int(QThread.currentThreadId())
+        """This is the save internal to the MDataBaseWrapper. It is not outward facing. This save
+        runs in the same thread as MDataBaseWrapper. This is very important. The outward facing save
+        is given above, and it uses a signal to trigger this save."""
+
         try:
             # TODO:Optimize, doesn't need to be done everytime
-            columns = self.device.getParameters().keys()
-            #print "columns to save:",columns
-
-            columns_with_units = []
-            for col in columns:
+            columns_with_units = ["capture_time"]
+            for col in self.device.getParameters().keys():
                 columns_with_units.append(col)
                 columns_with_units.append("unit_"+str(col))
 
-            columns = columns_with_units
+            columns = [c.replace(' ', '_') for c in columns_with_units]
 
-            columns = [c.replace(' ', '_') for c in columns]
-
-            columns.insert(0, "capture_time")
+            #columns.insert(0, "capture_time")
             #rows = [self.device.getReading(p) if self.device.isDataLoggingEnabled(p) else None for p in self.device.getParameters()]
             rows = []
             for param in self.device.getParameters():
@@ -73,6 +71,8 @@ class MDataBaseWrapper(QThread):
 
             #rows.insert(0,datetime.now().strftime("%m/%d/%Y_%H:%M:%S.%f"))
             rows.insert(0, time.time())
+
+            t1 = time.time()
             #print "Rows:", rows
             if not self.db.save(str(self.device), columns, rows):
                 if not self.db.does_table_exist(str(self.device)):
@@ -88,6 +88,8 @@ class MDataBaseWrapper(QThread):
                     col_to_add = self.db.findNonExistentColumn(str(self.device), columns)
                     print "Adding column to database:", col_to_add
                     self.db.addColumn(str(self.device), col_to_add, 'REAL')
+            t2 = time.time()
+            print self.device, "time to save:", t2 - t1
         except:
 
             if(self.db == None):
@@ -98,6 +100,8 @@ class MDataBaseWrapper(QThread):
                 pass
             else:
                 traceback.print_exc()
+
+
     def getVariables(self):
         return self.db.getColumns(str(self.device))[2::2]
     def getUnits(self):

@@ -373,49 +373,28 @@ class MDevice(QThread):
     def enableAllDataLogging(self):
         self.frame.masterEnableDataLogging(True)
 
-#    def addReading(self, reading, units=None, precision=None):
-#        currReadings = self.frame.getReadings()
-#        currReadings.extend(reading)
-#        self.frame.setReadings(currReadings)
-#
-#        if precision == None:
-#            currPrecisions = self.frame.getPrecisions()
-#            currPrecisions.append(precisions)
-#            self.frame.setPrecisions(precisions)
-#        if units == None:
-#            currUnits = self.frame.getUnits()
-#            currUnits.append(units)
-#            self.frame.setUnits(units)
-#
-#        self.updateContainer()
-
     def run(self):
         '''Automatically called periodically, 
         determined by MDevice.Mframe.getRefreshRate(). 
         There is also a MDevice.Mframe.setRefreshRate()
         function with which the refresh rate can be configured.
         '''
-        # print "-----------------------------------"
-#        self.device_stop_signal.connect(self.__threadSafeClose)
- #       self.db_params_updated_signal.connect(self.__configureDataLogging)
-  #      self.begin_signal.connect(self.__threadSafeBegin)
-        while True:
 
-            # self.lock.acquire()
+        while True:
+            #t1 = time.time()
             self.query()
-            # self.lock.release()
             node = self.frame.getNode()
             if node is not None and self.refreshNodeDataInCallQuery:
                 self.frame.getNode().refreshData()
             if self.datachest is not None and self.doneLoading:
                 try:
-                    t1 = time.time()
+
                     if self.frame.isDataLogging():
 
                         #print "MDevice:", str(self),"thread id:",int(QThread.currentThreadId())
                         self.datachest.save()
                         pass
-                    t2 = time.time()
+
                 except:
                     traceback.print_exc()
 
@@ -423,7 +402,8 @@ class MDevice(QThread):
                 web.gui.MAlert.monitorReadings(self)
 
             self.updateContainer()
-
+            #t2 = time.time()
+            #print self, "time to run:", t2 - t1
             if self.keepGoing:
                 self.msleep(int(self.frame.getRefreshRate()*1000))
             else:

@@ -18,7 +18,8 @@ class MDataBase:
         #traceback.print_stack()
         self.conn = sqlite3.connect(str(db_path))
         self.cursor = self.conn.cursor()
-
+        self.commit_rate = 300 # commit every 300 writes
+        self.writes_since_last_commit = 0
     def save(self, table_name, column_names, value_names):
 
         values = ["'"+str(v)+"'" if v != None else 'NULL' for v in value_names]
@@ -28,7 +29,9 @@ class MDataBase:
         table_name = table_name.replace(" ", "_")
 
         #print "trying to save:\n\t", columns, "\n\t", values
+
         try:
+            t1 = time.time()
             self.cursor.execute(
                 "INSERT INTO {tn} ({cn})"
                 "VALUES ({vals});".format(
@@ -37,14 +40,22 @@ class MDataBase:
                     vals = values
                     )
                 )
+
+
             #print self.cursor.fetchall()
-            self.conn.commit()
+            self.writes_since_last_commit += 1
+            if(self.writes_since_last_commit >= self.commit_rate):
+                self.conn.commit()
+                self.writes_since_last_commit = 0;
+            t2 = time.time()
+            #print table_name, "time to execute sql", t2 - t1
             return True
         except:
             #traceback.print_exc()
             return False
 
-
+    def commit_after_num_writes(self, rate):
+        self.commit_rate = rate
     def create_table(self, column_names, column_qualifiers, table_name):
         table_name = table_name.replace(" ", "_")
         column_tup = []
@@ -69,7 +80,7 @@ class MDataBase:
 
     def query(self, table_name, columns = '*', *args):
         #print "args:", args
-
+        #TODO: See if you can speed this up, particularly return astype(float)
         try:
 
             field = [column.replace(' ','_') for column in columns]
@@ -129,14 +140,20 @@ class MDataBase:
         except sqlite3.Error as e:
             print "An error occurred:", e.args[0]
     def getColumns(self, table_name):
+
         table_name = table_name.replace(" ", "_")
+        t1 = time.time()
         self.cursor.execute(
             "PRAGMA"
             "   table_info({tn})".format(
                 tn = table_name
             )
         )
-        return [i[1].encode('ascii') for i in self.cursor.fetchall()]
+        t2 = time.time()
+        r = [i[1].encode('ascii') for i in self.cursor.fetchall()]
+
+        print table_name, "time to get columns:", t2-t1
+        return r
 
     def findNonExistentColumn(self, table_name, columns):
         existing_columns = self.getColumns(table_name)

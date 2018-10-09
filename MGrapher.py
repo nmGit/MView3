@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
-from logilab.common.registry import traced_selection
+#from logilab.common.registry import traced_selection
 
 __author__ = "Noah Meltzer"
 __copyright__ = "Copyright 2016, McDermott Group"
@@ -253,8 +253,10 @@ class mGraph(QtGui.QWidget):
     def plot(self, **kwargs):
             # print "plotting"
        # traceback.print_stack()
+
         if self.hidden:
             return
+
         if not self.initialized:
             self.initialize()
 
@@ -269,7 +271,8 @@ class mGraph(QtGui.QWidget):
         autoRange = kwargs.get('autoRange', False)
 
         # If time was specified, then autorange
-        self.setupUnits()
+        #self.setupUnits()
+
         if time == 'range':
             if maxtime == 'now':
                 maxtime = tm.time()
@@ -285,28 +288,34 @@ class mGraph(QtGui.QWidget):
             mintime = maxtime - time # default 1 hour
 
 
+
         # data = self.device.getFrame().getDataSet().getData()
         #print "maxtime:", maxtime, "mintime:", mintime
+        t1 = tm.time()
         columns_to_request = ['capture_time']
-        columns_to_request.extend(self.device.getFrame().getDataChestWrapper().getVariables())
+        columns_to_request.extend(self.device.getParameters().keys())
 
         data = self.device.getFrame().getDataChestWrapper().query(columns_to_request, 'range', 'capture_time', mintime, maxtime)
 
+
         data = np.array(data).astype(float)
+
         #print "data is",data
         # if data == None:
         #     print "no data!"
         #     return
         times = [col[0] for col in data]
+
         i = 0
 
         while len(self.curves) < len(columns_to_request) - 1:
             self.pen = pg.mkPen(cosmetic=True, width=2, color=(0, 0, 0))
-            varNames = self.device.getFrame().getDataChestWrapper().getVariables()
-            #print "varNames: ", varNames, i
+            varNames = self.device.getParameters().keys()
+            print "varNames: ", varNames, i
             self.curves.append(self.p.plot([0], pen=self.pen, name=varNames[i].replace('_', ' ')))
             i = i + 1
             self.generateColors()
+
         # TODO: Optimize  this
         for i, col in enumerate(columns_to_request[1::]): # Skip capture_time column
             #print "len cols\ttimes", len(col), len(times)
@@ -323,6 +332,10 @@ class mGraph(QtGui.QWidget):
                 self.processRangeChangeSig = True
             except:
                 pass
+        t2 = tm.time()
+
+
+        print self.device, "time to plot:", t2 - t1
 
     def rangeChanged(self):
         pass
