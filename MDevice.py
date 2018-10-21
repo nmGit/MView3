@@ -365,6 +365,11 @@ class MDevice(QThread):
     def isDataLoggingEnabled(self, parameter):
         return self.frame.DataLoggingInfo()['channels'][parameter]
 
+    def getParameterType(self, parameter):
+        if type(parameter) is dict:
+            parameter = parameter.keys()[0]
+        return self.frame.getNode().getAnchorByName(parameter).getType()
+
     def disableAllDataLogging(self):
         self.frame.masterEnableDataLogging(False)
         for p in self.getParameters():

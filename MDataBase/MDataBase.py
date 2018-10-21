@@ -44,9 +44,15 @@ class MDataBase:
 
             #print self.cursor.fetchall()
             self.writes_since_last_commit += 1
+           # print table_name, "writes since commit:", self.writes_since_last_commit
             if(self.writes_since_last_commit >= self.commit_rate):
+                print table_name, "committing!"
+                t1_1 = time.time()
                 self.conn.commit()
-                self.writes_since_last_commit = 0;
+                t2_1 = time.time()
+                print table_name, "time to commit:", t2_1 - t1_1
+                self.writes_since_last_commit = 0
+
             t2 = time.time()
             #print table_name, "time to execute sql", t2 - t1
             return True
@@ -152,7 +158,7 @@ class MDataBase:
         t2 = time.time()
         r = [i[1].encode('ascii') for i in self.cursor.fetchall()]
 
-        print table_name, "time to get columns:", t2-t1
+       # print table_name, "time to get columns:", t2-t1
         return r
 
     def findNonExistentColumn(self, table_name, columns):

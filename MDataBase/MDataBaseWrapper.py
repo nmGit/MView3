@@ -89,7 +89,7 @@ class MDataBaseWrapper(QThread):
                     print "Adding column to database:", col_to_add
                     self.db.addColumn(str(self.device), col_to_add, 'REAL')
             t2 = time.time()
-            print self.device, "time to save:", t2 - t1
+           # print self.device, "time to save:", t2 - t1
         except:
 
             if(self.db == None):

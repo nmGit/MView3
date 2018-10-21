@@ -214,7 +214,7 @@ class MDeviceContainerWidget(QtGui.QFrame):
             t1 = time.time()
             self.device.getFrame().getPlot().plot(time='default')
             t2 = time.time()
-            print str(self.device), "Time to update device container:", t2 - t1
+           # print str(self.device), "Time to update device container:", t2 - t1
         if not frame.isError():
 
             nicknames = self.device.getNicknames()

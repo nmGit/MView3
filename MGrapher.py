@@ -335,7 +335,7 @@ class mGraph(QtGui.QWidget):
         t2 = tm.time()
 
 
-        print self.device, "time to plot:", t2 - t1
+       # print self.device, "time to plot:", t2 - t1
 
     def rangeChanged(self):
         pass
