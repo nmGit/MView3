@@ -53,8 +53,8 @@ class MDeviceNode(MNode):
         nicknames = self.device.getFrame().getNicknames()
         self.dontAddanotherparam = True
 
-        for i,param in enumerate(self.device.getParameters()):
-            self.addAnchor(MAnchor(param, self,  i + 1, type=self.device.getParameterType(param)))
+        for i, param in enumerate(nicknames):
+            self.addAnchor(MAnchor(param, self, i + 1, type='output'))
         devAnchor = self.addAnchor(name='Self', type='output')
         devAnchor.setData(self.getDevice())
 
