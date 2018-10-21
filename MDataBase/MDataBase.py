@@ -18,13 +18,14 @@ class MDataBase:
         #traceback.print_stack()
         self.conn = sqlite3.connect(str(db_path))
         self.cursor = self.conn.cursor()
-        self.commit_rate = 300 # commit every 300 writes
+        self.commit_rate = 10 # commit every 300 writes
         self.writes_since_last_commit = 0
     def save(self, table_name, column_names, value_names):
 
         values = ["'"+str(v)+"'" if v != None else 'NULL' for v in value_names]
         values = ",".join(values)
 
+        column_names = ["'" + c + "'" for c in column_names]
         columns = ",".join(column_names)
         table_name = table_name.replace(" ", "_")
 
@@ -66,7 +67,7 @@ class MDataBase:
         table_name = table_name.replace(" ", "_")
         column_tup = []
         for i,c in enumerate(column_names):
-            column_tup.append(str(c)+" "+str(column_qualifiers[i]))
+            column_tup.append("'"+str(c)+"' "+str(column_qualifiers[i]))
         columns = ",".join(column_tup)
         print "Creating table:", table_name, "with columns:", columns
         self.cursor.execute(
@@ -89,7 +90,7 @@ class MDataBase:
         #TODO: See if you can speed this up, particularly return astype(float)
         try:
 
-            field = [column.replace(' ','_') for column in columns]
+            field = [str("'"+column.replace(' ','_')+"'") for column in columns]
             table_name = table_name.replace(' ', '_')
             if args[0] == "last":
                 if type(field) is not list and field != '*':
