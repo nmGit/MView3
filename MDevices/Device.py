@@ -23,7 +23,7 @@ __status__ = "Beta"
 
 import labrad
 from labrad.units import Value, ValueArray
-from dataChestWrapper import dataChestWrapper
+#from dataChestWrapper import dataChestWrapper
 # from dataChestWrapper import dataChestWrapper
 # from MFrame import MFrame
 import MPopUp
@@ -128,12 +128,13 @@ class Device(MDevice):
         self.selectedDevice = arg
 
     def onBegin(self):
+        pass
         # print "onbegin here"
         # self.frame.setNicknames(self.nicknames)
 
-        self.frame.DataLoggingInfo()['name'] = self.name
-        self.frame.DataLoggingInfo()['chest'] = dataChestWrapper(self)
-        self.datachest = self.frame.DataLoggingInfo()['chest']
+        # self.frame.DataLoggingInfo()['name'] = self.name
+        # self.frame.DataLoggingInfo()['chest'] = dataChestWrapper(self)
+        # self.datachest = self.frame.DataLoggingInfo()['chest']
         # # Each device NEEDS to run on a different thread
         # # than the main thread (which ALWAYS runs the GUI).
         # # This thread is responsible for querying the devices.
@@ -163,7 +164,7 @@ class Device(MDevice):
     def addPlot(self, length=None):
         self.frame.addPlot(length)
         # Datalogging must be enabled if we want to plot data.
-        self.frame.enableDataLogging(True)
+        self.log(True)
         return self.frame.getPlot()
 
     def getPreferredUnit(self, name):
