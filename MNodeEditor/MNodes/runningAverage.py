@@ -8,8 +8,8 @@ import time
 class runningAverage(MNode):
     def __init__(self, *args, **kwargs):
         super(runningAverage, self).__init__(None, *args, **kwargs)
-        self.begin()
-        self.window = 3
+        #self.begin()
+        self.window = 50
         self.data = []
 
     def begin(self, *args, **kwargs):

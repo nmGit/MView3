@@ -75,7 +75,12 @@ class MAlert:
                 # self.devices[i].getFrame().getNicknames()
             key = dev.getFrame().getTitle() + ":" + \
                 dev.getFrame().getNicknames()[y]
-            enabled, min, max, people = web.limitDict[key]
+            if(key in web.limitDict):
+                enabled, min, max, people = web.limitDict[key]
+            else:
+                web.limitDict[key]= (False, None, None, None)
+                continue
+
             min = self.toFloat(min)
             max = self.toFloat(max)
             if dev.getFrame().getReading(param) != None:

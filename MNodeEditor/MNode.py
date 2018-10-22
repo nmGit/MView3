@@ -12,6 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+import pyqtgraph
 
 __author__ = "Noah Meltzer"
 __copyright__ = "Copyright 2016, McDermott Group"
@@ -24,13 +25,19 @@ __status__ = "Beta"
 from MAnchor import MAnchor
 import traceback
 from MWeb import web
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 
-class MNode(object):
+class MNode(QObject):
     # Attribute that lets MView find this MNode
+
+    MNodeUpdatedSignal = pyqtSignal()
+    MNodeAnchorAddedSignal = pyqtSignal(str, str)
 
     def __init__(self, *args, **kwargs):
         '''Initialize the new node.'''
+        super(MNode, self).__init__(None)
+       # QObject.__init__(self)
         web.nodes.append(self)
         self.tree = None
         self.anchors = []
@@ -65,6 +72,7 @@ class MNode(object):
         # print "node:", str(self), "refresh data called"
         try:
             self.onRefreshData()
+            self.MNodeUpdatedSignal.emit()
         except:
             traceback.print_exc()
             pass
@@ -90,6 +98,8 @@ class MNode(object):
                              type=type, data=suggestedData)  # adds itself
         anchor.propagateData(propagate)
         self.anchors.append(anchor)
+        print "adding anchor: ", anchor.param, anchor.type
+        self.MNodeAnchorAddedSignal.emit(str(anchor.param), str(anchor.type))
         self.anchorAdded(anchor, **kwargs)
 
         return anchor
@@ -135,3 +145,5 @@ class MNode(object):
 
     def setColor(self, r, g, b):
         pass
+    def connectAnchorAddedSignal(self, func):
+        self.MNodeAnchorAddedSignal.connect(func)

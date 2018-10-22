@@ -40,8 +40,8 @@ class MVirtualDevice(MDevice.MDevice):
 
     def onBegin(self):
        # print "--------beginning virt device---------"
-        self.log(True)
-
+      #  self.log(True)
+        pass
     # def addParameter(self, *args, **kwargs):
         # name = args[0]
         # units = kwargs.get("units", None)
@@ -53,8 +53,8 @@ class MVirtualDevice(MDevice.MDevice):
         pass
 
     def onLoad(self):
-        self.log(True)
-        self.plot(True)
+        #self.log(True)
+       # self.plot(True)
         self.configureDataLogging()
 
     def setYLabel(self, yLbl, **kwargs):
@@ -71,8 +71,8 @@ class MVirtualDevice(MDevice.MDevice):
     def setPlotRefreshRate(self, period):
         self.frame.setPlotRefreshRate(period)
 
-    def addPlot(self, length=None):
-        # self.frame.addPlot(length)
-        # Datalogging must be enabled if we want to plot data.
-        self.frame.enableDataLogging(False)
-        return self.frame.getPlot()
+    # def addPlot(self, length=None):
+    #     # self.frame.addPlot(length)
+    #     # Datalogging must be enabled if we want to plot data.
+    #     self.frame.enableDataLogging(False)
+    #     return self.frame.getPlot()

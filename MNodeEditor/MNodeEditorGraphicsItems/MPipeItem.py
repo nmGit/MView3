@@ -24,14 +24,17 @@ from PyQt4 import QtGui, QtCore
 
 
 class MPipeGraphicsItem(QtGui.QGraphicsPathItem):
-    def __init__(self, startAnchor, scene, parent=None):
-        QtGui.QGraphicsPathItem.__init__(self, parent=None)
+    def __init__(self, pipe, startAnchorGraphicsItem, endAnchorGraphicsItem, scene, parent=None):
+        QtGui.QGraphicsPathItem.__init__(self, parent)
         self.scene = scene
-        self.path = QtGui.QPainterPath(startAnchor.getGlobalLocation())
+        self.startAnchorGraphicsItem = startAnchorGraphicsItem
+        self.endAnchorGraphicsItem = endAnchorGraphicsItem
+        self.path = QtGui.QPainterPath(self.startAnchorGraphicsItem.getGlobalLocation())
         self.pen = QtGui.QPen()
-        self.pen.setStyle(2);
+        self.pen.setStyle(2)
         self.pen.setWidth(3)
         self.pen.setColor(QtGui.QColor(189, 195, 199))
+        self.pipe = pipe
         # Add itself to the scene
         self.scene.addItem(self)
         # Set up bounding rectangle
@@ -40,18 +43,18 @@ class MPipeGraphicsItem(QtGui.QGraphicsPathItem):
 
     def paint(self, painter, option, widget):
         self.prepareGeometryChange()
-        if not self.isUnconnected():
+        if not self.pipe.isUnconnected():
             self.setBrush(QtGui.QColor(255, 0, 0))
             self.setPath(self.path)
             path2 = QtGui.QPainterPath()
-            path2.moveTo(self.startAnchor.getGlobalLocation())
-            path2.lineTo(self.endAnchor.getGlobalLocation())
+            path2.moveTo(self.startAnchorGraphicsItem.getGlobalLocation())
+            path2.lineTo(self.endAnchorGraphicsItem.getGlobalLocation())
             painter.setPen(self.pen)
             painter.drawPath(path2)
 
     def sceneMouseMove(self, event):
         # print "Scene mouse move"
-        self.origMouseMoveEvent(event)
+        #self.origMouseMoveEvent(event)
         self.update()
         self.prepareGeometryChange()
 
@@ -62,29 +65,29 @@ class MPipeGraphicsItem(QtGui.QGraphicsPathItem):
 
     def boundingRect(self):
 
-        if not self.isUnconnected():
+        if not self.pipe.isUnconnected():
             # self.prepareGeometryChange()
-            width = self.endAnchor.getGlobalLocation().x(
-                ) - self.startAnchor.getGlobalLocation().x()
-            height = self.endAnchor.getGlobalLocation().y(
-                ) - self.startAnchor.getGlobalLocation().y()
+            width = self.endAnchorGraphicsItem.getGlobalLocation().x(
+                ) - self.startAnchorGraphicsItem.getGlobalLocation().x()
+            height = self.endAnchorGraphicsItem.getGlobalLocation().y(
+                ) - self.startAnchorGraphicsItem.getGlobalLocation().y()
             # Must do each rectange differently depending on the quadrant the
             # line is in.
             if(width < 0 and height < 0):
-                self.bound = QtCore.QRectF(self.startAnchor.getGlobalLocation().x(
-                    ) + width, self.startAnchor.getGlobalLocation().y() + height, width * -1, height * -1)
+                self.bound = QtCore.QRectF(self.startAnchorGraphicsItem.getGlobalLocation().x(
+                    ) + width, self.startAnchorGraphicsItem.getGlobalLocation().y() + height, width * -1, height * -1)
             elif(width < 0):
-                self.bound = QtCore.QRectF(self.startAnchor.getGlobalLocation().x(
-                    ) + width, self.startAnchor.getGlobalLocation().y(), width * -1, height)
+                self.bound = QtCore.QRectF(self.startAnchorGraphicsItem.getGlobalLocation().x(
+                    ) + width, self.startAnchorGraphicsItem.getGlobalLocation().y(), width * -1, height)
             elif(height < 0):
-                self.bound = QtCore.QRectF(self.startAnchor.getGlobalLocation().x(
-                    ), self.startAnchor.getGlobalLocation().y() + height, width, height * -1)
+                self.bound = QtCore.QRectF(self.startAnchorGraphicsItem.getGlobalLocation().x(
+                    ), self.startAnchorGraphicsItem.getGlobalLocation().y() + height, width, height * -1)
             else:
-                self.bound = QtCore.QRectF(self.startAnchor.getGlobalLocation().x(
-                    ), self.startAnchor.getGlobalLocation().y(), width, height)
+                self.bound = QtCore.QRectF(self.startAnchorGraphicsItem.getGlobalLocation().x(
+                    ), self.startAnchorGraphicsItem.getGlobalLocation().y(), width, height)
             return self.bound
         else:
             return self.bound
-   def destruct(self):
+    def destruct(self):
         '''This is where the pipe destroys itself :(. '''
         pass

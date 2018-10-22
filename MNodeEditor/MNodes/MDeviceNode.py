@@ -28,9 +28,12 @@ from PyQt4 import QtCore, QtGui
 from functools import partial
 import numpy as np
 import time
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 
 class MDeviceNode(MNode):
+
+
     def __init__(self, device, *args, **kwargs):
         super(MDeviceNode, self).__init__(None, *args, **kwargs)
 
@@ -51,7 +54,7 @@ class MDeviceNode(MNode):
         self.dontAddanotherparam = True
 
         for i, param in enumerate(nicknames):
-            self.addAnchor(MAnchor(param, self,  i + 1, type='output'))
+            self.addAnchor(MAnchor(param, self, i + 1, type='output'))
         devAnchor = self.addAnchor(name='Self', type='output')
         devAnchor.setData(self.getDevice())
 

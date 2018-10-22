@@ -329,19 +329,19 @@ class MFrame:
     def getPlotLength(self):
         return self.plotLength
 
-    def setDataSet(self, dataSet):
-        self.dataSet = dataSet
+    #def setDataSet(self, dataSet):
+     #   self.dataSet = dataSet
 
-    def getDataSet(self):
-        return self.dataSet
+    #def getDataSet(self):
+     #   return self.dataSet
 
     def getDataChestWrapper(self):
-        return self.dataChestWrapper
+        return self.datalogsettingsDict['chest']
 
     def setDataChestWrapper(self, wrapper):
-        self.dataChestWrapper = wrapper
+        self.datalogsettingsDict['chest']= wrapper
 
-    def enableDataLogging(self, b):
+    def masterEnableDataLogging(self, b):
         self.datalogsettingsDict['logData'] = b
 
     def isDataLogging(self):
@@ -407,13 +407,17 @@ class MFrame:
 #        self.readings.append(None)
         order = len(self.parameters)
 
-        self.parameters[params[0]] = {"name": params[0], "reading": None,
-                                      "units": params[1], "precision": params[2], "out_of_range": False}
+        self.parameters[params[0]] = {"name": params[0],
+                                      "reading": None,
+                                      "units": params[1],
+                                      "precision": params[2],
+                                      "out_of_range": False}
         self.paramKeyOrder.append(params[0])
         # print "---------- add parameter NICKNAMES WAS SET", self.parameters
 
     def setParamVisibility(self, param, visible):
         '''Set whether or not a parameter shows up on the GUI.'''
+      #  print "Added", param, "to visibility:", visible
         if param in self.parameters.keys():
             self.parameters[param]['visible'] = visible
         else:
@@ -422,6 +426,7 @@ class MFrame:
 
     def isParamVisible(self, param):
         '''Get the visibility of a parameter.'''
+      #  print "Checking if param", param, "is visible"
         return self.parameters[param]['visible']
 
     def getRawDataSet(self, param):

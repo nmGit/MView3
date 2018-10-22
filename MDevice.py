@@ -21,9 +21,11 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 from MFrame import MFrame
+from PyQt4 import QtCore
 from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 import threading
-from dataChestWrapper import dataChestWrapper
+from MDataBase.MDataBase import MDataBase
+from MDataBase.MDataBaseWrapper import MDataBaseWrapper
 from MWeb import web
 import traceback
 import time
@@ -43,7 +45,12 @@ class MDevice(QThread):
   to all devices that use the same interface.
   '''
     updateSignal = pyqtSignal()
+    addParameterSignal = pyqtSignal(str)
     lock = threading.Lock()
+
+
+    begin_signal = pyqtSignal(name = "begin_signal")
+
 
     def __init__(self, name, *args, **kwargs):
         '''Initializes the device:
@@ -74,6 +81,8 @@ class MDevice(QThread):
 
         self.doneLoading = False
 
+
+
         #self.memory_tracker = tracker.SummaryTracker()
     def log(self, log):
         """ Tell the device whether to log data or not
@@ -81,9 +90,15 @@ class MDevice(QThread):
         :param log: Boolean
 
     """
-        self.frame.enableDataLogging(log)
-        if not log:
-            self.plot(False)
+        if log == False:
+            for p in self.getParameters():
+                self.disableDataLogging(p)
+        else:
+            if(self.frame.getDataChestWrapper() == None):
+                self.configureDataLogging()
+
+        self.frame.masterEnableDataLogging(log)
+
 
     def isLogging(self):
         '''Getter for whether or not datalogging is enabled for this device.
@@ -135,11 +150,14 @@ class MDevice(QThread):
 
     def addPlot(self, length=None, *args):
 
-        self.frame.addPlot(length)
-        # Datalogging must be enabled if we want to plot data.
-        self.log(True)
-        return self.frame.getPlot()
+        if(self.isLogging()):
+            self.frame.addPlot(length)
+            # Datalogging must be enabled if we want to plot data.
 
+            return self.frame.getPlot()
+        else:
+            raise Exception("Cannot add plot before enabling data logging.")
+            return None
     def getFrame(self):
         """Return the device's frame."""
         return self.frame
@@ -148,8 +166,14 @@ class MDevice(QThread):
         # print "stopping device thread..."
         self.keepGoing = False
         # print "device thread stopped."
-
+        #self.device_stop_signal.emit()
+        if self.frame.DataLoggingInfo()['chest']:
+            self.frame.DataLoggingInfo()['chest'].close()
         self.close()
+
+    def __threadSafeClose(self):
+        if self.frame.DataLoggingInfo()['chest']:
+            self.frame.DataLoggingInfo()['chest'].close()
 
     def plot(self, plot):
         self.frame.setHasPlot(plot)
@@ -164,7 +188,7 @@ class MDevice(QThread):
         # traceback.print_stack()
         self.onBegin()
         # self.frame.setReadingIndex(self.settingResultIndices)
-        self.configureDataLogging()
+        #self.configureDataLogging()
         # Each device NEEDS to run on a different thread
         # than the main thread (which ALWAYS runs the GUI).
         # This thread is responsible for querying the devices.
@@ -172,29 +196,34 @@ class MDevice(QThread):
 #        # If the main thread stops, stop the child thread.
 #        self.deviceThread.daemon = True
 #        # Start the thread.
-#        self.deviceThread.start()
-        self.callQuery()
+
+        self.start()
+        #self.callQuery()
+    def __threadSafeBegin(self):
+        self.configureDataLogging()
 
     def configureDataLogging(self):
-        if self.isLogging():
-            # print self, "is datalogging"
-            self.frame.DataLoggingInfo()['name'] = self.name
-            self.frame.DataLoggingInfo()['chest'] = dataChestWrapper(
-                self, data_type=self.dataType)
-            self.frame.DataLoggingInfo()[
-                'lock_logging_settings'] = self.lockLoggingSettings
-            if self.defaultLogLocation != None:
-                # If the current directory is a subdirectory of the default,
-                # then that is ok and the current directory should not be
-                # changed.
-                print "current location:", self.frame.DataLoggingInfo()['location']
-                print "default:", self.defaultLogLocation
-                if not(self.defaultLogLocation in self.frame.DataLoggingInfo()['location']):
-                    print "Paths not ok"
 
-                    self.frame.DataLoggingInfo()[
-                        'location'] = self.defaultLogLocation
-            self.datachest = self.frame.DataLoggingInfo()['chest']
+        # print self, "is datalogging"
+        self.frame.DataLoggingInfo()['name'] = self.name
+
+        self.frame.DataLoggingInfo()[
+            'lock_logging_settings'] = self.lockLoggingSettings
+        if self.defaultLogLocation != None:
+            # If the current directory is a subdirectory of the default,
+            # then that is ok and the current directory should not be
+            # changed.
+            print "current location:", self.frame.DataLoggingInfo()['location']
+            print "default:", self.defaultLogLocation
+            if not(self.defaultLogLocation in self.frame.DataLoggingInfo()['location']):
+                print "Paths not ok"
+
+                self.frame.DataLoggingInfo()[
+                    'location'] = self.defaultLogLocation
+
+        self.frame.DataLoggingInfo()['chest'] = MDataBaseWrapper(self)
+
+        self.datachest = self.frame.DataLoggingInfo()['chest']
 
     def onBegin(self):
         '''Called at the end of MDevice.begin(). This is called before 
@@ -226,7 +255,7 @@ class MDevice(QThread):
     are different). This function must return a tuple in 
     the form ((str) Parameter Name, (int)Precision, (str) units)
    '''
-        return (args[0], args[1], args[2])
+        return
 
     def setPrecisions(self, precisions):
         self.frame.setPrecisions(precisions)
@@ -326,54 +355,67 @@ class MDevice(QThread):
 
     def getReadingIndex(self, parameter):
         return self.frame.getReadingIndex(parameter)
-#    def addReading(self, reading, units=None, precision=None):
-#        currReadings = self.frame.getReadings()
-#        currReadings.extend(reading)
-#        self.frame.setReadings(currReadings)
-#
-#        if precision == None:
-#            currPrecisions = self.frame.getPrecisions()
-#            currPrecisions.append(precisions)
-#            self.frame.setPrecisions(precisions)
-#        if units == None:
-#            currUnits = self.frame.getUnits()
-#            currUnits.append(units)
-#            self.frame.setUnits(units)
-#
-#        self.updateContainer()
 
-    def callQuery(self):
+    def enableDataLogging(self, parameter):
+        self.frame.DataLoggingInfo()['channels'][parameter] = True
+
+    def disableDataLogging(self, parameter):
+        self.frame.DataLoggingInfo()['channels'][parameter] = False
+
+    def isDataLoggingEnabled(self, parameter):
+        return self.frame.DataLoggingInfo()['channels'][parameter]
+
+    def getParameterType(self, parameter):
+        if type(parameter) is dict:
+            parameter = parameter.keys()[0]
+        return self.frame.getNode().getAnchorByName(parameter).getType()
+
+    def disableAllDataLogging(self):
+        self.frame.masterEnableDataLogging(False)
+        for p in self.getParameters():
+            self.disableDataLogging(p)
+
+    def enableAllDataLogging(self):
+        self.frame.masterEnableDataLogging(True)
+
+    def run(self):
         '''Automatically called periodically, 
         determined by MDevice.Mframe.getRefreshRate(). 
         There is also a MDevice.Mframe.setRefreshRate()
         function with which the refresh rate can be configured.
         '''
-        # print "-----------------------------------"
-        if not self.keepGoing:
-            return
 
-        # self.lock.acquire()
-        self.query()
-        # self.lock.release()
-        node = self.frame.getNode()
-        if node is not None and self.refreshNodeDataInCallQuery:
-            self.frame.getNode().refreshData()
-        if self.datachest is not None and self.doneLoading:
-            try:
-                t1 = time.time()
-                self.datachest.save()
-                t2 = time.time()
-            except:
-                traceback.print_exc()
+        while True:
+            #t1 = time.time()
+            self.query()
+            node = self.frame.getNode()
+            if node is not None and self.refreshNodeDataInCallQuery:
+                self.frame.getNode().refreshData()
+            if self.datachest is not None and self.doneLoading:
+                try:
 
-        if web.gui != None and web.gui.MAlert != None:
-            web.gui.MAlert.monitorReadings(self)
+                    if self.frame.isDataLogging():
 
-        self.updateContainer()
+                        #print "MDevice:", str(self),"thread id:",int(QThread.currentThreadId())
+                        self.datachest.save()
+                        pass
 
-        if self.keepGoing:
-            threading.Timer(self.frame.getRefreshRate(),
-                            self.callQuery).start()
+                except:
+                    traceback.print_exc()
+
+            if web.gui != None and web.gui.MAlert != None:
+                web.gui.MAlert.monitorReadings(self)
+
+            self.updateContainer()
+            #t2 = time.time()
+            #print self, "time to run:", t2 - t1
+            if self.keepGoing:
+                self.msleep(int(self.frame.getRefreshRate()*1000))
+            else:
+                return
+
+                #threading.Timer(self.frame.getRefreshRate(),
+                 #               self.callQuery).start()
 
     def prompt(self, button):
         '''Called when 
@@ -415,12 +457,13 @@ class MDevice(QThread):
         self.onAddParameter(*args, **kwargs)
         self.frame.setParamVisibility(name, show)
         self.frame.DataLoggingInfo()['channels'][name] = log
+        self.addParameterSignal.emit(name)
 
-    def logData(self, b):
-        """Enable or disable datalogging for the device."""
-        # if channels!= None:
-        #    self.frame.DataLoggingInfo['channels'] = channels
-        self.frame.enableDataLogging(b)
+    # def logData(self, b):
+    #     """Enable or disable datalogging for the device."""
+    #     # if channels!= None:
+    #     #    self.frame.DataLoggingInfo['channels'] = channels
+    #     self.frame.enableDataLogging(b)
 
     def __str__(self):
         if self.frame.getTitle() is None:

@@ -31,6 +31,8 @@ from MReadout import MReadout
 
 
 class MAnchor(object):
+
+
     def __init__(self, name, node, index,  parent=None, **kwargs):
         # Get the keyword arguments
         self.type = kwargs.get('type', 'output')
@@ -150,6 +152,9 @@ class MAnchor(object):
 
     def isConnected(self):
         return not self.getPipes() == []
+
+    def getTree(self):
+        return self.tree
 
     def __str__(self):
         return str(self.param)

@@ -82,7 +82,6 @@ class MGui(QtGui.QMainWindow):
     # splash.show()
 
     def __init__(self):
-        # atexit.register(self.stop)
 
         web.gui = self
         self.devices = []
@@ -149,7 +148,7 @@ class MGui(QtGui.QMainWindow):
         VirtualDevicesMenu.addAction(virtualDevicesConfigAction)
         # Keeps track of the number of widgets, used for placing tiles
         # into the correct column.
-        #self.neh = MNodeEditorHandler()
+        self.neh = MNodeEditorHandler()
         numWidgets = 0
         # Configure the size policy of all tiles.
         self.frameSizePolicy = QtGui.QSizePolicy()
@@ -190,7 +189,7 @@ class MGui(QtGui.QMainWindow):
             except:
                 pass
         web.persistentData.saveState()
-        # self.neh.stop()
+        self.neh.stop()
 
     def addDevice(self, device):
         if self.started:
@@ -246,8 +245,8 @@ class MGui(QtGui.QMainWindow):
         web.persistentData.persistentDataAccess(period, 'guiRefreshRate')
 
     def openVirtualDevicesConfig(self):
-        # self.neh.showEditor()
-        print "no, I wont"
+        self.neh.showEditor()
+        #print "no, I wont"
 
     def openConfig(self):
         self.Config = ConfigGui(self)
@@ -259,7 +258,7 @@ class MGui(QtGui.QMainWindow):
         self.MAlert = MAlert.MAlert()
         self.MAlert.begin()
 
-    def startGui(self, title, tele, autostart=True):
+    def startGui(self, title, tele = None, autostart=True):
         """Start the GUI."""
         # print "Starting GUI."
         # Used as the name of the dataChest data title.
@@ -287,7 +286,7 @@ class MGui(QtGui.QMainWindow):
         # Show the GUI.
         self.show()
         self.timer = QtCore.QTimer(self)
-        # self.neh.begin()
+        self.neh.begin()
         # Update the GUI every so often. This CAN ONLY be done
         # in the main thread.
         if self.keepGoing:

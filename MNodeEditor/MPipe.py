@@ -22,7 +22,7 @@ __status__ = "Beta"
 
 
 class MPipe:
-    def __init__(self, startAnchor, scene, parent=None):
+    def __init__(self, startAnchor):
 
         #startAnchor.parentNode().pipeConnected(startAnchor, self)
         # Create a new painter path starting at the location of the first

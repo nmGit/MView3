@@ -27,6 +27,7 @@ import sys
 import inspect
 from glob import glob
 from MWeb import web
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 
 class NodeTree:
@@ -39,6 +40,9 @@ class NodeTree:
         inspect.getfile(inspect.currentframe())))
 
     os.chdir(path + "\MNodes")
+
+    #node_added_signal = pyqtSignal(name = "node_added_to_tree_signal")
+
     # print os.getcwd()
     for file in glob("*.py"):
         web.nodeFilenames.append(file)
@@ -77,7 +81,7 @@ class NodeTree:
             # print "endAnchor:", endAnchor
             # print "anchor:", anchor
             if endAnchor != None:
-                pipe = MPipe(anchor, self.scene)
+                pipe = MPipe(anchor)
                 self.pipes.append(pipe)
                 self.pipes[-1].connect(endAnchor)
                 endAnchor.connect(self.pipes[-1])
@@ -86,7 +90,7 @@ class NodeTree:
             else:
                 if len(self.getPipes()) == 0:
                     # print "adding pipe"
-                    pipe = self.addPipe(MPipe(anchor, self.scene))
+                    pipe = self.addPipe(MPipe(anchor))
                 else:
                     # print "A pipe exists"
                     if self.getPipes()[-1].isUnconnected():
@@ -94,7 +98,7 @@ class NodeTree:
                         pipe = self.getPipes()[-1]
                     else:
                        # print "Creating pipe"
-                        pipe = self.addPipe(MPipe(anchor, self.scene))
+                        pipe = self.addPipe(MPipe(anchor))
 
                 anchor.pipeConnected(pipe)
                 anchor.parentNode().pipeConnected(anchor, pipe)
@@ -104,11 +108,15 @@ class NodeTree:
             # print "ERROR:",e
             self.deletePipe(self.pipes[-1])
 
+    def getNodeAddedSignal(self):
+        return self.node_added_signal
+
     def addNode(self, node):
         # node.setScene(self.scene)
         node.setTree(self)
         node.begin()
         self.nodes.append(node)
+        #self.node_added_signal.emit()
         return node
 
     def getNodes(self):
