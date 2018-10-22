@@ -85,7 +85,7 @@ class MDataBase:
     def does_table_exist(self, table_name):
         table_name = "'" + table_name + "'"
         table_name = table_name.replace(" ","_")
-        self.cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND NAME='{tn}'".format(tn=table_name))
+        self.cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND NAME={tn}".format(tn=table_name))
         return (1==self.cursor.fetchall()[0][0])
 
     def query(self, table_name, columns = '*', *args):

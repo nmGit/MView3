@@ -28,7 +28,7 @@ from NotifierGUI import NotifierGUI
 from MConfigGui import ConfigGui
 from MDataSetConfigGUI import DataSetConfigGUI
 from MPersistentData import MPersistentData
-
+from MNodeEditor import MNodeEditorHandler
 import MAlert
 from MWeb import web
 
@@ -148,7 +148,7 @@ class MGui(QtGui.QMainWindow):
         VirtualDevicesMenu.addAction(virtualDevicesConfigAction)
         # Keeps track of the number of widgets, used for placing tiles
         # into the correct column.
-        self.neh = MNodeEditorHandler()
+        self.neh = MNodeEditorHandler.MNodeEditorHandler()
         numWidgets = 0
         # Configure the size policy of all tiles.
         self.frameSizePolicy = QtGui.QSizePolicy()
