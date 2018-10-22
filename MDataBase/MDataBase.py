@@ -27,6 +27,7 @@ class MDataBase:
 
         column_names = ["'" + c + "'" for c in column_names]
         columns = ",".join(column_names)
+        table_name = "'" + table_name + "'"
         table_name = table_name.replace(" ", "_")
 
         #print "trying to save:\n\t", columns, "\n\t", values
@@ -64,6 +65,7 @@ class MDataBase:
     def commit_after_num_writes(self, rate):
         self.commit_rate = rate
     def create_table(self, column_names, column_qualifiers, table_name):
+        table_name = "'" + table_name + "'"
         table_name = table_name.replace(" ", "_")
         column_tup = []
         for i,c in enumerate(column_names):
@@ -81,6 +83,7 @@ class MDataBase:
         )
 
     def does_table_exist(self, table_name):
+        table_name = "'" + table_name + "'"
         table_name = table_name.replace(" ","_")
         self.cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND NAME='{tn}'".format(tn=table_name))
         return (1==self.cursor.fetchall()[0][0])
@@ -92,6 +95,7 @@ class MDataBase:
 
             field = [str("'"+column.replace(' ','_')+"'") for column in columns]
             table_name = table_name.replace(' ', '_')
+            table_name = "'" + table_name + "'"
             if args[0] == "last":
                 if type(field) is not list and field != '*':
                     raise ValueError('MDataBase: If arg is "last" then field must be a list of columns.')
@@ -149,6 +153,7 @@ class MDataBase:
     def getColumns(self, table_name):
 
         table_name = table_name.replace(" ", "_")
+        table_name = "'" + table_name + "'"
         t1 = time.time()
         self.cursor.execute(
             "PRAGMA"
@@ -163,6 +168,7 @@ class MDataBase:
         return r
 
     def findNonExistentColumn(self, table_name, columns):
+        table_name = "'" + table_name + "'"
         existing_columns = self.getColumns(table_name)
         for column in columns:
             if column in existing_columns:
@@ -173,6 +179,7 @@ class MDataBase:
 
     def addColumn(self, table_name, column, type):
         table_name = table_name.replace(" ", "_")
+        table_name = "'" + table_name + "'"
         column = column.replace(" ", "_")
         self.cursor.execute(
             "ALTER TABLE '{tn}' ADD '{cn}' {ct}".format(tn = table_name,
