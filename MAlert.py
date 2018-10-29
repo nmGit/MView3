@@ -39,7 +39,7 @@ class MAlert:
     def __init__(self):
 
         # Configure all public variables
-        self.tele = web.telecomm
+        self.tele = MMail.MMail()
         self.devices = web.devices
         self.t1 = 0
         self.message = []
@@ -125,12 +125,12 @@ class MAlert:
                                      + " | " + str(device) + "->"
                                      + param + ": " +
                                      str(device.getReading(param)) +
-                                     device.getUnit(param) +
+                                     str(device.getUnit(param)) +
                                      " | Range: "
-                                     + str(min)
-                                     + device.getUnit(param) +
-                                     " - " + str(max) +
-                                     device.getUnit(param) + "."))
+                                     + str(str(min))
+                                     + str(device.getUnit(param)) +
+                                     " - " + str(str(max)) +
+                                     str(device.getUnit(param)) + "."))
 
                 self.message.append((""))
             if(HOURS_BETWEEN_EMAILS < elapsedHrs):
@@ -139,15 +139,16 @@ class MAlert:
                     # print self.message
                     for key in self.mailSent:
                         self.mailSent[key] = False
-                    success, address = self.tele.send_sms(
-                        str(device),
-                        str(self.message),
+                    print "Email message:", self.message
+                    success = self.tele.sendMail(
                         [str(person).strip() for person in people.split(',')],
-                        "labrad_physics")
+                        "MView",
+                        str(web.title) + str(device),
+                        "Message" + str(self.message)
+                        )
                     print [str(person).strip() for person in people.split(',')]
                     if (not success):
-                        print("Couldn't send email to group: " +
-                              str([str(person).strip() for person in people.split(',')]) + " | " + str(success) + " " + str(address))
+                        print("Couldn't send email to group.");
                     self.message = []
                     for key in self.mailSent:
                         self.mailSent[key] = False
