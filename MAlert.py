@@ -140,10 +140,11 @@ class MAlert:
                     for key in self.mailSent:
                         self.mailSent[key] = False
                     print "Email message:", self.message
+                    print "in MAlert web title", web.title
                     success = self.tele.sendMail(
                         [str(person).strip() for person in people.split(',')],
                         "MView",
-                        str(web.title) + str(device),
+                        str(web.title) + ":" + str(device),
                         "Message" + str(self.message)
                         )
                     print [str(person).strip() for person in people.split(',')]

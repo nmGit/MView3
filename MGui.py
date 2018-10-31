@@ -283,6 +283,7 @@ class MGui(QtGui.QMainWindow):
         self.initGui()
         self.setWindowTitle(title)
         web.title = title
+        print "Starting gui with title:", web.title
         # Show the GUI.
         self.show()
         self.timer = QtCore.QTimer(self)

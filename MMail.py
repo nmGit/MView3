@@ -44,6 +44,7 @@ class MMail:
         # Send the email.
 
     def sendMail(self, To, From, Subject, Body):
+
         success = True
         self.smtpObj = smtplib.SMTP("smtp.gmail.com", 587)
 
@@ -58,13 +59,14 @@ class MMail:
             traceback.print_exc()
             success = False
         # Send the email.
-        msg = MIMEText(Body)
-        msg['Subject'] = Subject
-        msg['From'] = From
-        msg['To'] = To
+        email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" % (From, ", ".join(To), Subject, Body)
+        print "Sending email with text:"
+        print "-------------------------------------------"
+        print email_text
+        print "-------------------------------------------"
+
         try:
-            self.smtpObj.sendmail('physics.labrad@gmail.com', To,
-                            Body)
+            self.smtpObj.sendmail(From, To, email_text)
             print("Successfully sent mail.")
         except:
             traceback.print_exc()

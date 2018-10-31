@@ -111,7 +111,8 @@ class MDataBaseWrapper(QThread):
     def openDb(self):
         log_location = self.device.getFrame().DataLoggingInfo()['location']
         log_name = self.device.getFrame().DataLoggingInfo()['name']
-        self.db = MDataBase(log_location + '\\' + log_name)
+        if(log_location != None):
+            self.db = MDataBase(log_location + '\\' + log_name)
 
     def save_state(self):
         dataname = self.device.getFrame().DataLoggingInfo()['name']

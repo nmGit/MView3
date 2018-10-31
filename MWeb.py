@@ -54,3 +54,6 @@ class web:
     nodeFilenames = []
     nodes = []
     persistentData = None
+
+    notifier_email_address = None
+    notifier_email_pwd = None
