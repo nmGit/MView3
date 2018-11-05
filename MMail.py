@@ -24,6 +24,7 @@ import smtplib
 from email.mime.text import MIMEText
 import MPopUp
 import traceback
+from PyQt4 import QtCore
 
 class MMail:
     """Very simple email client."""
@@ -40,18 +41,20 @@ class MMail:
         except:
             MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             traceback.print_exc()
-        self.smtpObj.quit();
+        self.smtpObj.quit()
+        self.mail_sem = QtCore.QSemaphore(1)
         # Send the email.
 
     def sendMail(self, To, From, Subject, Body):
 
-        success = True
-        self.smtpObj = smtplib.SMTP("smtp.gmail.com", 587)
 
-        self.smtpObj.ehlo()
         # Initialize TLS security.
-        self.smtpObj.starttls()
+        self.mail_sem.acquire()
         try:
+            success = True
+            self.smtpObj = smtplib.SMTP("smtp.gmail.com", 587)
+            self.smtpObj.ehlo()
+            self.smtpObj.starttls()
             self.smtpObj.login('physics.labrad@gmail.com', 'mcdermott')
         except:
             print("ERROR: Could not log in to email.")
@@ -73,4 +76,5 @@ class MMail:
             print("ERROR: Could not send mail")
             success = False
         self.smtpObj.quit()
+        self.mail_sem.release()
         return success
