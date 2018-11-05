@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d9f373e7-7aa2-4b84-85a5-2c7d5909dc93" name="Default" comment="">
+    <list default="true" id="d9f373e7-7aa2-4b84-85a5-2c7d5909dc93" name="Default" comment="Prevent database from trying to create a file if no location is specified. No bueno">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/MView.iml" afterPath="$PROJECT_DIR$/.idea/MView.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MAlert.py" afterPath="$PROJECT_DIR$/MAlert.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py" afterPath="$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MGui.py" afterPath="$PROJECT_DIR$/MGui.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MMail.py" afterPath="$PROJECT_DIR$/MMail.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/MWeb.py" afterPath="$PROJECT_DIR$/MWeb.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/NotifierGUI.py" afterPath="$PROJECT_DIR$/NotifierGUI.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,14 +21,14 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.56242377">
+    <splitter split-orientation="horizontal" split-proportion="0.47014114">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="MAlert.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="MAlert.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/MAlert.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="3795">
-                  <caret line="115" column="64" lean-forward="true" selection-start-line="115" selection-start-column="64" selection-end-line="115" selection-end-column="64" />
+                <state relative-caret-position="-2007">
+                  <caret line="41" column="8" lean-forward="true" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="33" />
                   <folding>
                     <element signature="e#913#927#0" expanded="true" />
                   </folding>
@@ -39,18 +39,18 @@
           <file leaf-file-name="MWeb.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MWeb.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="735">
-                  <caret line="55" column="25" lean-forward="true" selection-start-line="55" selection-start-column="25" selection-end-line="55" selection-end-column="25" />
+                <state relative-caret-position="1716">
+                  <caret line="55" column="25" lean-forward="false" selection-start-line="55" selection-start-column="25" selection-end-line="55" selection-end-column="25" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="NotifierGUI.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="NotifierGUI.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/NotifierGUI.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="7380">
-                  <caret line="238" column="23" lean-forward="true" selection-start-line="238" selection-start-column="23" selection-end-line="238" selection-end-column="23" />
+                <state relative-caret-position="-1246">
+                  <caret line="176" column="13" lean-forward="false" selection-start-line="176" selection-start-column="13" selection-end-line="176" selection-end-column="13" />
                   <folding />
                 </state>
               </provider>
@@ -59,38 +59,8 @@
           <file leaf-file-name="MGui.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MGui.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1180">
-                  <caret line="285" column="33" lean-forward="false" selection-start-line="285" selection-start-column="33" selection-end-line="285" selection-end-column="33" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MDataBase.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MDataBase/MDataBase.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="388">
-                  <caret line="160" column="0" lean-forward="false" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="MDataBaseWrapper.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="351">
-                  <caret line="113" column="33" lean-forward="false" selection-start-line="113" selection-start-column="33" selection-end-line="113" selection-end-column="33" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="encoders.py" pinned="false" current-in-tab="false">
-            <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/email/encoders.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2310">
-                  <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+                <state relative-caret-position="369">
+                  <caret line="270" column="18" lean-forward="false" selection-start-line="270" selection-start-column="18" selection-end-line="270" selection-end-column="18" />
                   <folding />
                 </state>
               </provider>
@@ -99,8 +69,8 @@
           <file leaf-file-name="MMail.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MMail.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1881">
-                  <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+                <state relative-caret-position="448">
+                  <caret line="43" column="27" lean-forward="false" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="27" />
                   <folding>
                     <element signature="e#842#856#0" expanded="true" />
                   </folding>
@@ -108,21 +78,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="email_test.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/email_test.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="66">
-                  <caret line="2" column="18" lean-forward="true" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="MDevice.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MDevice.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="582">
-                  <caret line="387" column="0" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="387" selection-end-column="0" />
+                <state relative-caret-position="321">
+                  <caret line="406" column="0" lean-forward="false" selection-start-line="406" selection-start-column="0" selection-end-line="406" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -132,13 +92,14 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-          <file leaf-file-name="MMail.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="MMail.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MMail.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2046">
-                  <caret line="62" column="40" lean-forward="false" selection-start-line="62" selection-start-column="40" selection-end-line="62" selection-end-column="40" />
+                <state relative-caret-position="1130">
+                  <caret line="59" column="25" lean-forward="false" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
                   <folding>
                     <element signature="e#842#856#0" expanded="true" />
+                    <marker date="1541455722997" expanded="true" signature="1605:2785" ph="..." />
                   </folding>
                 </state>
               </provider>
@@ -147,8 +108,18 @@
           <file leaf-file-name="MGui.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/MGui.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-2751">
-                  <caret line="183" column="41" lean-forward="false" selection-start-line="183" selection-start-column="41" selection-end-line="183" selection-end-column="41" />
+                <state relative-caret-position="-7260">
+                  <caret line="38" column="16" lean-forward="false" selection-start-line="38" selection-start-column="16" selection-end-line="38" selection-end-column="16" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ssl.py" pinned="false" current-in-tab="true">
+            <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/ssl.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="336">
+                  <caret line="807" column="0" lean-forward="false" selection-start-line="807" selection-start-column="0" selection-end-line="807" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -172,6 +143,9 @@
       <find>time to commit</find>
       <find>setTitle</find>
       <find>web.title</find>
+      <find>setReading</find>
+      <find>MMail</find>
+      <find>MAlert</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -185,10 +159,12 @@
         <option value="$PROJECT_DIR$/email_test.py" />
         <option value="$PROJECT_DIR$/MDataBase/MDataBase.py" />
         <option value="$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py" />
-        <option value="$PROJECT_DIR$/MMail.py" />
-        <option value="$PROJECT_DIR$/MAlert.py" />
         <option value="$PROJECT_DIR$/MGui.py" />
         <option value="$PROJECT_DIR$/MWeb.py" />
+        <option value="$PROJECT_DIR$/NotifierGUI.py" />
+        <option value="$PROJECT_DIR$/MDevice.py" />
+        <option value="$PROJECT_DIR$/MMail.py" />
+        <option value="$PROJECT_DIR$/MAlert.py" />
       </list>
     </option>
   </component>
@@ -252,7 +228,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../MViewProjects/TestGui/testGui.py" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -467,22 +443,29 @@
       <option name="project" value="LOCAL" />
       <updated>1541020361977</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Prevent database from trying to create a file if no location is specified. No bueno">
+      <created>1541020636350</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1541020636350</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="3222" height="1762" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22306477" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12701422" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991672" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39974377" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -498,7 +481,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Stop printing a message every time database changes are committed" />
-    <option name="LAST_COMMIT_MESSAGE" value="Stop printing a message every time database changes are committed" />
+    <MESSAGE value="Prevent database from trying to create a file if no location is specified. No bueno" />
+    <option name="LAST_COMMIT_MESSAGE" value="Prevent database from trying to create a file if no location is specified. No bueno" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -509,19 +493,14 @@
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MMail.py</url>
-          <line>47</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/MGui.py</url>
           <line>284</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/MAlert.py</url>
-          <line>146</line>
-          <option name="timeStamp" value="5" />
+          <line>116</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -531,7 +510,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="6" />
+      <option name="time" value="8" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -540,16 +519,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/MAlert.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4686">
-          <caret line="142" column="28" lean-forward="false" selection-start-line="142" selection-start-column="28" selection-end-line="142" selection-end-column="28" />
-          <folding>
-            <element signature="e#913#927#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3531">
@@ -570,7 +539,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="924">
           <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -586,9 +554,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6303">
           <caret line="203" column="14" lean-forward="false" selection-start-line="203" selection-start-column="8" selection-end-line="203" selection-end-column="14" />
-          <folding>
-            <element signature="e#843#856#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -604,7 +569,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2178">
           <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -630,7 +594,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3069">
           <caret line="96" column="0" lean-forward="false" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -665,9 +628,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="759">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding>
-            <element signature="e#843#856#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -700,9 +660,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="759">
           <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding>
-            <element signature="e#843#856#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -788,7 +745,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -796,7 +752,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2178">
           <caret line="66" column="0" lean-forward="false" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -804,17 +759,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6303">
           <caret line="203" column="14" lean-forward="false" selection-start-line="203" selection-start-column="8" selection-end-line="203" selection-end-column="14" />
-          <folding>
-            <element signature="e#843#856#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/smtplib.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21021">
-          <caret line="643" column="0" lean-forward="false" selection-start-line="643" selection-start-column="0" selection-end-line="643" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -830,7 +774,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="924">
           <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -838,13 +781,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3069">
           <caret line="96" column="0" lean-forward="false" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MDataBase/MDataBase.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
+        <state relative-caret-position="5181">
           <caret line="160" column="0" lean-forward="false" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
           <folding />
         </state>
@@ -852,7 +794,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MDataBase/MDataBaseWrapper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
+        <state relative-caret-position="3531">
           <caret line="113" column="33" lean-forward="false" selection-start-line="113" selection-start-column="33" selection-end-line="113" selection-end-column="33" />
           <folding />
         </state>
@@ -861,23 +803,71 @@
     <entry file="file://$PROJECT_DIR$/email_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
-          <caret line="2" column="18" lean-forward="true" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+          <caret line="2" column="18" lean-forward="false" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MWeb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1716">
+          <caret line="55" column="25" lean-forward="false" selection-start-line="55" selection-start-column="25" selection-end-line="55" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/NotifierGUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1246">
+          <caret line="176" column="13" lean-forward="false" selection-start-line="176" selection-start-column="13" selection-end-line="176" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/ssl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="807" column="0" lean-forward="false" selection-start-line="807" selection-start-column="0" selection-end-line="807" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MDevice.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="582">
-          <caret line="387" column="0" lean-forward="false" selection-start-line="387" selection-start-column="0" selection-end-line="387" selection-end-column="0" />
+        <state relative-caret-position="321">
+          <caret line="406" column="0" lean-forward="false" selection-start-line="406" selection-start-column="0" selection-end-line="406" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/smtplib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="644" column="0" lean-forward="false" selection-start-line="644" selection-start-column="0" selection-end-line="644" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/socket.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="534">
+          <caret line="479" column="0" lean-forward="false" selection-start-line="479" selection-start-column="0" selection-end-line="479" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/WinPython-64bit-2.7.10.3/python-2.7.10.amd64/Lib/site-packages/pyqtgraph/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="311" column="0" lean-forward="false" selection-start-line="311" selection-start-column="0" selection-end-line="311" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MMail.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1881">
-          <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+        <state relative-caret-position="448">
+          <caret line="43" column="27" lean-forward="false" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="27" />
           <folding>
             <element signature="e#842#856#0" expanded="true" />
           </folding>
@@ -886,35 +876,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MGui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1180">
-          <caret line="285" column="33" lean-forward="false" selection-start-line="285" selection-start-column="33" selection-end-line="285" selection-end-column="33" />
+        <state relative-caret-position="369">
+          <caret line="270" column="18" lean-forward="false" selection-start-line="270" selection-start-column="18" selection-end-line="270" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MAlert.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3795">
-          <caret line="115" column="64" lean-forward="true" selection-start-line="115" selection-start-column="64" selection-end-line="115" selection-end-column="64" />
+        <state relative-caret-position="-2007">
+          <caret line="41" column="8" lean-forward="true" selection-start-line="41" selection-start-column="8" selection-end-line="41" selection-end-column="33" />
           <folding>
             <element signature="e#913#927#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MWeb.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="55" column="25" lean-forward="true" selection-start-line="55" selection-start-column="25" selection-end-line="55" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/NotifierGUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7380">
-          <caret line="238" column="23" lean-forward="true" selection-start-line="238" selection-start-column="23" selection-end-line="238" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>

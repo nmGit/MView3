@@ -3,7 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
     <content url="file://$MODULE_DIR$/../MViewTesting" />
-    <orderEntry type="jdk" jdkName="Python 2.7 (MView)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 2.7.10 (C:\WinPython-64bit-2.7.10.3\python-2.7.10.amd64\python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
