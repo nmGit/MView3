@@ -124,15 +124,14 @@ class MAlert:
                 self.message.append((time.strftime('%x at %X', time.localtime(time.time()))
                                      + " | " + str(device) + "->"
                                      + param + ": " +
-                                     str(device.getReading(param)) +
+                                     str(device.getReading(param)) + " " +
                                      str(device.getUnit(param)) +
                                      " | Range: "
-                                     + str(str(min))
+                                     + str(str(min)) + " "
                                      + str(device.getUnit(param)) +
-                                     " - " + str(str(max)) +
+                                     " - " + str(str(max)) + " " +
                                      str(device.getUnit(param)) + "."))
 
-                self.message.append((""))
             if(HOURS_BETWEEN_EMAILS < elapsedHrs):
                 if not len([str(person).strip() for person in people.split(',')][0]) == 0:
                     print "sending mail"
@@ -145,7 +144,7 @@ class MAlert:
                         [str(person).strip() for person in people.split(',')],
                         "MView",
                         str(web.title) + ":" + str(device),
-                        "Message" + str(self.message)
+                        str('\n'.join(self.message))
                         )
                     print [str(person).strip() for person in people.split(',')]
                     if (not success):
