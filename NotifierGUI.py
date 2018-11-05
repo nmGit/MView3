@@ -171,7 +171,7 @@ class AlertConfig(QtGui.QWidget):
         layout.addWidget(maxlbl, 1, 5)
 
         cnctlbl = QtGui.QLabel()
-        cnctlbl.setText("Contact (NAME1,NAME2,etc...)")
+        cnctlbl.setText("Contact (email,email,etc...)")
         layout.addWidget(cnctlbl, 1, 7)
         # These are indexing variables
         z = 1
