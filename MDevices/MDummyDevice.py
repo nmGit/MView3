@@ -13,7 +13,7 @@ class MDummyDevice(MDevice):
         pass
     def onLoad(self):
         for param in self.getParameters():
-            print param, "param type", self.getParameterType(param)
+            #print param, "param type", self.getParameterType(param)
             if self.getParameterType(param) == 'output':
                 self.input_params.append(param)
     def onAddParameter(self, *args, **kwargs):
