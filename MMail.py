@@ -30,7 +30,7 @@ class MMail:
     """Very simple email client."""
 
     def __init__(self):
-
+        print("Initializing MMail...")
         self.smtpObj = smtplib.SMTP('smtp.googlemail.com')
         # Say hello to the email server.
         self.smtpObj.ehlo()
@@ -52,13 +52,12 @@ class MMail:
         self.mail_sem.acquire()
         try:
             success = True
-            self.smtpObj = smtplib.SMTP("smtp.gmail.com", 587)
+            self.smtpObj = smtplib.SMTP('smtp.googlemail.com')
             self.smtpObj.ehlo()
             self.smtpObj.starttls()
             self.smtpObj.login('physics.labrad@gmail.com', 'mcdermott')
         except:
             print("ERROR: Could not log in to email.")
-            MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             traceback.print_exc()
             success = False
         # Send the email.
