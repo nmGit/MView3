@@ -33,16 +33,21 @@ import time
 import sys
 from MWeb import web
 sys.dont_write_bytecode = True
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+import Queue
 
+class MAlert(QThread):
 
-class MAlert:
+    mail_queue = Queue.Queue()
+    queuedMail = []
     def __init__(self):
-
+        super(MAlert, self).__init__()
         # Configure all public variables
         self.tele = MMail.MMail()
         self.devices = web.devices
         self.t1 = 0
         self.message = []
+        self.people = ''
         # Have the specified people been notified about the specific device?
         self.mailSent = {}
         # Keep running, this is false when settings are changed and a
@@ -57,7 +62,7 @@ class MAlert:
                     self.mailSent[self.devices[i].getFrame().getTitle(
                     ) + ":" + self.devices[i].getFrame().getNicknames()[y]] = False
                     # print(len(self.mailSent))
-
+        self.start()
     def begin(self):
         # This runs on its own thread
 
@@ -91,11 +96,11 @@ class MAlert:
                     if(min != None and min > reading):
                         # print "MALERT reading below min ", min
                         dev.setOutOfRange(param)
-                        self.sendMail(dev, param, reading, people, min, max)
+                        self.queueMail(dev, param, reading, people, min, max)
                         # print " min sent to ", people
                     elif(max != None and max < reading):
                         dev.setOutOfRange(param)
-                        self.sendMail(dev, param, reading, people, min, max)
+                        self.queueMail(dev, param, reading, people, min, max)
                         # print " max sent to ", people
 
                     else:
@@ -112,16 +117,37 @@ class MAlert:
     def stop(self):
         self.keepGoing = False
 
-    def sendMail(self, device, param, reading, people, min, max):
-        '''Send mail if the given amount of time has elapsed.'''
-        HOURS_BETWEEN_EMAILS = 3
-        elapsedHrs = (time.time() - self.t1) / 3600
-        key = device.getFrame().getTitle() + ":" + param
-        if people != '':
-            if(not self.mailSent[key]):
+    def run(self):
+        while(True):
+            print("Running MAlert")
+            HOURS_BETWEEN_EMAILS = 3
 
-                self.mailSent[key] = True
-                self.message.append((time.strftime('%x at %X', time.localtime(time.time()))
+            recipients =  [str(person).strip() for person in self.people.split(',')]
+            if(len(recipients) != 0 and not self.mail_queue.empty()):
+                message = []
+                while(not self.mail_queue.empty()):
+                    message.append(self.mail_queue.get() + "\n")
+                print message
+                success = self.tele.sendMail(
+                    recipients,
+                    "MView",
+                    str(web.title),
+                    str('\n'.join(message))
+                )
+                if not success:
+                    print "Error while sending mail."
+                else:
+                    print "sleeping for 3 hours"
+                    self.sleep(HOURS_BETWEEN_EMAILS * 60 * 60)
+            self.sleep(1)
+
+    def queueMail(self, device, param, reading, people, min, max):
+        '''Send mail if the given amount of time has elapsed.'''
+
+        elapsedHrs = (time.time() - self.t1) / 3600
+        key = str(device) + ":" + param
+        if(key not in self.queuedMail):
+            self.message = (time.strftime('%x at %X', time.localtime(time.time()))
                                      + " | " + str(device) + "->"
                                      + param + ": " +
                                      str(device.getReading(param)) + " " +
@@ -130,26 +156,44 @@ class MAlert:
                                      + str(str(min)) + " "
                                      + str(device.getUnit(param)) +
                                      " - " + str(str(max)) + " " +
-                                     str(device.getUnit(param)) + "."))
+                                     str(device.getUnit(param)) + ".")
+            self.mail_queue.put(self.message)
+            self.people = people
+            self.queuedMail.append(str(device) + ":" + str(param))
 
-            if(HOURS_BETWEEN_EMAILS < elapsedHrs):
-                if not len([str(person).strip() for person in people.split(',')][0]) == 0:
-                    print "sending mail"
-                    # print self.message
-                    for key in self.mailSent:
-                        self.mailSent[key] = False
-                    print "Email message:", self.message
-                    print "in MAlert web title", web.title
-                    success = self.tele.sendMail(
-                        [str(person).strip() for person in people.split(',')],
-                        "MView",
-                        str(web.title) + ":" + str(device),
-                        str('\n'.join(self.message))
-                        )
-                    print [str(person).strip() for person in people.split(',')]
-                    if (not success):
-                        print("Couldn't send email to group.");
-                    self.message = []
-                    for key in self.mailSent:
-                        self.mailSent[key] = False
-                    self.t1 = time.time()
+        # if people != '':
+        #     if(not self.mailSent[key]):
+        #
+        #         self.mailSent[key] = True
+        #         self.message.append((time.strftime('%x at %X', time.localtime(time.time()))
+        #                              + " | " + str(device) + "->"
+        #                              + param + ": " +
+        #                              str(device.getReading(param)) + " " +
+        #                              str(device.getUnit(param)) +
+        #                              " | Range: "
+        #                              + str(str(min)) + " "
+        #                              + str(device.getUnit(param)) +
+        #                              " - " + str(str(max)) + " " +
+        #                              str(device.getUnit(param)) + "."))
+        #
+        #     if(HOURS_BETWEEN_EMAILS < elapsedHrs):
+        #         if not len([str(person).strip() for person in people.split(',')][0]) == 0:
+        #             print "sending mail"
+        #             # print self.message
+        #             for key in self.mailSent:
+        #                 self.mailSent[key] = False
+        #             print "Email message:", self.message
+        #             print "in MAlert web title", web.title
+        #             success = self.tele.sendMail(
+        #                 [str(person).strip() for person in people.split(',')],
+        #                 "MView",
+        #                 str(web.title) + ":" + str(device),
+        #                 str('\n'.join(self.message))
+        #                 )
+        #             print [str(person).strip() for person in people.split(',')]
+        #             if (not success):
+        #                 print("Couldn't send email to group.");
+        #             self.message = []
+        #             for key in self.mailSent:
+        #                 self.mailSent[key] = False
+        #             self.t1 = time.time()
