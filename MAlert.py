@@ -81,7 +81,7 @@ class MAlert(QThread):
             key = dev.getFrame().getTitle() + ":" + \
                 dev.getFrame().getNicknames()[y]
             if(key in web.limitDict):
-                enabled, min, max, people = web.limitDict[key]
+                enabled, min, max = web.limitDict[key]
             else:
                 web.limitDict[key]= (False, None, None, None)
                 continue

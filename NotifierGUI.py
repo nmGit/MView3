@@ -43,6 +43,7 @@ class NotifierGUI(QtGui.QDialog):
         super(NotifierGUI, self).__init__(parent)
         # Create a new tab
         tabWidget = QtGui.QTabWidget()
+
         # The name of the main MView program
         self.loader = loader
         # The the config data should be stored with the the main class
@@ -56,6 +57,9 @@ class NotifierGUI(QtGui.QDialog):
         self.allDatatxt = [[], [], [], []]
         # The settings window has a tab
         tabWidget.addTab(self.alert, "Alert Configuration")
+        # Create email list in a new tab
+        self.email_list = EmailList()
+        tabWidget.addTab(self.email_list, "Email Configuration")
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -109,8 +113,8 @@ class NotifierGUI(QtGui.QDialog):
                                                          .allWidgetDict[key][2].text()))
                         else:
                             deviceDataArray.append('')
-                        deviceDataArray.append(self.alert
-                                               .allWidgetDict[key][3].text())
+                     #   deviceDataArray.append(self.alert
+                     #                          .allWidgetDict[key][3].text())
                         if(deviceDataArray[1] > deviceDataArray[2]
                                 and deviceDataArray[1] is not None
                                 and deviceDataArray[2] is not None):
@@ -170,9 +174,9 @@ class AlertConfig(QtGui.QWidget):
         maxlbl.setText("Maximum")
         layout.addWidget(maxlbl, 1, 5)
 
-        cnctlbl = QtGui.QLabel()
-        cnctlbl.setText("Contact (email,email,etc...)")
-        layout.addWidget(cnctlbl, 1, 7)
+        #cnctlbl = QtGui.QLabel()
+        #cnctlbl.setText("Contact (email,email,etc...)")
+        #layout.addWidget(cnctlbl, 1, 7)
         # These are indexing variables
         z = 1
         x = 0
@@ -201,16 +205,16 @@ class AlertConfig(QtGui.QWidget):
                             # All widget dict holds the Qt objects
                             self.allWidgetDict[key] = [QtGui.QCheckBox(),
                                                        QtGui.QLineEdit(),
-                                                       QtGui.QLineEdit(),
-                                                       QtGui.QLineEdit()]
+                                                       QtGui.QLineEdit()]#,
+                                                      # QtGui.QLineEdit()]
                             self.allWidgetDict[key][0].setChecked(
                                 self.allDataDict[key][0])
                             self.allWidgetDict[key][1].setText(
                                 str(self.allDataDict[key][1]))
                             self.allWidgetDict[key][2].setText(
                                 str(self.allDataDict[key][2]))
-                            self.allWidgetDict[key][3].setText(
-                                str(self.allDataDict[key][3]))
+                         #   self.allWidgetDict[key][3].setText(
+                         #       str(self.allDataDict[key][3]))
                     else:
                         self.allWidgetDict[key] = [QtGui.QCheckBox(),
                                                    QtGui.QLineEdit(),
@@ -222,7 +226,7 @@ class AlertConfig(QtGui.QWidget):
                     layout.addWidget(label, z, 1)
                     layout.addWidget(self.allWidgetDict[key][1], z, 3)
                     layout.addWidget(self.allWidgetDict[key][2], z, 5)
-                    layout.addWidget(self.allWidgetDict[key][3], z, 7)
+                   # layout.addWidget(self.allWidgetDict[key][3], z, 7)
                     layout.addWidget(self.allWidgetDict[key][0], z, 2)
 
                     unitLabel = QtGui.QLabel()
@@ -246,7 +250,42 @@ class AlertConfig(QtGui.QWidget):
             print "Config Data Opened"
 
         except:
-            traceback.print_exc()
+            #traceback.print_exc()
             self.allDataDict = {}
             print("No notifier config file found")
         return self.allDataDict
+
+class EmailList(QtGui.QWidget):
+    def __init__(self, parent = None):
+        super(EmailList, self).__init__(parent)
+        item_list = QtGui.QListWidget()
+        item_list.setStyleSheet(  "QListWidget::item {"
+                                     "border-style: solid  ;" 
+                                     "border-width:0.2px;" 
+                                     "border-color:black;" 
+                                     "background-color: rgb(255, 255, 255);"
+                                  "}"
+                                  "QListWidget::item:selected {"
+                                     "background-color: rgb(52, 73, 94);"
+                                     "border-style: none ;" 
+                                     "border-width:0.8px;" 
+                                  "}")
+        #item_list.setFlags(QtCore.Qt.ItemIsEditable)
+
+        main_v_box = QtGui.QVBoxLayout()
+        main_v_box.addWidget(QtGui.QLabel("Mailing List:"))
+
+        main_v_box.addWidget(item_list)
+
+        list_item_layout = QtGui.QHBoxLayout()
+        list_item_layout.addWidget(QtGui.QLabel("Test item"))
+        for i in range(1, 30):
+            test_item = QtGui.QListWidgetItem(QtCore.QString("Test %d" % i))
+
+
+
+            test_item.setFlags(test_item.flags() | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable)
+            item_list.addItem(test_item)
+       # item_list.addItem(list_item_layout)
+
+        self.setLayout(main_v_box)
