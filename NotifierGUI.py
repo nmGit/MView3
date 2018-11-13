@@ -33,6 +33,7 @@ import cPickle as pickle
 import os
 import inspect
 import traceback
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 sys.dont_write_bytecode = True
 
 
@@ -58,8 +59,10 @@ class NotifierGUI(QtGui.QDialog):
         # The settings window has a tab
         tabWidget.addTab(self.alert, "Alert Configuration")
         # Create email list in a new tab
-        self.email_list = EmailList()
-        tabWidget.addTab(self.email_list, "Email Configuration")
+        print self.alert.allDataDict
+        emails = []
+        self.email_list = MEditableList(emails)
+        tabWidget.addTab(self.email_list, "Mailing List")
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -113,8 +116,7 @@ class NotifierGUI(QtGui.QDialog):
                                                          .allWidgetDict[key][2].text()))
                         else:
                             deviceDataArray.append('')
-                     #   deviceDataArray.append(self.alert
-                     #                          .allWidgetDict[key][3].text())
+                        deviceDataArray.append(self.email_list.get_items())
                         if(deviceDataArray[1] > deviceDataArray[2]
                                 and deviceDataArray[1] is not None
                                 and deviceDataArray[2] is not None):
@@ -142,6 +144,7 @@ class NotifierGUI(QtGui.QDialog):
 
 
 class AlertConfig(QtGui.QWidget):
+
     def __init__(self, location, loader, parent=None):
         super(AlertConfig, self).__init__(parent)
         # Configure the layout
@@ -255,11 +258,12 @@ class AlertConfig(QtGui.QWidget):
             print("No notifier config file found")
         return self.allDataDict
 
-class EmailList(QtGui.QWidget):
-    def __init__(self, parent = None):
-        super(EmailList, self).__init__(parent)
-        item_list = QtGui.QListWidget()
-        item_list.setStyleSheet(  "QListWidget::item {"
+class MEditableList(QtGui.QWidget):
+    updateSignal = pyqtSignal()
+    def __init__(self, elems, parent = None):
+        super(MEditableList, self).__init__(parent)
+        self.item_list = QtGui.QListWidget()
+        self.item_list.setStyleSheet(  "QListWidget::item {"
                                      "border-style: solid  ;" 
                                      "border-width:0.2px;" 
                                      "border-color:black;" 
@@ -275,17 +279,96 @@ class EmailList(QtGui.QWidget):
         main_v_box = QtGui.QVBoxLayout()
         main_v_box.addWidget(QtGui.QLabel("Mailing List:"))
 
-        main_v_box.addWidget(item_list)
+        main_v_box.addWidget(self.item_list)
 
         list_item_layout = QtGui.QHBoxLayout()
         list_item_layout.addWidget(QtGui.QLabel("Test item"))
-        for i in range(1, 30):
-            test_item = QtGui.QListWidgetItem(QtCore.QString("Test %d" % i))
 
+        self.item_widget_labels = []
+        self.item_widget_edit_pbs = []
+        self.item_widget_remove_pbs = []
+        for elem in elems:
+            item_widget_label = QtGui.QLabel(str(elem))
+            item_widget_edit_pb = QtGui.QPushButton("Edit")
+            item_widget_remove_pb = QtGui.QPushButton("Remove")
 
+            self.item_widget_labels.append(item_widget_label)
+            self.item_widget_edit_pbs.append(item_widget_edit_pb)
+            self.item_widget_remove_pbs.append(item_widget_remove_pb)
 
-            test_item.setFlags(test_item.flags() | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsSelectable)
-            item_list.addItem(test_item)
-       # item_list.addItem(list_item_layout)
+            item_widget_layout = QtGui.QHBoxLayout()
+            item_widget_layout.addWidget(item_widget_label)
+            item_widget_layout.addWidget(item_widget_edit_pb)
+            item_widget_layout.addWidget(item_widget_remove_pb)
+
+            item_widget = QtGui.QWidget()
+            item_widget.setLayout(item_widget_layout)
+
+            item = QtGui.QListWidgetItem()
+            item.setSizeHint(item_widget.sizeHint())
+
+            item.setFlags(item.flags())
+            self.item_list.addItem(item)
+            self.item_list.setItemWidget(item, item_widget)
+
+        add_item_layout = QtGui.QHBoxLayout()
+        add_item_button = QtGui.QPushButton("Add...")
+        add_item_button.clicked.connect(self.__add_item)
+        add_item_layout.addWidget(add_item_button)
+
+        add_item_widget = QtGui.QWidget()
+        add_item_widget.setLayout(add_item_layout)
+
+        #add_item_item = QtGui.QListWidgetItem()
+        #add_item_item.setSizeHint(add_item_widget.sizeHint())
+
+        #self.item_list.addItem(add_item_item)
+        #self.item_list.setItemWidget(add_item_item, add_item_widget)
+        main_v_box.addWidget(add_item_widget)
 
         self.setLayout(main_v_box)
+    def get_items(self):
+        text = []
+        for label in self.item_widget_label:
+            text.append(label.text())
+        print "Editable list text:", text
+        return text
+    def __add_item(self):
+        text, accept = QtGui.QInputDialog.getText(self, "Add Entry...", "Email:")
+        if(accept):
+            self.add_item(text)
+
+    def add_item(self, text):
+
+        item_widget_label = QtGui.QLabel(text)
+
+        item_widget_edit_pb = QtGui.QPushButton("Edit")
+        item_widget_remove_pb = QtGui.QPushButton("Remove")
+
+        item_widget_label.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        item_widget_edit_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        item_widget_remove_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+
+        self.item_widget_labels.append(item_widget_label)
+        self.item_widget_edit_pbs.append(item_widget_edit_pb)
+        self.item_widget_remove_pbs.append(item_widget_remove_pb)
+
+        item_widget_layout = QtGui.QHBoxLayout()
+        item_widget_layout.addWidget(item_widget_label)
+        item_widget_layout.addStretch(0)
+        item_widget_layout.addWidget(item_widget_edit_pb)
+        item_widget_layout.addWidget(item_widget_remove_pb)
+
+
+        item_widget = QtGui.QWidget()
+        item_widget.setLayout(item_widget_layout)
+        item_widget.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        item = QtGui.QListWidgetItem()
+        item.setSizeHint(item_widget.sizeHint())
+
+        item.setFlags(item.flags())
+        self.item_list.addItem(item)
+        self.item_list.setItemWidget(item, item_widget)
+
+        num_items = self.item_list.count()
+        self.item_list.insertItem(num_items - 1, item)
