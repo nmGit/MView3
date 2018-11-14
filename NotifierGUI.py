@@ -60,9 +60,9 @@ class NotifierGUI(QtGui.QDialog):
         tabWidget.addTab(self.alert, "Alert Configuration")
         # Create email list in a new tab
         print self.alert.allDataDict
-        emails = []
-        self.email_list = MEditableList(emails)
-        tabWidget.addTab(self.email_list, "Mailing List")
+
+        self.email_lists = MMailingLists()
+        tabWidget.addTab(self.email_lists, "Mailing List")
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -258,6 +258,56 @@ class AlertConfig(QtGui.QWidget):
             print("No notifier config file found")
         return self.allDataDict
 
+class MMailingLists(QtGui.QWidget):
+        def __init__(self, parent=None):
+            '''Initialize the Notifier Gui'''
+            super(MMailingLists, self).__init__(parent)
+            self.main_v_box = QtGui.QVBoxLayout()
+            self.setLayout(self.main_v_box)
+
+            self.mailing_lists = {}
+            self.mailing_list_widgets = {}
+            self.mailing_lists["list1"] = ["email1", "email2"]
+            self.mailing_list_widgets["list1"] = MEditableList(self.mailing_lists["list1"])
+            # Create a new tab
+            self.tabWidget = QtGui.QTabWidget()
+            self.main_v_box.addWidget(self.tabWidget)
+            # Add list button
+            self.add_list_button_layout = QtGui.QHBoxLayout()
+            self.main_v_box.addLayout(self.add_list_button_layout)
+            self.add_list_button = QtGui.QPushButton("Add Mailing List...")
+            self.delete_list_button = QtGui.QPushButton("Delete Mailing List...")
+            self.add_list_button.clicked.connect(self.addList_gui)
+            self.delete_list_button.clicked.connect(self.deleteList_gui)
+            self.add_list_button_layout.addWidget(self.add_list_button)
+            self.add_list_button_layout.addWidget(self.delete_list_button)
+            self.add_list_button_layout.addStretch(0)
+
+            for list in self.mailing_lists.keys():
+                self.tabWidget.addTab(self.mailing_list_widgets[list], list)
+        def addList_gui(self):
+            text, accept = QtGui.QInputDialog.getText(self, "Add Mailing List", "List name:")
+            if accept:
+                self.addList(text, [])
+        def addList(self, listName, entries):
+            self.mailing_lists[listName] = []
+            self.mailing_list_widgets[listName] = MEditableList(self.mailing_lists[listName])
+            self.tabWidget.addTab(self.mailing_list_widgets[listName], listName)
+
+        def deleteList_gui(self):
+            text, accept = QtGui.QInputDialog.getItem(self, "Add Mailing List", "Select the list to delete", self.mailing_lists.keys())
+            if accept:
+                self.deleteList(text)
+        def deleteList(self, listName):
+            # find the correct tab
+            for tab_index in range(self.tabWidget.count()):
+                if(self.tabWidget.tabText(tab_index) == listName):
+                    self.tabWidget.widget(tab_index).setParent(None)  # Delete widget
+                    self.tabWidget.removeTab(tab_index)
+                    del self.mailing_lists[listName]
+
+
+
 class MEditableList(QtGui.QWidget):
     updateSignal = pyqtSignal()
     def __init__(self, elems, parent = None):
@@ -319,6 +369,7 @@ class MEditableList(QtGui.QWidget):
         add_item_widget = QtGui.QWidget()
         add_item_widget.setLayout(add_item_layout)
 
+        add_item_layout.addStretch(0)
         #add_item_item = QtGui.QListWidgetItem()
         #add_item_item.setSizeHint(add_item_widget.sizeHint())
 
