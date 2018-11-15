@@ -119,7 +119,7 @@ class MAlert(QThread):
 
     def run(self):
         while(True):
-            print("Running MAlert")
+            #print("Running MAlert")
             HOURS_BETWEEN_EMAILS = 3
 
             recipients =  [str(person).strip() for person in self.people.split(',')]

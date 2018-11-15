@@ -34,6 +34,7 @@ import os
 import inspect
 import traceback
 from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from MCheckableComboBoxes import MCheckableComboBox
 sys.dont_write_bytecode = True
 
 
@@ -63,6 +64,8 @@ class NotifierGUI(QtGui.QDialog):
 
         self.email_lists = MMailingLists()
         tabWidget.addTab(self.email_lists, "Mailing List")
+        self.email_lists.mailing_list_added_sig.connect(self.list_added)
+        self.email_lists.mailing_list_removed_sig.connect(self.list_removed)
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -84,6 +87,11 @@ class NotifierGUI(QtGui.QDialog):
         self.setWindowTitle("Notifier Settings")
         # Store all data
         self.saveData()
+    def list_added(self, name):
+        self.alert.add_mailing_list(name)
+
+    def list_removed(self, name):
+        self.alert.remove_mailing_list(name)
 
     def saveData(self):
         '''Save the data upon exit'''
@@ -177,9 +185,9 @@ class AlertConfig(QtGui.QWidget):
         maxlbl.setText("Maximum")
         layout.addWidget(maxlbl, 1, 5)
 
-        #cnctlbl = QtGui.QLabel()
-        #cnctlbl.setText("Contact (email,email,etc...)")
-        #layout.addWidget(cnctlbl, 1, 7)
+        mailing_list_lbl = QtGui.QLabel()
+        mailing_list_lbl.setText("Mailing Lists")
+        layout.addWidget(mailing_list_lbl, 1, 7)
         # These are indexing variables
         z = 1
         x = 0
@@ -208,8 +216,8 @@ class AlertConfig(QtGui.QWidget):
                             # All widget dict holds the Qt objects
                             self.allWidgetDict[key] = [QtGui.QCheckBox(),
                                                        QtGui.QLineEdit(),
-                                                       QtGui.QLineEdit()]#,
-                                                      # QtGui.QLineEdit()]
+                                                       QtGui.QLineEdit(),
+                                                       MCheckableComboBox(color_scheme="light")]
                             self.allWidgetDict[key][0].setChecked(
                                 self.allDataDict[key][0])
                             self.allWidgetDict[key][1].setText(
@@ -229,7 +237,7 @@ class AlertConfig(QtGui.QWidget):
                     layout.addWidget(label, z, 1)
                     layout.addWidget(self.allWidgetDict[key][1], z, 3)
                     layout.addWidget(self.allWidgetDict[key][2], z, 5)
-                   # layout.addWidget(self.allWidgetDict[key][3], z, 7)
+                    layout.addWidget(self.allWidgetDict[key][3], z, 7)
                     layout.addWidget(self.allWidgetDict[key][0], z, 2)
 
                     unitLabel = QtGui.QLabel()
@@ -242,7 +250,16 @@ class AlertConfig(QtGui.QWidget):
                     # These are used for indexing
                     z = z + 1
                     x = x + 1
+    def add_mailing_list(self, str):
+        for key in self.allWidgetDict.keys():
+            #print self.allWidgetDict
+            self.allWidgetDict[key][3].addItem(str)
+    def remove_mailing_list(self, str):
+        for key in self.allWidgetDict.keys():
+            #print self.allWidgetDict
+            print key, str
 
+            self.allWidgetDict[key][3].removeItem(str)
     def openData(self):
         '''Retreive a user's previous settings.'''
         try:
@@ -259,6 +276,8 @@ class AlertConfig(QtGui.QWidget):
         return self.allDataDict
 
 class MMailingLists(QtGui.QWidget):
+        mailing_list_added_sig = pyqtSignal(str)
+        mailing_list_removed_sig = pyqtSignal(str)
         def __init__(self, parent=None):
             '''Initialize the Notifier Gui'''
             super(MMailingLists, self).__init__(parent)
@@ -267,8 +286,8 @@ class MMailingLists(QtGui.QWidget):
 
             self.mailing_lists = {}
             self.mailing_list_widgets = {}
-            self.mailing_lists["list1"] = ["email1", "email2"]
-            self.mailing_list_widgets["list1"] = MEditableList(self.mailing_lists["list1"])
+           # self.mailing_lists["list1"] = ["email1", "email2"]
+            #self.mailing_list_widgets["list1"] = MEditableList(self.mailing_lists["list1"])
             # Create a new tab
             self.tabWidget = QtGui.QTabWidget()
             self.main_v_box.addWidget(self.tabWidget)
@@ -293,6 +312,7 @@ class MMailingLists(QtGui.QWidget):
             self.mailing_lists[listName] = []
             self.mailing_list_widgets[listName] = MEditableList(self.mailing_lists[listName])
             self.tabWidget.addTab(self.mailing_list_widgets[listName], listName)
+            self.mailing_list_added_sig.emit(listName)
 
         def deleteList_gui(self):
             text, accept = QtGui.QInputDialog.getItem(self, "Add Mailing List", "Select the list to delete", self.mailing_lists.keys())
@@ -300,16 +320,21 @@ class MMailingLists(QtGui.QWidget):
                 self.deleteList(text)
         def deleteList(self, listName):
             # find the correct tab
-            for tab_index in range(self.tabWidget.count()):
+            num_tabs = self.tabWidget.count()
+            for tab_index in range(num_tabs):
                 if(self.tabWidget.tabText(tab_index) == listName):
-                    self.tabWidget.widget(tab_index).setParent(None)  # Delete widget
+                    print "removing tab", listName
+                    #self.tabWidget.widget(tab_index).setParent(None)  # Delete widget
                     self.tabWidget.removeTab(tab_index)
                     del self.mailing_lists[listName]
+                    self.mailing_list_removed_sig.emit(listName)
+                    break
 
 
 
 class MEditableList(QtGui.QWidget):
-    updateSignal = pyqtSignal()
+    updateSignal = pyqtSignal(str)
+    removeSignal = pyqtSignal(str)
     def __init__(self, elems, parent = None):
         super(MEditableList, self).__init__(parent)
         self.item_list = QtGui.QListWidget()
@@ -327,39 +352,18 @@ class MEditableList(QtGui.QWidget):
         #item_list.setFlags(QtCore.Qt.ItemIsEditable)
 
         main_v_box = QtGui.QVBoxLayout()
-        main_v_box.addWidget(QtGui.QLabel("Mailing List:"))
+        #main_v_box.addWidget(QtGui.QLabel("Mailing List:"))
 
         main_v_box.addWidget(self.item_list)
 
         list_item_layout = QtGui.QHBoxLayout()
-        list_item_layout.addWidget(QtGui.QLabel("Test item"))
+        #list_item_layout.addWidget(QtGui.QLabel("Test item"))
 
         self.item_widget_labels = []
         self.item_widget_edit_pbs = []
         self.item_widget_remove_pbs = []
         for elem in elems:
-            item_widget_label = QtGui.QLabel(str(elem))
-            item_widget_edit_pb = QtGui.QPushButton("Edit")
-            item_widget_remove_pb = QtGui.QPushButton("Remove")
-
-            self.item_widget_labels.append(item_widget_label)
-            self.item_widget_edit_pbs.append(item_widget_edit_pb)
-            self.item_widget_remove_pbs.append(item_widget_remove_pb)
-
-            item_widget_layout = QtGui.QHBoxLayout()
-            item_widget_layout.addWidget(item_widget_label)
-            item_widget_layout.addWidget(item_widget_edit_pb)
-            item_widget_layout.addWidget(item_widget_remove_pb)
-
-            item_widget = QtGui.QWidget()
-            item_widget.setLayout(item_widget_layout)
-
-            item = QtGui.QListWidgetItem()
-            item.setSizeHint(item_widget.sizeHint())
-
-            item.setFlags(item.flags())
-            self.item_list.addItem(item)
-            self.item_list.setItemWidget(item, item_widget)
+            self.add_item(elem)
 
         add_item_layout = QtGui.QHBoxLayout()
         add_item_button = QtGui.QPushButton("Add...")
@@ -393,21 +397,24 @@ class MEditableList(QtGui.QWidget):
 
         item_widget_label = QtGui.QLabel(text)
 
-        item_widget_edit_pb = QtGui.QPushButton("Edit")
+        #item_widget_edit_pb = QtGui.QPushButton("Edit")
         item_widget_remove_pb = QtGui.QPushButton("Remove")
 
+        #item_widget_edit_pb.clicked.connect(lambda x:self.edit_item(text))
+        item_widget_remove_pb.clicked.connect(lambda x: self.remove_item(text))
+
         item_widget_label.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
-        item_widget_edit_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        #item_widget_edit_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
         item_widget_remove_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
 
         self.item_widget_labels.append(item_widget_label)
-        self.item_widget_edit_pbs.append(item_widget_edit_pb)
+        #self.item_widget_edit_pbs.append(item_widget_edit_pb)
         self.item_widget_remove_pbs.append(item_widget_remove_pb)
 
         item_widget_layout = QtGui.QHBoxLayout()
         item_widget_layout.addWidget(item_widget_label)
         item_widget_layout.addStretch(0)
-        item_widget_layout.addWidget(item_widget_edit_pb)
+        #item_widget_layout.addWidget(item_widget_edit_pb)
         item_widget_layout.addWidget(item_widget_remove_pb)
 
 
@@ -423,3 +430,10 @@ class MEditableList(QtGui.QWidget):
 
         num_items = self.item_list.count()
         self.item_list.insertItem(num_items - 1, item)
+
+    def remove_item(self, item):
+        for index in range(self.item_list.count()):
+            if(item == self.item_list.itemWidget(self.item_list.item(index)).layout().itemAt(0).widget().text()):
+
+                self.item_list.takeItem(index)
+        pass
