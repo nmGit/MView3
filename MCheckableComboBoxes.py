@@ -9,6 +9,8 @@ class MCheckableComboBox(QtGui.QComboBox):
         self.view().pressed.connect(self.handleItemPressed)
         self.setModel(QtGui.QStandardItemModel(self))
         color_scheme = kwargs.get("color_scheme", "dark")
+        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
+        self.setSizeAdjustPolicy(QtGui.QComboBox.AdjustToContents )
         if(color_scheme == "dark"):
             self.setStyleSheet("\
                         background-color:rgb(70, 80, 88);\
