@@ -24,6 +24,8 @@ import traceback
 import inspect
 import MPersistentData
 import sys
+import NotifierGUI
+#from NotifierGUI import Notifier
 sys.dont_write_bytecode = True
 #189, 195, 199
 
@@ -57,3 +59,4 @@ class web:
 
     notifier_email_address = None
     notifier_email_pwd = None
+    alert_data = None

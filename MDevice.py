@@ -78,7 +78,7 @@ class MDevice(QThread):
         self.datachest = None
         self.keepGoing = True
         self.settingResultIndices = []
-
+        self.notifier_mailing_lists = []
         self.doneLoading = False
 
 
@@ -308,6 +308,12 @@ class MDevice(QThread):
 
     def setReading(self, parameter, reading):
         self.frame.setReading(parameter, reading)
+
+    def setMailingLists(self, lists):
+        self.notifier_mailing_lists = lists
+
+    def getMailingLists(self):
+        return self.notifier_mailing_lists;
 
     def getUnit(self, parameter):
         return self.frame.getUnit(parameter)

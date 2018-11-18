@@ -93,6 +93,7 @@ class MAlert(QThread):
                 # print "enabled: ", enabled
                 if(enabled):
                     # print key,self.dict[key]
+                    mailing_lists = web.limitDict[key]["lists"]
                     if(min != None and min > reading):
                         # print "MALERT reading below min ", min
                         dev.setOutOfRange(param)

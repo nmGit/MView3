@@ -35,8 +35,61 @@ import inspect
 import traceback
 from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 from MCheckableComboBoxes import MCheckableComboBox
+import pprint
 sys.dont_write_bytecode = True
+from functools import partial
 
+class Notifier:
+    # Lists take the form:
+    # self.lists = {"list1":
+    #                   {"Members":
+    #                       ["Member1", "Member1",...],
+    #                    "Subscriptions":
+    #                       ["device1:param1, "device1:param2", "device2:param1",...]
+    #                    }
+    #               "list2": ...
+    #              }
+    pp = pprint.PrettyPrinter(indent=4)
+    def __init__(self):
+        self.lists = {}
+    def add_list(self, list):
+        self.lists[str(list)] = {"Members":[], "Subscriptions":[]}
+    def add_members(self, list, members):
+        if type(members) is list:
+            self.lists[str(list)]["Members"].extend(members)
+        else:
+            self.lists[str(list)]["Members"].append(str(members))
+        self.pp.pprint(self.lists)
+    def add_subscription(self, list, subscription_keys):
+        if type(subscription_keys) is list:
+            self.lists[list]["Subscriptions"].extend(subscription_keys)
+        else:
+            self.lists[list]["Subscriptions"].append(str(subscription_keys))
+        self.pp.pprint(self.lists)
+
+    def remove_list(self, list):
+        del self.lists[list]
+        self.pp.pprint(self.lists)
+
+    def remove_members(self, list, members):
+        if type(members) is list:
+            for member in members:
+                index = self.lists[list]["Members"].index(member)
+                del self.lists[list]["Members"][index]
+        else:
+            index = self.lists[list]["Members"].index(str(members))
+            del self.lists[list]["Members"][index]
+        self.pp.pprint(self.lists)
+
+    def remove_subscriptions(self, list, subscriptions):
+        if type(subscriptions) is list:
+            for subscription in subscriptions:
+                index = self.lists[list]["Subscriptions"].index(subscription)
+                del self.lists[list]["Subscriptions"][index]
+        else:
+            index = self.lists[list]["Subscriptions"].index(str(subscriptions))
+            del self.lists[list]["Subscriptions"][index]
+        pp.pprint(self.lists)
 
 class NotifierGUI(QtGui.QDialog):
 
@@ -89,10 +142,11 @@ class NotifierGUI(QtGui.QDialog):
         self.saveData()
     def list_added(self, name):
         self.alert.add_mailing_list(name)
+        web.alert_data.add_list(name)
 
     def list_removed(self, name):
         self.alert.remove_mailing_list(name)
-
+        web.alert_data.remove_list(name)
     def saveData(self):
         '''Save the data upon exit'''
         try:
@@ -152,7 +206,7 @@ class NotifierGUI(QtGui.QDialog):
 
 
 class AlertConfig(QtGui.QWidget):
-
+    list_change_made = pyqtSignal(str)
     def __init__(self, location, loader, parent=None):
         super(AlertConfig, self).__init__(parent)
         # Configure the layout
@@ -204,20 +258,29 @@ class AlertConfig(QtGui.QWidget):
             z = z + 1
             # Create all of the information fields and put the saved data in
             # them.
+            key_copies = []
             for y in range(1, len(web.devices[j].getFrame().getNicknames()) + 1):
                 paramName = web.devices[j].getFrame().getNicknames()[y - 1]
                 u = y - 1
                 if(paramName is not None):
                     title = web.devices[j].getFrame().getTitle()
                     nickname = web.devices[j].getFrame().getNicknames()[u]
+
                     key = (title + ":" + nickname)
                     if(key in self.allDataDict):
-                        for data in self.allDataDict[key]:
+                        #for data in self.allDataDict[key]:
                             # All widget dict holds the Qt objects
+                            combo_box = MCheckableComboBox(color_scheme="light")
+                           # key = str("%s"%key)
+                            key_copies.append(str("%s" % key))
+                            #print "Connecting with key", key_copies[-1], id(key_copies[-1])
+                           # print key_copies
+                            combo_box.activated.connect(partial(self.combo_box_item_clicked, key))
+                            #combo_box.activated.connect(lambda x: self.combo_box_item_clicked(combo_box.itemText(x),key_copies))
                             self.allWidgetDict[key] = [QtGui.QCheckBox(),
                                                        QtGui.QLineEdit(),
                                                        QtGui.QLineEdit(),
-                                                       MCheckableComboBox(color_scheme="light")]
+                                                       combo_box]
                             self.allWidgetDict[key][0].setChecked(
                                 self.allDataDict[key][0])
                             self.allWidgetDict[key][1].setText(
@@ -258,8 +321,14 @@ class AlertConfig(QtGui.QWidget):
         for key in self.allWidgetDict.keys():
             #print self.allWidgetDict
             print key, str
-
             self.allWidgetDict[key][3].removeItem(str)
+        print
+    def combo_box_item_clicked(self, key, index):
+        print "List changed:", key,  self.allWidgetDict[self.allWidgetDict.keys()[0]][3].itemText(index)
+
+        #self.sync_backend_with_frontend()
+
+
     def openData(self):
         '''Retreive a user's previous settings.'''
         try:
@@ -312,6 +381,10 @@ class MMailingLists(QtGui.QWidget):
             self.mailing_lists[listName] = []
             self.mailing_list_widgets[listName] = MEditableList(self.mailing_lists[listName])
             self.tabWidget.addTab(self.mailing_list_widgets[listName], listName)
+            web.alert_data.add_list(listName)
+            web.alert_data.add_members(listName,entries)
+            self.mailing_list_widgets[listName].item_added.connect(partial(web.alert_data.add_members, listName))
+            self.mailing_list_widgets[listName].item_removed.connect(partial(web.alert_data.remove_members, listName))
             self.mailing_list_added_sig.emit(listName)
 
         def deleteList_gui(self):
@@ -321,6 +394,7 @@ class MMailingLists(QtGui.QWidget):
         def deleteList(self, listName):
             # find the correct tab
             num_tabs = self.tabWidget.count()
+            web.alert_data.remove_list(listName)
             for tab_index in range(num_tabs):
                 if(self.tabWidget.tabText(tab_index) == listName):
                     print "removing tab", listName
@@ -333,8 +407,8 @@ class MMailingLists(QtGui.QWidget):
 
 
 class MEditableList(QtGui.QWidget):
-    updateSignal = pyqtSignal(str)
-    removeSignal = pyqtSignal(str)
+    item_added = pyqtSignal(str)
+    item_removed = pyqtSignal(str)
     def __init__(self, elems, parent = None):
         super(MEditableList, self).__init__(parent)
         self.item_list = QtGui.QListWidget()
@@ -401,7 +475,7 @@ class MEditableList(QtGui.QWidget):
         item_widget_remove_pb = QtGui.QPushButton("Remove")
 
         #item_widget_edit_pb.clicked.connect(lambda x:self.edit_item(text))
-        item_widget_remove_pb.clicked.connect(lambda x: self.remove_item(text))
+        item_widget_remove_pb.clicked.connect(partial(self.remove_item,text))
 
         item_widget_label.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
         #item_widget_edit_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
@@ -430,10 +504,15 @@ class MEditableList(QtGui.QWidget):
 
         num_items = self.item_list.count()
         self.item_list.insertItem(num_items - 1, item)
-
+        self.item_added.emit(text)
     def remove_item(self, item):
-        for index in range(self.item_list.count()):
-            if(item == self.item_list.itemWidget(self.item_list.item(index)).layout().itemAt(0).widget().text()):
-
-                self.item_list.takeItem(index)
-        pass
+        try:
+            for index in range(self.item_list.count()):
+                #print "looking at index", index, self.item_list.itemWidget(self.item_list.item(index)).layout().itemAt(0).widget().text()
+                if(item == self.item_list.itemWidget(self.item_list.item(index)).layout().itemAt(0).widget().text()):
+                     self.item_list.takeItem(index)
+                     break;
+            self.item_removed.emit(item)
+        except:
+            traceback.print_stack()
+            traceback.print_exc()
