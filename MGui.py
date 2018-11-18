@@ -24,7 +24,7 @@ import sys
 sys.dont_write_bytecode = True
 from PyQt4 import QtCore, QtGui
 
-from NotifierGUI import NotifierGUI
+from NotifierGUI import NotifierGUI, Notifier
 from MConfigGui import ConfigGui
 from MDataSetConfigGUI import DataSetConfigGUI
 from MPersistentData import MPersistentData
@@ -77,10 +77,10 @@ class MGui(QtGui.QMainWindow):
     MAlert = None
     started = False
     widgetsToAdd = []
-    # splash_pix = QtGui.QPixmap('logo.png')
-    # splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
-    # splash.show()
-
+    splash_pix = QtGui.QPixmap('logo.png')
+    splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    splash.show()
+    web.alert_data = Notifier()
     def __init__(self):
 
         web.gui = self
