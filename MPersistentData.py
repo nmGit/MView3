@@ -55,7 +55,8 @@ class MPersistentData:
         self.persistentDataDict = pickle.load(
             open(os.path.join(self.location, self.name), 'rb'))
         # print self.persistentDataDict
-
+    def getDict(self):
+        return self.persistentDataDict
     def persistentDataAccess(self, val, *args, **kwargs):
         # print "h1"
         # traceback.print_exc()

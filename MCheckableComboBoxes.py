@@ -26,7 +26,9 @@ class MCheckableComboBox(QtGui.QComboBox):
     def isChecked(self, index):
         item = self.model().item(index)
         if item.checkState() == QtCore.Qt.Checked:
+            #item.setCheckState(True)
             return True
+        #item.setCheckState(False)
         return False
 
     def setChecked(self, index, checked):

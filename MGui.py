@@ -81,6 +81,7 @@ class MGui(QtGui.QMainWindow):
     splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
     splash.show()
     web.alert_data = Notifier()
+
     def __init__(self):
 
         web.gui = self
@@ -180,6 +181,10 @@ class MGui(QtGui.QMainWindow):
         print "Shutting down MView."
 
         # print "all devices:", web.devices
+        try:
+            web.alert_data.save()
+        except:
+            print "Failed to save notifier data."
         for device in web.devices:
             # print "stopping", str(device)
             device.stop()
@@ -257,6 +262,7 @@ class MGui(QtGui.QMainWindow):
             self.MAlert.stop()
         self.MAlert = MAlert.MAlert()
         self.MAlert.begin()
+        #self.MAlert.mailing_list_selected.connect(web.alert_data.add_subscription)
 
     def startGui(self, title, tele = None, autostart=True):
         """Start the GUI."""
@@ -267,7 +273,7 @@ class MGui(QtGui.QMainWindow):
         # Start the notifier.
         self.started = True
         web.telecomm = tele
-        self.NotifierGUI = NotifierGUI(self.loader)
+        #self.NotifierGUI = NotifierGUI(self.loader)
         self.startMAlert()
 
         screen_resolution = QtGui.QDesktopWidget().screenGeometry()
