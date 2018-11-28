@@ -24,28 +24,68 @@ import smtplib
 from email.mime.text import MIMEText
 import MPopUp
 import traceback
-from PyQt4 import QtCore
+from MWeb import web
+from PyQt4 import QtCore, QtGui
 
 class MMail:
     """Very simple email client."""
 
     def __init__(self):
         try:
-            print("Initializing MMail...")
-            self.smtpObj = smtplib.SMTP('smtp.googlemail.com', timeout = 1)
-            # Say hello to the email server.
-            self.smtpObj.ehlo()
-            # Initialize TLS security.
-            self.smtpObj.starttls()
+            self.email = web.persistentData.getDict()['Email']['Address']
+            self.pwd = web.persistentData.getDict()['Email']['Password']
+            self.host = web.persistentData.getDict()['Email']['Host']
+            if(self.email):
+                print("Initializing MMail...")
+                self.smtpObj = smtplib.SMTP(self.host, timeout = 1)
+                # Say hello to the email server.
+                self.smtpObj.ehlo()
+                # Initialize TLS security.
+                self.smtpObj.starttls()
 
-            self.smtpObj.login('physics.labrad@gmail.com', 'mcdermott')
-            self.smtpObj.quit()
-            self.mail_sem = QtCore.QSemaphore(1)
+                self.smtpObj.login(self.email, self.pwd)
+                self.smtpObj.quit()
+                self.mail_sem = QtCore.QSemaphore(1)
         except:
             MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             traceback.print_exc()
 
         # Send the email.
+       # 'smtp.googlemail.com'
+    def verify(self, host, email, pwd):
+        true_if_success = True
+        host = str(host)
+        email = str(email)
+        pwd = str(pwd)
+        try:
+            self.smtpObj = smtplib.SMTP(host, timeout=1)
+            # Say hello to the email server.
+            self.smtpObj.ehlo()
+            # Initialize TLS security.
+            self.smtpObj.starttls()
+
+            self.smtpObj.login(email, pwd)
+            self.smtpObj.quit()
+            QtGui.QMessageBox(QtGui.QMessageBox.Information, "Success!","Your new email settings have been saved.",
+                              QtGui.QMessageBox.Ok).exec_()
+        except:
+            QtGui.QMessageBox(QtGui.QMessageBox.Critical, "Notifier failed to login to email.", traceback.format_exc(1),
+                              QtGui.QMessageBox.Ok).exec_()
+            #MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
+            true_if_success = False
+        return true_if_success
+    def changeCredentials(self, host, email, pwd):
+        self.host = str(host)
+        self.email = str(email)
+        self.pwd = str(pwd)
+
+        host = str(host)
+        email = str(email)
+        pwd = str(pwd)
+
+        web.persistentData.persistentDataAccess(email, 'Email', 'Address')
+        web.persistentData.persistentDataAccess(pwd, 'Email', 'Password')
+        web.persistentData.persistentDataAccess(host, 'Email', 'Host')
 
     def sendMail(self, To, From, Subject, Body):
 
@@ -54,10 +94,10 @@ class MMail:
         self.mail_sem.acquire()
         try:
             success = True
-            self.smtpObj = smtplib.SMTP('smtp.googlemail.com')
+            self.smtpObj = smtplib.SMTP(self.host)
             self.smtpObj.ehlo()
             self.smtpObj.starttls()
-            self.smtpObj.login('physics.labrad@gmail.com', 'mcdermott')
+            self.smtpObj.login(self.email, self.pwd)
         except:
             print("ERROR: Could not log in to email.")
             traceback.print_exc()

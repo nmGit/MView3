@@ -43,7 +43,7 @@ class MAlert(QThread):
     def __init__(self):
         super(MAlert, self).__init__()
         # Configure all public variables
-        self.tele = MMail.MMail()
+        web.telecomm = MMail.MMail()
         self.devices = web.devices
         self.t1 = 0
         self.message = []
@@ -129,7 +129,7 @@ class MAlert(QThread):
                 while(not self.mail_queue.empty()):
                     message.append(self.mail_queue.get() + "\n")
                 print message
-                success = self.tele.sendMail(
+                success = web.tele.sendMail(
                     recipients,
                     "MView",
                     str(web.title),

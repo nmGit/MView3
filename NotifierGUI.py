@@ -52,7 +52,7 @@ class Notifier:
     pp = pprint.PrettyPrinter(indent=4)
     def __init__(self):
         self.lists = {}
-        self.limits = {}
+        #self.limits = {}
         self.open()
     def add_list(self, list):
         self.lists[str(list)] = {"Members":[], "Subscriptions":[]}
@@ -104,23 +104,28 @@ class Notifier:
         self.pp.pprint(self.lists)
 
     def set_enabled(self, key, state):
-        if key not in self.limits.keys():
-            self.limits[key] = {}
-        self.limits[key]['enable'] = state
-        self.pp.pprint(self.limits)
+
+        web.persistentData.persistentDataAccess(state, "NotifierInfo", key, "enable")
+
     def get_enabled(self, key):
-        if key not in self.limits.keys():
-            self.limits[key] = {}
-            self.limits[key]['enable'] = False
-        return self.limits[key]['enable']
-    def set_min(self, key, min):
+
+        return web.persistentData.persistentDataAccess(None, "NotifierInfo", key, "enable", default=False)
+    def set_min(self, key, minimum):
+        web.persistentData.persistentDataAccess(minimum, "NotifierInfo", "Limits", key, "Min")
+        #self.limits[key]["Min"] = minimum
         return
     def get_min(self, key):
-        return ''
-    def set_max(self, key, min):
+        minimum = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key, "Min", default=None)
+
+        return minimum
+    def set_max(self, key, maximum):
+        web.persistentData.persistentDataAccess(maximum, "NotifierInfo", "Limits", key, "Max")
+        #self.limits[key]["Max"] = maximum
         return
     def get_max(self, key):
-        return ''
+        maximum = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key, "Max", default=None)
+
+        return maximum
     def get_mailing_lists(self):
         return self.lists
     # def get_members(self, list):
@@ -131,6 +136,7 @@ class Notifier:
         print "---------------------------------------------------------"
         self.pp.pprint(web.persistentData.getDict())
         print "---------------------------------------------------------"
+        limits = web.persistentData.getDict()['NotifierInfo']['Limits']
         saved_state = web.persistentData.getDict().get('NotifierInfo', False)
         if not saved_state:
             return
@@ -152,7 +158,7 @@ class Notifier:
         if 'NotifierInfo' not in web.persistentData.getDict().keys():
             web.persistentData.getDict()['NotifierInfo'] = {'Mailing': {}, 'Limits': {}}
         web.persistentData.getDict()['NotifierInfo']['Mailing'] = self.lists
-        web.persistentData.getDict()['NotifierInfo']['Limits'] = self.limits
+       # web.persistentData.getDict()['NotifierInfo']['Limits'] = limits
 
 class NotifierGUI(QtGui.QDialog):
 
@@ -189,6 +195,7 @@ class NotifierGUI(QtGui.QDialog):
         # Configure password input
         self.login_config = LoginConfig()
         tabWidget.addTab(self.login_config, "Mailer Configuration")
+        self.login_config.email_credential_change_made.connect(self.email_changed)
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -221,6 +228,8 @@ class NotifierGUI(QtGui.QDialog):
 
     def getDict(self):
         return self.alert.allDataDict
+    def email_changed(self, host, email, pwd):
+        web.telecomm.changeCredentials(host, email, pwd)
 
     def close_cancel(self):
         self.close()
@@ -229,27 +238,53 @@ class NotifierGUI(QtGui.QDialog):
         self.close()
 
 class LoginConfig(QtGui.QWidget):
-    pwd_change_made = pyqtSignal(str)
-    username_change_made = pyqtSignal(str)
+    email_credential_change_made = pyqtSignal(str, str, str)
+
     def __init__(self, parent = None):
         super(LoginConfig, self).__init__(parent)
         layout = QtGui.QVBoxLayout()
         self.setLayout(layout)
 
 
+        email = web.persistentData.persistentDataAccess(None,'Email', 'Address', default = None)
+        pwd = web.persistentData.persistentDataAccess(None,'Email', 'Password', default = None)
+        host = web.persistentData.persistentDataAccess(None,'Email', 'Host', default = None)
+
+        host_layout = QtGui.QHBoxLayout()
+        host_layout.addWidget(QtGui.QLabel("Host Address:"))
+        host_layout.addStretch(0)
+        self.host_input = QtGui.QLineEdit()
+        if(host and type(host) is str):
+            self.host_input.setText(host)
+        else:
+            self.host_input.setPlaceholderText("smtp.googlemail.com for GMail")
+        host_layout.addWidget(self.host_input)
+
         username_layout = QtGui.QHBoxLayout()
-        username_layout.addWidget(QtGui.QLabel("Gmail address:"))
+        username_layout.addWidget(QtGui.QLabel("Email Address:"))
         username_layout.addStretch(0)
         self.username_input = QtGui.QLineEdit()
+        if(email and type(email) is str):
+            self.username_input.setText(email)
+
         username_layout.addWidget(self.username_input)
 
         pwd_layout = QtGui.QHBoxLayout()
-        pwd_layout.addWidget(QtGui.QLabel("Gmail password:"))
+        pwd_layout.addWidget(QtGui.QLabel("Email Password:"))
         pwd_layout.addStretch(0)
         self.pwd_input = QtGui.QLineEdit()
+        if(pwd and type(pwd) is str):
+            self.pwd_input.setText(pwd)
         pwd_layout.addWidget(self.pwd_input)
+
         layout.addLayout(username_layout)
         layout.addLayout(pwd_layout)
+        layout.addLayout(host_layout)
+
+        self.username_input.textEdited.connect(self.email_changed)
+        self.pwd_input.textEdited.connect(self.pwd_changed)
+        self.host_input.textEdited.connect(self.host_changed)
+
         verify_pb = QtGui.QPushButton("Verify...")
         verify_pb.clicked.connect(self.verify_email)
         pb_layout = QtGui.QHBoxLayout()
@@ -258,15 +293,23 @@ class LoginConfig(QtGui.QWidget):
         layout.addLayout(pb_layout)
         layout.addStretch(0)
         warning_lbl = QtGui.QLabel("NOTE: These login credentials are NOT stored securely."
-                                      " Please only use a dedicated gmail address."
+                                      " Please only use a dedicated email address."
                                       " DO NOT use an organizational email address.")
         warning_lbl.setWordWrap(True)
         layout.addWidget(warning_lbl)
     def verify_email(self):
+        host = self.host_input.text()
+        email = self.username_input.text()
+        pwd = self.pwd_input.text()
+        success = web.telecomm.verify(host, email, pwd)
+        if(success):
+            self.email_credential_change_made.emit(host, email, pwd)
         pass
     def email_changed(self):
         pass
     def pwd_changed(self):
+        pass
+    def host_changed(self):
         pass
 class AlertConfig(QtGui.QWidget):
     list_change_made = pyqtSignal(str)
@@ -340,6 +383,16 @@ class AlertConfig(QtGui.QWidget):
                     min_lineedit = QtGui.QLineEdit()
                     max_lineedit = QtGui.QLineEdit()
 
+                    maximum = web.alert_data.get_max(key)
+                    minimum = web.alert_data.get_min(key)
+
+                    if(maximum):
+                        max_lineedit.setText(str(maximum))
+                    if(minimum):
+                        min_lineedit.setText(str(minimum))
+
+                    min_lineedit.editingFinished.connect(partial(self.min_val_changed, key, min_lineedit.text))
+                    max_lineedit.editingFinished.connect(partial(self.max_val_changed, key, max_lineedit.text))
                     enabled_chkbx.stateChanged.connect(partial(self.enable_state_changed, key))
 
                     self.allWidgetDict[key] = [enabled_chkbx,
@@ -347,8 +400,8 @@ class AlertConfig(QtGui.QWidget):
                                                max_lineedit,
                                                combo_box]
                     enabled_chkbx.setChecked(web.alert_data.get_enabled(key))
-                    min_lineedit.setText(web.alert_data.get_min(key))
-                    max_lineedit.setText(web.alert_data.get_max(key))
+                    #min_lineedit.setText(web.alert_data.get_min(key))
+                    #max_lineedit.setText(web.alert_data.get_max(key))
 
                     for list in mailing_lists.keys():
                         combo_box.addItem(list)
@@ -405,6 +458,49 @@ class AlertConfig(QtGui.QWidget):
     def enable_state_changed(self, key, state):
         print "enable clicked", key, state
         web.alert_data.set_enabled(key, state)
+    def min_val_changed(self, key, text):
+        if(callable(text)):
+            text = text()
+        print "Min val changed", key, text
+       # if ('E' == text[-1] or 'e' == text[-1] or '-' == text[-1] or '.' == text[-1]):
+       #     return
+        text = str(text)
+        if (len(text.strip()) == 0):
+            return
+        try:
+            val = float(text)
+
+        except ValueError:
+
+            QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Minimum Value", "Minimum Value must be a number "
+                                                                                  "in one of the following forms:\n\n"
+                                                                                  "1234.5678\n"
+                                                                                  "1.24E56\n\n"
+                                                                                  "Changes not saved.",
+                              QtGui.QMessageBox.Ok).exec_()
+            return
+        web.alert_data.set_min(key, val)
+
+    def max_val_changed(self, key, text):
+      #  if ('E' == text[-1] or 'e' == text[-1] or '-' == text[-1]):
+      #      return\
+        if (callable(text)):
+            text = text()
+        text = str(text)
+        if (len(text.strip()) == 0):
+            return
+        try:
+            val = float(text)
+
+        except ValueError:
+            QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Maximum Value", "Maximum Value must be a number "
+                                                                                  "in one of the following forms:\n\n"
+                                                                                  "1234.5678\n"
+                                                                                  "1.24E56\n\n"
+                                                                                  "Changes not saved.",
+                              QtGui.QMessageBox.Ok).exec_()
+            return
+        web.alert_data.set_max(key, val)
 
     # def openData(self):
     #     '''Retreive a user's previous settings.'''
