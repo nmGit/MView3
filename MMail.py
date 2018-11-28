@@ -30,19 +30,21 @@ class MMail:
     """Very simple email client."""
 
     def __init__(self):
-        print("Initializing MMail...")
-        self.smtpObj = smtplib.SMTP('smtp.googlemail.com')
-        # Say hello to the email server.
-        self.smtpObj.ehlo()
-        # Initialize TLS security.
-        self.smtpObj.starttls()
         try:
+            print("Initializing MMail...")
+            self.smtpObj = smtplib.SMTP('smtp.googlemail.com', timeout = 1)
+            # Say hello to the email server.
+            self.smtpObj.ehlo()
+            # Initialize TLS security.
+            self.smtpObj.starttls()
+
             self.smtpObj.login('physics.labrad@gmail.com', 'mcdermott')
+            self.smtpObj.quit()
+            self.mail_sem = QtCore.QSemaphore(1)
         except:
             MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             traceback.print_exc()
-        self.smtpObj.quit()
-        self.mail_sem = QtCore.QSemaphore(1)
+
         # Send the email.
 
     def sendMail(self, To, From, Subject, Body):

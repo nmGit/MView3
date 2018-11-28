@@ -76,6 +76,7 @@ class Notifier:
         self.pp.pprint(self.lists)
 
     def remove_list(self, list):
+        list = str(list)
         del self.lists[list]
         self.pp.pprint(self.lists)
 
@@ -152,6 +153,7 @@ class Notifier:
             web.persistentData.getDict()['NotifierInfo'] = {'Mailing': {}, 'Limits': {}}
         web.persistentData.getDict()['NotifierInfo']['Mailing'] = self.lists
         web.persistentData.getDict()['NotifierInfo']['Limits'] = self.limits
+
 class NotifierGUI(QtGui.QDialog):
 
     def __init__(self, loader, parent=None):
@@ -183,6 +185,10 @@ class NotifierGUI(QtGui.QDialog):
 
         self.email_lists.mailing_list_added_sig.connect(self.list_added)
         self.email_lists.mailing_list_removed_sig.connect(self.list_removed)
+
+        # Configure password input
+        self.login_config = LoginConfig()
+        tabWidget.addTab(self.login_config, "Mailer Configuration")
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -221,6 +227,47 @@ class NotifierGUI(QtGui.QDialog):
     def close_ok(self):
         web.alert_data.save()
         self.close()
+
+class LoginConfig(QtGui.QWidget):
+    pwd_change_made = pyqtSignal(str)
+    username_change_made = pyqtSignal(str)
+    def __init__(self, parent = None):
+        super(LoginConfig, self).__init__(parent)
+        layout = QtGui.QVBoxLayout()
+        self.setLayout(layout)
+
+
+        username_layout = QtGui.QHBoxLayout()
+        username_layout.addWidget(QtGui.QLabel("Gmail address:"))
+        username_layout.addStretch(0)
+        self.username_input = QtGui.QLineEdit()
+        username_layout.addWidget(self.username_input)
+
+        pwd_layout = QtGui.QHBoxLayout()
+        pwd_layout.addWidget(QtGui.QLabel("Gmail password:"))
+        pwd_layout.addStretch(0)
+        self.pwd_input = QtGui.QLineEdit()
+        pwd_layout.addWidget(self.pwd_input)
+        layout.addLayout(username_layout)
+        layout.addLayout(pwd_layout)
+        verify_pb = QtGui.QPushButton("Verify...")
+        verify_pb.clicked.connect(self.verify_email)
+        pb_layout = QtGui.QHBoxLayout()
+        pb_layout.addStretch(0)
+        pb_layout.addWidget(verify_pb)
+        layout.addLayout(pb_layout)
+        layout.addStretch(0)
+        warning_lbl = QtGui.QLabel("NOTE: These login credentials are NOT stored securely."
+                                      " Please only use a dedicated gmail address."
+                                      " DO NOT use an organizational email address.")
+        warning_lbl.setWordWrap(True)
+        layout.addWidget(warning_lbl)
+    def verify_email(self):
+        pass
+    def email_changed(self):
+        pass
+    def pwd_changed(self):
+        pass
 class AlertConfig(QtGui.QWidget):
     list_change_made = pyqtSignal(str)
     mailing_list_selected = pyqtSignal(str,str)
@@ -382,8 +429,8 @@ class MMailingLists(QtGui.QWidget):
             super(MMailingLists, self).__init__(parent)
             self.main_v_box = QtGui.QVBoxLayout()
             self.setLayout(self.main_v_box)
-
-            self.mailing_lists = web.alert_data.get_mailing_lists()
+            ml = web.alert_data.get_mailing_lists()
+            self.mailing_lists = {}
             self.mailing_list_widgets = {}
            # self.mailing_lists["list1"] = ["email1", "email2"]
             #self.mailing_list_widgets["list1"] = MEditableList(self.mailing_lists["list1"])
@@ -400,38 +447,41 @@ class MMailingLists(QtGui.QWidget):
             self.add_list_button_layout.addWidget(self.add_list_button)
             self.add_list_button_layout.addWidget(self.delete_list_button)
             self.add_list_button_layout.addStretch(0)
-
-            for list in self.mailing_lists.keys():
+            print "Notifier GUI mailing_lists", ml
+            for list in ml.keys():
                 self.addList(list)
-
-                for member in self.mailing_lists[list]['Members']:
-                    self.mailing_list_widgets[-1].addItem(member)
+                print "Constructing",ml[list]
+                members = [member for member in ml[list]['Members']]
+                print "adding members", members
+                for member in members:
+                    print "\t adding member", member
+                    self.mailing_list_widgets[list].add_item(member, backend=True)
         def addList_gui(self):
             text, accept = QtGui.QInputDialog.getText(self, "Add Mailing List", "List name:")
             if accept:
-                self.addList(text, [])
+                self.addList(text)
                 web.alert_data.add_list(text)
+            self.mailing_list_added_sig.emit(text)
 
         def addList(self, listName):
             listName = str(listName)
-
-            self.mailing_lists[listName] = []
+            if(listName not in self.mailing_lists.keys()):
+                self.mailing_lists[listName] = {}
             self.mailing_list_widgets[listName] = MEditableList(self.mailing_lists[listName])
             self.tabWidget.addTab(self.mailing_list_widgets[listName], listName)
-            #
-            #web.alert_data.add_members(listName,entries)
+
             self.mailing_list_widgets[listName].item_added.connect(partial(web.alert_data.add_members, listName))
             self.mailing_list_widgets[listName].item_removed.connect(partial(web.alert_data.remove_members, listName))
-            self.mailing_list_added_sig.emit(listName)
 
         def deleteList_gui(self):
             text, accept = QtGui.QInputDialog.getItem(self, "Add Mailing List", "Select the list to delete", self.mailing_lists.keys())
             if accept:
                 self.deleteList(text)
         def deleteList(self, listName):
+            listName = str(listName)
             # find the correct tab
             num_tabs = self.tabWidget.count()
-            web.alert_data.remove_list(listName)
+            #web.alert_data.remove_list(listName)
             for tab_index in range(num_tabs):
                 if(self.tabWidget.tabText(tab_index) == listName):
                     print "removing tab", listName
@@ -499,12 +549,12 @@ class MEditableList(QtGui.QWidget):
             text.append(label.text())
         print "Editable list text:", text
         return text
-    def __add_item(self):
+    def __add_item(self, **kwargs):
         text, accept = QtGui.QInputDialog.getText(self, "Add Entry...", "Email:")
         if(accept):
-            self.add_item(text)
+            self.add_item(text, **kwargs)
 
-    def add_item(self, text):
+    def add_item(self, text, **kwargs):
 
         item_widget_label = QtGui.QLabel(text)
 
@@ -541,7 +591,8 @@ class MEditableList(QtGui.QWidget):
 
         num_items = self.item_list.count()
         self.item_list.insertItem(num_items - 1, item)
-        self.item_added.emit(text)
+        if(not kwargs.get("backend", False)):
+            self.item_added.emit(text)
     def remove_item(self, item):
         try:
             for index in range(self.item_list.count()):
