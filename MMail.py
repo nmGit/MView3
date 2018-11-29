@@ -37,7 +37,7 @@ class MMail:
             self.host = web.persistentData.getDict()['Email']['Host']
             if(self.email):
                 print("Initializing MMail...")
-                self.smtpObj = smtplib.SMTP(self.host, timeout = 1)
+                self.smtpObj = smtplib.SMTP(self.host, timeout = 3)
                 # Say hello to the email server.
                 self.smtpObj.ehlo()
                 # Initialize TLS security.
@@ -58,7 +58,7 @@ class MMail:
         email = str(email)
         pwd = str(pwd)
         try:
-            self.smtpObj = smtplib.SMTP(host, timeout=1)
+            self.smtpObj = smtplib.SMTP(host, timeout=3)
             # Say hello to the email server.
             self.smtpObj.ehlo()
             # Initialize TLS security.
@@ -66,10 +66,10 @@ class MMail:
 
             self.smtpObj.login(email, pwd)
             self.smtpObj.quit()
-            QtGui.QMessageBox(QtGui.QMessageBox.Information, "Success!","Your new email settings have been saved.",
+            QtGui.QMessageBox(QtGui.QMessageBox.Information, "Success!","Login successful! Your new email settings have been saved.",
                               QtGui.QMessageBox.Ok).exec_()
         except:
-            QtGui.QMessageBox(QtGui.QMessageBox.Critical, "Notifier failed to login to email.", traceback.format_exc(1),
+            QtGui.QMessageBox(QtGui.QMessageBox.Critical, "Notifier failed to login to email.", "Could not log in\n\n"+traceback.format_exc(1),
                               QtGui.QMessageBox.Ok).exec_()
             #MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             true_if_success = False

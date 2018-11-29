@@ -275,6 +275,7 @@ class LoginConfig(QtGui.QWidget):
         self.pwd_input = QtGui.QLineEdit()
         if(pwd and type(pwd) is str):
             self.pwd_input.setText(pwd)
+        self.pwd_input.setEchoMode(QtGui.QLineEdit.Password)
         pwd_layout.addWidget(self.pwd_input)
 
         layout.addLayout(username_layout)
@@ -285,7 +286,7 @@ class LoginConfig(QtGui.QWidget):
         self.pwd_input.textEdited.connect(self.pwd_changed)
         self.host_input.textEdited.connect(self.host_changed)
 
-        verify_pb = QtGui.QPushButton("Verify...")
+        verify_pb = QtGui.QPushButton("Verify and save...")
         verify_pb.clicked.connect(self.verify_email)
         pb_layout = QtGui.QHBoxLayout()
         pb_layout.addStretch(0)
@@ -528,6 +529,25 @@ class MMailingLists(QtGui.QWidget):
             ml = web.alert_data.get_mailing_lists()
             self.mailing_lists = {}
             self.mailing_list_widgets = {}
+
+            self.mailing_period_label = QtGui.QLabel("Mailing Period:")
+            self.mailing_period_edit = QtGui.QLineEdit()
+            self.mailing_period_unit = QtGui.QComboBox()
+            self.mailing_period_unit.addItem("Days")
+            self.mailing_period_unit.addItem("Hours")
+            self.mailing_period_unit.addItem("Minutes")
+            self.mailing_period_unit.addItem("Seconds")
+
+            self.mailing_period_layout = QtGui.QHBoxLayout()
+            self.mailing_period_layout.addWidget(self.mailing_period_label)
+            self.mailing_period_layout.addStretch(0)
+            self.mailing_period_layout.addWidget(self.mailing_period_edit)
+            self.mailing_period_layout.addWidget(self.mailing_period_unit)
+
+            self.main_v_box.addLayout(self.mailing_period_layout)
+
+            self.mailing_period_edit.editingFinished.connect(self.mailingPeriodEdited)
+            self.mailing_period_unit.activated.connect(self.mailingPeriodEdited)
            # self.mailing_lists["list1"] = ["email1", "email2"]
             #self.mailing_list_widgets["list1"] = MEditableList(self.mailing_lists["list1"])
             # Create a new tab
@@ -587,7 +607,22 @@ class MMailingLists(QtGui.QWidget):
                     self.mailing_list_removed_sig.emit(listName)
                     break
 
+        def mailingPeriodEdited(self, unit = None):
+            if not unit:
+                unit = self.mailing_period_unit.currentText()
+                web.persistentData.persistentDataAccess(unit)
 
+            try:
+                value = float(self.mailing_period_edit.text())
+                web.persistentData.persistentDataAccess(unit)
+            except ValueError:
+                self.mailing_period_edit.clear()
+                QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid period", "Period Value must be a number "
+                                                                                      "in one of the following forms:\n\n"
+                                                                                      "1234.5678\n"
+                                                                                      "1.24E56\n\n"
+                                                                                      "Changes not saved.",
+                                  QtGui.QMessageBox.Ok).exec_()
 
 class MEditableList(QtGui.QWidget):
     item_added = pyqtSignal(str)
