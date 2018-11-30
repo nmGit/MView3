@@ -74,6 +74,7 @@ class MMail:
             #MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             true_if_success = False
         return true_if_success
+
     def changeCredentials(self, host, email, pwd):
         self.host = str(host)
         self.email = str(email)

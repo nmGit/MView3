@@ -60,3 +60,5 @@ class web:
     notifier_email_address = None
     notifier_email_pwd = None
     alert_data = None
+
+    malert = None

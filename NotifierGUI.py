@@ -50,9 +50,11 @@ class Notifier:
     #               "list2": ...
     #              }
     pp = pprint.PrettyPrinter(indent=4)
+
     def __init__(self):
         self.lists = {}
         #self.limits = {}
+        self.mailing_period = None
         self.open()
     def add_list(self, list):
         self.lists[str(list)] = {"Members":[], "Subscriptions":[]}
@@ -63,6 +65,14 @@ class Notifier:
             self.lists[str(mailinglist)]["Members"].append(str(members))
         print "added members", members
         self.pp.pprint(self.lists)
+    def get_members(self, list):
+        return self.lists[str(list)]["Members"]
+    def get_members_of_list(self, list):
+        if(list in self.lists.keys()):
+            return self.lists[list]["Members"]
+        else:
+            return []
+
     def add_subscription(self, mailinglist, subscription_keys):
         mailinglist = str(mailinglist)
         print "adding subscriptions", subscription_keys
@@ -74,7 +84,13 @@ class Notifier:
             subscription_keys = str(subscription_keys)
             self.lists[mailinglist]["Subscriptions"].append(str(subscription_keys))
         self.pp.pprint(self.lists)
-
+    def get_subscribers(self, key):
+        subs = []
+        mailing = web.persistentData.persistentDataAccess(None, "Mailing", default={})
+        for list in mailing.keys():
+            if key in mailing[list]["Subscriptions"]:
+                subs.append(list)
+        return subs
     def remove_list(self, list):
         list = str(list)
         del self.lists[list]
@@ -105,21 +121,21 @@ class Notifier:
 
     def set_enabled(self, key, state):
 
-        web.persistentData.persistentDataAccess(state, "NotifierInfo", key, "enable")
+        web.persistentData.persistentDataAccess(state, "NotifierInfo", "Limits", key,  "enable")
 
     def get_enabled(self, key):
 
-        return web.persistentData.persistentDataAccess(None, "NotifierInfo", key, "enable", default=False)
+        return web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key, "enable", default=False)
     def set_min(self, key, minimum):
-        web.persistentData.persistentDataAccess(minimum, "NotifierInfo", "Limits", key, "Min")
+        web.persistentData.persistentDataAccess(minimum, "NotifierInfo", "Limits", key,  "Min")
         #self.limits[key]["Min"] = minimum
         return
     def get_min(self, key):
-        minimum = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key, "Min", default=None)
+        minimum = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key,  "Min", default=None)
 
         return minimum
     def set_max(self, key, maximum):
-        web.persistentData.persistentDataAccess(maximum, "NotifierInfo", "Limits", key, "Max")
+        web.persistentData.persistentDataAccess(maximum, "NotifierInfo", "Limits", key,  "Max")
         #self.limits[key]["Max"] = maximum
         return
     def get_max(self, key):
@@ -128,6 +144,11 @@ class Notifier:
         return maximum
     def get_mailing_lists(self):
         return self.lists
+    def setMailingPeriod(self, period_in_seconds):
+        self.mailing_period = period_in_seconds
+        web.persistentData.persistentDataAccess(period_in_seconds, "NotifierInfo", "Mail_Settings", "Period")
+        web.malert.setMailingPeriod(period_in_seconds)
+
     # def get_members(self, list):
     #     print "get members:",self.lists
     #     return self.lists[list]['Members']
@@ -136,12 +157,14 @@ class Notifier:
         print "---------------------------------------------------------"
         self.pp.pprint(web.persistentData.getDict())
         print "---------------------------------------------------------"
-        limits = web.persistentData.getDict()['NotifierInfo']['Limits']
+
+        self.setMailingPeriod(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "Period", default = 3 * 60 * 60))
+        # limits = web.persistentData.getDict()['NotifierInfo']['Limits']
         saved_state = web.persistentData.getDict().get('NotifierInfo', False)
         if not saved_state:
             return
         else:
-            saved_state = saved_state['Mailing']
+            saved_state = saved_state.get('Mailing', {})
         print "saved state", saved_state
 
         for list in saved_state.keys():
@@ -532,12 +555,15 @@ class MMailingLists(QtGui.QWidget):
 
             self.mailing_period_label = QtGui.QLabel("Mailing Period:")
             self.mailing_period_edit = QtGui.QLineEdit()
+            self.mailing_period_edit.setText(str(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "DisplayValue", default = 3)))
             self.mailing_period_unit = QtGui.QComboBox()
             self.mailing_period_unit.addItem("Days")
             self.mailing_period_unit.addItem("Hours")
             self.mailing_period_unit.addItem("Minutes")
             self.mailing_period_unit.addItem("Seconds")
-
+            text_index = self.mailing_period_unit.findText(str(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "DisplayUnit", default = "Hours")))
+            if text_index != -1:
+                self.mailing_period_unit.setCurrentIndex(text_index)
             self.mailing_period_layout = QtGui.QHBoxLayout()
             self.mailing_period_layout.addWidget(self.mailing_period_label)
             self.mailing_period_layout.addStretch(0)
@@ -608,13 +634,15 @@ class MMailingLists(QtGui.QWidget):
                     break
 
         def mailingPeriodEdited(self, unit = None):
+            if type(unit) is int:
+                unit = self.mailing_period_unit.itemText(unit)
             if not unit:
                 unit = self.mailing_period_unit.currentText()
-                web.persistentData.persistentDataAccess(unit)
 
+            unit = str(unit)
             try:
                 value = float(self.mailing_period_edit.text())
-                web.persistentData.persistentDataAccess(unit)
+
             except ValueError:
                 self.mailing_period_edit.clear()
                 QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid period", "Period Value must be a number "
@@ -623,6 +651,20 @@ class MMailingLists(QtGui.QWidget):
                                                                                       "1.24E56\n\n"
                                                                                       "Changes not saved.",
                                   QtGui.QMessageBox.Ok).exec_()
+
+                return
+            web.persistentData.persistentDataAccess(unit, "NotifierInfo", "Mail_Settings", "DisplayUnit")
+            web.persistentData.persistentDataAccess(value, "NotifierInfo", "Mail_Settings", "DisplayValue")
+            if(unit == "Days"):
+                period_in_seconds = value * 60 * 60 * 24
+            elif(unit == "Hours"):
+                period_in_seconds = value * 60 * 60
+            elif(unit == "Minutes"):
+                period_in_seconds = value * 60
+            else:
+                period_in_seconds = value
+
+            web.alert_data.setMailingPeriod(period_in_seconds)
 
 class MEditableList(QtGui.QWidget):
     item_added = pyqtSignal(str)

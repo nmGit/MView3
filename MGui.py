@@ -74,12 +74,14 @@ class MGui(QtGui.QMainWindow):
     VBoxColumn = 0
     # Used to allow query to keep calling itself.
     keepGoing = True
-    MAlert = None
+    #MAlert = None
     started = False
     widgetsToAdd = []
     splash_pix = QtGui.QPixmap('logo.png')
     splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
     splash.show()
+    MAlert = MAlert.MAlert()
+    web.malert = MAlert
     web.alert_data = Notifier()
 
     def __init__(self):
@@ -260,8 +262,9 @@ class MGui(QtGui.QMainWindow):
     def startMAlert(self):
         if self.MAlert != None:
             self.MAlert.stop()
-        self.MAlert = MAlert.MAlert()
+
         self.MAlert.begin()
+
         #self.MAlert.mailing_list_selected.connect(web.alert_data.add_subscription)
 
     def startGui(self, title, tele = None, autostart=True):
@@ -272,7 +275,7 @@ class MGui(QtGui.QMainWindow):
         #web.devices = devices
         # Start the notifier.
         self.started = True
-        web.telecomm = tele
+        #web.telecomm = tele
         #self.NotifierGUI = NotifierGUI(self.loader)
         self.startMAlert()
 
