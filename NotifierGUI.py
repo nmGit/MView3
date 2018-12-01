@@ -86,7 +86,14 @@ class Notifier:
         self.pp.pprint(self.lists)
     def get_subscribers(self, key):
         subs = []
-        mailing = web.persistentData.persistentDataAccess(None, "Mailing", default={})
+        mailing = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mailing", default={})
+        for list in mailing.keys():
+            if key in mailing[list]["Subscriptions"]:
+                subs.extend(mailing[list]["Members"])
+        return subs
+    def get_subscribing_lists(self, key):
+        subs = []
+        mailing = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mailing", default={})
         for list in mailing.keys():
             if key in mailing[list]["Subscriptions"]:
                 subs.append(list)
@@ -490,19 +497,20 @@ class AlertConfig(QtGui.QWidget):
        #     return
         text = str(text)
         if (len(text.strip()) == 0):
-            return
-        try:
-            val = float(text)
+            val = ''
+        else:
+            try:
+                val = float(text)
 
-        except ValueError:
+            except ValueError:
 
-            QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Minimum Value", "Minimum Value must be a number "
-                                                                                  "in one of the following forms:\n\n"
-                                                                                  "1234.5678\n"
-                                                                                  "1.24E56\n\n"
-                                                                                  "Changes not saved.",
-                              QtGui.QMessageBox.Ok).exec_()
-            return
+                QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Minimum Value", "Minimum Value must be a number "
+                                                                                      "in one of the following forms:\n\n"
+                                                                                      "1234.5678\n"
+                                                                                      "1.24E56\n\n"
+                                                                                      "Changes not saved.",
+                                  QtGui.QMessageBox.Ok).exec_()
+                return
         web.alert_data.set_min(key, val)
 
     def max_val_changed(self, key, text):
@@ -512,18 +520,19 @@ class AlertConfig(QtGui.QWidget):
             text = text()
         text = str(text)
         if (len(text.strip()) == 0):
-            return
-        try:
-            val = float(text)
+            val = ''
+        else:
+            try:
+                val = float(text)
 
-        except ValueError:
-            QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Maximum Value", "Maximum Value must be a number "
-                                                                                  "in one of the following forms:\n\n"
-                                                                                  "1234.5678\n"
-                                                                                  "1.24E56\n\n"
-                                                                                  "Changes not saved.",
-                              QtGui.QMessageBox.Ok).exec_()
-            return
+            except ValueError:
+                QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Maximum Value", "Maximum Value must be a number "
+                                                                                      "in one of the following forms:\n\n"
+                                                                                      "1234.5678\n"
+                                                                                      "1.24E56\n\n"
+                                                                                      "Changes not saved.",
+                                  QtGui.QMessageBox.Ok).exec_()
+                return
         web.alert_data.set_max(key, val)
 
     # def openData(self):

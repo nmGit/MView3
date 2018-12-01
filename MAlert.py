@@ -103,13 +103,13 @@ class MAlert(QThread):
                     if(enabled):
 
                         if(min != None and min > reading):
-                            print "MALERT reading below min ", min
+                            #print "MALERT reading below min ", min
                             dev.setOutOfRange(param)
-                            self.queueMail(dev, param, reading, web.alert_data.get_subscribers(key), min, max)
+                            self.queueMail(dev, param, reading, key, min, max)
                             # print " min sent to ", people
                         elif(max != None and max < reading):
                             dev.setOutOfRange(param)
-                            self.queueMail(dev, param, reading, people, min, max)
+                            self.queueMail(dev, param, reading, key, min, max)
                             # print " max sent to ", people
 
                         else:
@@ -127,66 +127,75 @@ class MAlert(QThread):
         self.keepGoing = False
 
     def run(self):
+        list_and_messages = {}
         while(True):
-            #print("Running MAlert")
-            #HOURS_BETWEEN_EMAILS = 3
-
-            list_and_messages = {}
-            web.persistentData.persistentDataAccess(None, "NotifierInfo")
-            while(not self.mail_queue.empty()):
-                list, message = self.mail_queue.get()
-                if list not in list_and_messages.keys():
-                    list_and_messages[list] = {"Messages" : [], "TimeLastSent" : -1}
-                else:
-                    list_and_messages[list]["Messages"].append(message)
-                now = time.time()
-                for list in list_and_messages.keys():
-                    if((now -  list_and_messages[list]["TimeLastSent"]) > self.mailingPeriod):
-                        list_and_messages[list]["TimeLastSent"] = now
-                        recipients = web.alert_data.get_members(list)
-                        success = web.tele.sendMail(
-                            recipients,
-                            "MView Mailing List " + list,
-                            str(web.title),
-                            str('\n'.join(message))
-                        )
-                self.queuedMail[list] = []
+            # Run once a second
             self.sleep(1)
+            # Wait until there is something in the mail queue
+            if(not self.mail_queue.empty()):
+                # "DEQUEUEING"
+                # Retrieve what is on the mail queue
+                mailing_list, message = self.mail_queue.get()
+                # If the mailing list has never been registered in list_and_messages, then register it.
+                #print "list and messages:", list_and_messages
+                if mailing_list not in list_and_messages.keys():
+                    list_and_messages[mailing_list] = {"Messages": [message], "TimeLastSent": -1}
+                # Otherwise add the message to the list of outgoing messages for the given list.
+                else:
+                    list_and_messages[mailing_list]["Messages"].append(message)
 
+            # Go through all mailing lists and decide whether or not to send the message
+            for mailing_list in list_and_messages.keys():
+                # Base our decision on whether or not to send on the elaped time
+                now = time.time()
+                elapsed_time = now - list_and_messages[mailing_list]["TimeLastSent"]
+                # Get the messages
+                messages = list_and_messages[mailing_list]["Messages"]
+                # Get the recipients
+                recipients = web.alert_data.get_members(mailing_list)
 
+               # print "elapsed time:", list_and_messages
 
-            # recipients =  [str(person).strip() for person in self.people.split(',')]
-            # if(len(recipients) != 0 and not self.mail_queue.empty()):
-            #     message = []
-            #     while(not self.mail_queue.empty()):
-            #         message.append(self.mail_queue.get() + "\n")
-            #     print message
-            #     success = web.tele.sendMail(
-            #         recipients,
-            #         "MView",
-            #         str(web.title),
-            #         str('\n'.join(message))
-            #     )
-            #     if not success:
-            #         print "Error while sending mail."
-            #     else:
-            #         print "sleeping for 3 hours"
-            #         self.sleep(self.mailing_period)
+                # If there are messages to send and enough time has elapsed, then send the message.
+                # Also ensure that there are recipients
+                if(len(recipients) != 0 and len(messages) != 0 and elapsed_time > self.mailingPeriod):
+                    list_and_messages[mailing_list]["TimeLastSent"] = now
 
+                    try:
+                        success = web.telecomm.sendMail(
+                            recipients,
+                            "MView Mailing List",
+                            str(web.title),
+                            str("\n".join(messages))
+                        )
+                    except:
+                        print "Mailing failed!"
+                    list_and_messages[mailing_list]["Messages"] = []
 
-    def queueMail(self, device, param, reading, addresses, min, max):
+                    for key in self.queuedMail[mailing_list].keys():
+                        self.queuedMail[mailing_list][key] = False
+
+    def queueMail(self, device, param, reading, key, min, max):
         '''Send mail if the given amount of time has elapsed.'''
 
-       # elapsedHrs = (time.time() - self.t1) / 3600
-        key = str(device) + ":" + param
-        for address in addresses:
-            if address not in self.queuedMail.keys():
-                self.queuedMail[address] = []
-            if(key not in self.queuedMail[address]):
+        # Get all lists which subscribe to this key
+        subscribing_lists = web.alert_data.get_subscribing_lists(key)
+
+        # Iterate over all lists that subscribe to this key and queue mail for the list if necessary
+        for mailing_list in subscribing_lists:
+            # If this mailing list is not registered, then register it
+            if mailing_list not in self.queuedMail.keys():
+                self.queuedMail[mailing_list] = {}
+            if key not in self.queuedMail[mailing_list].keys():
+                self.queuedMail[mailing_list][key] = False
+            # Check if mail has already been queued for this list (the queuedMail is reset anytime mail is sent to
+            # that mailing list).
+            # print "Queued mail:", self.queuedMail
+            if(not self.queuedMail[mailing_list][key]):
                 unit = device.getUnit(param)
                 unit = unit if unit else ''
-                min = min if min else ''
-                max = max if max else ''
+                min = min if min else '-infinity'
+                max = max if max else 'infinity'
                 self.message = (time.strftime('%x at %X', time.localtime(time.time()))
                                          + " | " + str(device) + "->"
                                          + param + ": " +
@@ -194,47 +203,11 @@ class MAlert(QThread):
                                          str(unit) +
                                          " | Range: "
                                          + str(str(min)) + " "
-                                         + str(device.getUnit(param)) +
-                                         " - " + str(str(max)) + " " +
-                                         str(device.getUnit(param)) + ".")
-                #people = web.alert_data.getMembersOfList(list)
-                self.mail_queue.put([address, self.message])
-
-                self.queuedMail[address].append(key)
-
-        # if people != '':
-        #     if(not self.mailSent[key]):
-        #
-        #         self.mailSent[key] = True
-        #         self.message.append((time.strftime('%x at %X', time.localtime(time.time()))
-        #                              + " | " + str(device) + "->"
-        #                              + param + ": " +
-        #                              str(device.getReading(param)) + " " +
-        #                              str(device.getUnit(param)) +
-        #                              " | Range: "
-        #                              + str(str(min)) + " "
-        #                              + str(device.getUnit(param)) +
-        #                              " - " + str(str(max)) + " " +
-        #                              str(device.getUnit(param)) + "."))
-        #
-        #     if(HOURS_BETWEEN_EMAILS < elapsedHrs):
-        #         if not len([str(person).strip() for person in people.split(',')][0]) == 0:
-        #             print "sending mail"
-        #             # print self.message
-        #             for key in self.mailSent:
-        #                 self.mailSent[key] = False
-        #             print "Email message:", self.message
-        #             print "in MAlert web title", web.title
-        #             success = self.tele.sendMail(
-        #                 [str(person).strip() for person in people.split(',')],
-        #                 "MView",
-        #                 str(web.title) + ":" + str(device),
-        #                 str('\n'.join(self.message))
-        #                 )
-        #             print [str(person).strip() for person in people.split(',')]
-        #             if (not success):
-        #                 print("Couldn't send email to group.");
-        #             self.message = []
-        #             for key in self.mailSent:
-        #                 self.mailSent[key] = False
-        #             self.t1 = time.time()
+                                         + str(unit) +
+                                         " to " + str(str(max)) + " " +
+                                         str(unit) + ".")
+                # Queue mail
+                # print "QUEUEING"
+                self.mail_queue.put([mailing_list, self.message])
+                # Mark the key is queued for the given mailing list
+                self.queuedMail[mailing_list][key] = True

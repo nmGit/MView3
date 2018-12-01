@@ -31,10 +31,12 @@ class MMail:
     """Very simple email client."""
 
     def __init__(self):
+        self.mail_sem = QtCore.QSemaphore(1)
         try:
             self.email = web.persistentData.getDict()['Email']['Address']
             self.pwd = web.persistentData.getDict()['Email']['Password']
             self.host = web.persistentData.getDict()['Email']['Host']
+
             if(self.email):
                 print("Initializing MMail...")
                 self.smtpObj = smtplib.SMTP(self.host, timeout = 3)
@@ -45,7 +47,7 @@ class MMail:
 
                 self.smtpObj.login(self.email, self.pwd)
                 self.smtpObj.quit()
-                self.mail_sem = QtCore.QSemaphore(1)
+
         except:
             MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
             traceback.print_exc()
@@ -104,6 +106,7 @@ class MMail:
             traceback.print_exc()
             success = False
         # Send the email.
+        #print "Body:\n", Body
         email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" % (From, ", ".join(To), Subject, Body)
         print "Sending email with text:"
         print "-------------------------------------------"
