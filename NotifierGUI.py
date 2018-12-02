@@ -349,11 +349,14 @@ class AlertConfig(QtGui.QWidget):
     def __init__(self, location, loader, parent=None):
         super(AlertConfig, self).__init__(parent)
         # Configure the layout
+        main_layout = QtGui.QVBoxLayout()
         layout = QtGui.QGridLayout()
+        main_layout.addLayout(layout)
+        main_layout.addStretch(0)
         # where to find the notifier data
         self.location = location
         # Set the layout
-        self.setLayout(layout)
+        self.setLayout(main_layout)
         self.loader = loader
         self.mins = {}
         self.maxs = {}
@@ -410,6 +413,7 @@ class AlertConfig(QtGui.QWidget):
                     combo_box = MCheckableComboBox(color_scheme="light")
                     key_copies.append(str("%s" % key))
                     combo_box.activated.connect(partial(self.combo_box_item_clicked, key))
+                    combo_box.setSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Minimum)
                     enabled_chkbx = QtGui.QCheckBox()
                     min_lineedit = QtGui.QLineEdit()
                     max_lineedit = QtGui.QLineEdit()
