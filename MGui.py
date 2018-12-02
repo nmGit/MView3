@@ -24,7 +24,7 @@ import sys
 sys.dont_write_bytecode = True
 from PyQt4 import QtCore, QtGui
 
-from NotifierGUI import NotifierGUI
+from NotifierGUI import NotifierGUI, Notifier
 from MConfigGui import ConfigGui
 from MDataSetConfigGUI import DataSetConfigGUI
 from MPersistentData import MPersistentData
@@ -74,12 +74,15 @@ class MGui(QtGui.QMainWindow):
     VBoxColumn = 0
     # Used to allow query to keep calling itself.
     keepGoing = True
-    MAlert = None
+    #MAlert = None
     started = False
     widgetsToAdd = []
-    # splash_pix = QtGui.QPixmap('logo.png')
-    # splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
-    # splash.show()
+    splash_pix = QtGui.QPixmap('logo.png')
+    splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+    splash.show()
+    MAlert = MAlert.MAlert()
+    web.malert = MAlert
+    web.alert_data = Notifier()
 
     def __init__(self):
 
@@ -180,6 +183,10 @@ class MGui(QtGui.QMainWindow):
         print "Shutting down MView."
 
         # print "all devices:", web.devices
+        try:
+            web.alert_data.save()
+        except:
+            print "Failed to save notifier data."
         for device in web.devices:
             # print "stopping", str(device)
             device.stop()
@@ -255,8 +262,10 @@ class MGui(QtGui.QMainWindow):
     def startMAlert(self):
         if self.MAlert != None:
             self.MAlert.stop()
-        self.MAlert = MAlert.MAlert()
+
         self.MAlert.begin()
+
+        #self.MAlert.mailing_list_selected.connect(web.alert_data.add_subscription)
 
     def startGui(self, title, tele = None, autostart=True):
         """Start the GUI."""
@@ -266,8 +275,8 @@ class MGui(QtGui.QMainWindow):
         #web.devices = devices
         # Start the notifier.
         self.started = True
-        web.telecomm = tele
-        self.NotifierGUI = NotifierGUI(self.loader)
+        #web.telecomm = tele
+        #self.NotifierGUI = NotifierGUI(self.loader)
         self.startMAlert()
 
         screen_resolution = QtGui.QDesktopWidget().screenGeometry()
@@ -283,6 +292,7 @@ class MGui(QtGui.QMainWindow):
         self.initGui()
         self.setWindowTitle(title)
         web.title = title
+        # print "Starting gui with title:", web.title
         # Show the GUI.
         self.show()
         self.timer = QtCore.QTimer(self)

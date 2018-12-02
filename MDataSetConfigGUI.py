@@ -181,14 +181,14 @@ class DataSetSettings(QtGui.QWidget):
                 currentLoc = device.getFrame().DataLoggingInfo()['location']
                 print "currentLoc:", currentLoc
                 newLoc = currentLoc.split('\\')
-                print "newLocation3:", newLoc
+               # print "newLocation3:", newLoc
                 # If the folder we are in is in the format 'MM_DD_YY', then
                 # Assume MView created it and we should back out and create a
                 # new folder.
                 r = re.compile('.{2}_.{2}_.{2}')
                 if r.match(newLoc[-1]):
                     newLoc = newLoc[:-1:]
-                print "newLocation2:", newLoc
+                #print "newLocation2:", newLoc
                 newLoc.append(newFolder)
                 print "newLocation:", newLoc
                 newLoc = "\\".join([str(dir) for dir in newLoc])

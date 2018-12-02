@@ -32,7 +32,7 @@ class MPersistentData:
     persistentDataDict = {}
 
     def __init__(self,name):
-        # print "Loading persistent data..."
+
         self.location = os.path.dirname(traceback.extract_stack()[0][0])
 
         self.name = str(name)+'_mview.config'
@@ -54,8 +54,9 @@ class MPersistentData:
 
         self.persistentDataDict = pickle.load(
             open(os.path.join(self.location, self.name), 'rb'))
-        # print self.persistentDataDict
-
+        print "Loading persistent data from %s%s" % (self.location, self.persistentDataDict)
+    def getDict(self):
+        return self.persistentDataDict
     def persistentDataAccess(self, val, *args, **kwargs):
         # print "h1"
         # traceback.print_exc()

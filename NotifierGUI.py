@@ -33,8 +33,162 @@ import cPickle as pickle
 import os
 import inspect
 import traceback
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from MCheckableComboBoxes import MCheckableComboBox
+import pprint
 sys.dont_write_bytecode = True
+from functools import partial
 
+class Notifier:
+    # Lists take the form:
+    # self.lists = {"list1":
+    #                   {"Members":
+    #                       ["Member1", "Member1",...],
+    #                    "Subscriptions":
+    #                       ["device1:param1, "device1:param2", "device2:param1",...]
+    #                    }
+    #               "list2": ...
+    #              }
+    pp = pprint.PrettyPrinter(indent=4)
+
+    def __init__(self):
+        self.lists = {}
+        #self.limits = {}
+        self.mailing_period = None
+        self.open()
+    def add_list(self, list):
+        self.lists[str(list)] = {"Members":[], "Subscriptions":[]}
+    def add_members(self, mailinglist, members):
+        if type(members) is list:
+            self.lists[str(mailinglist)]["Members"].extend(members)
+        else:
+            self.lists[str(mailinglist)]["Members"].append(str(members))
+        print "added members", members
+        self.pp.pprint(self.lists)
+    def get_members(self, list):
+        return self.lists[str(list)]["Members"]
+    def get_members_of_list(self, list):
+        if(list in self.lists.keys()):
+            return self.lists[list]["Members"]
+        else:
+            return []
+
+    def add_subscription(self, mailinglist, subscription_keys):
+        mailinglist = str(mailinglist)
+        print "adding subscriptions", subscription_keys
+        if type(subscription_keys) is list:
+            print "is array"
+            self.lists[mailinglist]["Subscriptions"].extend(subscription_keys)
+        else:
+            print "is not array"
+            subscription_keys = str(subscription_keys)
+            self.lists[mailinglist]["Subscriptions"].append(str(subscription_keys))
+        self.pp.pprint(self.lists)
+    def get_subscribers(self, key):
+        subs = []
+        mailing = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mailing", default={})
+        for list in mailing.keys():
+            if key in mailing[list]["Subscriptions"]:
+                subs.extend(mailing[list]["Members"])
+        return subs
+    def get_subscribing_lists(self, key):
+        subs = []
+        mailing = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mailing", default={})
+        for list in mailing.keys():
+            if key in mailing[list]["Subscriptions"]:
+                subs.append(list)
+        return subs
+    def remove_list(self, list):
+        list = str(list)
+        del self.lists[list]
+        self.pp.pprint(self.lists)
+
+    def remove_members(self, list, members):
+        list = str(list)
+        if type(members) is list:
+            for member in members:
+                index = self.lists[list]["Members"].index(member)
+                del self.lists[list]["Members"][index]
+        else:
+            members = str(members)
+            index = self.lists[list]["Members"].index(str(members))
+            del self.lists[list]["Members"][index]
+        self.pp.pprint(self.lists)
+
+    def remove_subscription(self, list, subscriptions):
+        list = str(list)
+        if type(subscriptions) is list:
+            for subscription in subscriptions:
+                index = self.lists[list]["Subscriptions"].index(subscription)
+                del self.lists[list]["Subscriptions"][index]
+        else:
+            index = self.lists[list]["Subscriptions"].index(str(subscriptions))
+            del self.lists[list]["Subscriptions"][index]
+        self.pp.pprint(self.lists)
+
+    def set_enabled(self, key, state):
+
+        web.persistentData.persistentDataAccess(state, "NotifierInfo", "Limits", key,  "enable")
+
+    def get_enabled(self, key):
+
+        return web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key, "enable", default=False)
+    def set_min(self, key, minimum):
+        web.persistentData.persistentDataAccess(minimum, "NotifierInfo", "Limits", key,  "Min")
+        #self.limits[key]["Min"] = minimum
+        return
+    def get_min(self, key):
+        minimum = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key,  "Min", default=None)
+
+        return minimum
+    def set_max(self, key, maximum):
+        web.persistentData.persistentDataAccess(maximum, "NotifierInfo", "Limits", key,  "Max")
+        #self.limits[key]["Max"] = maximum
+        return
+    def get_max(self, key):
+        maximum = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Limits", key, "Max", default=None)
+
+        return maximum
+    def get_mailing_lists(self):
+        return self.lists
+    def setMailingPeriod(self, period_in_seconds):
+        self.mailing_period = period_in_seconds
+        web.persistentData.persistentDataAccess(period_in_seconds, "NotifierInfo", "Mail_Settings", "Period")
+        web.malert.setMailingPeriod(period_in_seconds)
+
+    # def get_members(self, list):
+    #     print "get members:",self.lists
+    #     return self.lists[list]['Members']
+    def open(self):
+        print "opening notifier data"
+        print "---------------------------------------------------------"
+        self.pp.pprint(web.persistentData.getDict())
+        print "---------------------------------------------------------"
+
+        self.setMailingPeriod(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "Period", default = 3 * 60 * 60))
+        # limits = web.persistentData.getDict()['NotifierInfo']['Limits']
+        saved_state = web.persistentData.getDict().get('NotifierInfo', False)
+        if not saved_state:
+            return
+        else:
+            saved_state = saved_state.get('Mailing', {})
+        print "saved state", saved_state
+
+        for list in saved_state.keys():
+            subscriptions = saved_state[list]['Subscriptions']
+            members = saved_state[list]['Members']
+            print "saved members:", members
+            print "saved subscriptions:", subscriptions
+            self.add_list(list)
+            self.add_members(list, members)
+            self.add_subscription(list, subscriptions)
+        print "done opening notifier data", self.lists
+    def save(self):
+        print "saving notifier data"
+        if 'NotifierInfo' not in web.persistentData.getDict().keys():
+            web.persistentData.getDict()['NotifierInfo'] = {'Mailing': {}, 'Limits': {}}
+        web.persistentData.getDict()['NotifierInfo']['Mailing'] = self.lists
+       # web.persistentData.getDict()['NotifierInfo']['Limits'] = limits
 
 class NotifierGUI(QtGui.QDialog):
 
@@ -43,6 +197,7 @@ class NotifierGUI(QtGui.QDialog):
         super(NotifierGUI, self).__init__(parent)
         # Create a new tab
         tabWidget = QtGui.QTabWidget()
+        web.alert_data.open()
         # The name of the main MView program
         self.loader = loader
         # The the config data should be stored with the the main class
@@ -52,10 +207,25 @@ class NotifierGUI(QtGui.QDialog):
         # print "Looking for config file in: ", self.location
         # New widget
         self.alert = AlertConfig(self.location, loader)
+        self.alert.mailing_list_selected.connect(web.alert_data.add_subscription)
+        self.alert.mailing_list_deselected.connect(web.alert_data.remove_subscription)
         # AlDatatxt holds the text contents of all data entered in table
         self.allDatatxt = [[], [], [], []]
         # The settings window has a tab
         tabWidget.addTab(self.alert, "Alert Configuration")
+        # Create email list in a new tab
+       # print self.alert.allDataDict
+
+        self.email_lists = MMailingLists()
+        tabWidget.addTab(self.email_lists, "Mailing List")
+
+        self.email_lists.mailing_list_added_sig.connect(self.list_added)
+        self.email_lists.mailing_list_removed_sig.connect(self.list_removed)
+
+        # Configure password input
+        self.login_config = LoginConfig()
+        tabWidget.addTab(self.login_config, "Mailer Configuration")
+        self.login_config.email_credential_change_made.connect(self.email_changed)
         # Configure layouts
         mainLayout = QtGui.QVBoxLayout()
         mainLayout.addWidget(tabWidget)
@@ -72,88 +242,130 @@ class NotifierGUI(QtGui.QDialog):
         buttonLayout.addWidget(okButton)
         buttonLayout.addWidget(cancelButton)
         # Configure buttons
-        okButton.clicked.connect(self.saveData)
-        cancelButton.clicked.connect(self.close)
+        okButton.clicked.connect(self.close_ok)
+        cancelButton.clicked.connect(self.close_cancel)
         self.setWindowTitle("Notifier Settings")
-        # Store all data
-        self.saveData()
 
-    def saveData(self):
-        '''Save the data upon exit'''
-        try:
-            # For each device
-            for device in web.devices:
-                # Get the title
-                title = device.getFrame().getTitle()
-                # For each nickname (parameter)
-                for nickname in device.getFrame().getNicknames():
-                    # If the nickname is not none, then we can store the data
-                    if(nickname is not None):
-                        # The key is in the format device:paramName
-                        key = title + ":" + nickname
-                        # Temporary array used for assembling the data on each
-                        # line
-                        deviceDataArray = []
-                        # Store the state of the checkbox
-                        deviceDataArray.append(self.alert
-                                               .allWidgetDict[key][0].isChecked())
-                        if len(self.alert.allWidgetDict[key][1].text()) is not 0:
-                            # Store the text if there is any
-                            deviceDataArray.append(float(self.alert
-                                                         .allWidgetDict[key][1].text()))
-                        else:
-                            # Otherwise store a blank string
-                            deviceDataArray.append('')
-                        if len(self.alert.allWidgetDict[key][2].text()) is not 0:
-                            deviceDataArray.append(float(self.alert
-                                                         .allWidgetDict[key][2].text()))
-                        else:
-                            deviceDataArray.append('')
-                        deviceDataArray.append(self.alert
-                                               .allWidgetDict[key][3].text())
-                        if(deviceDataArray[1] > deviceDataArray[2]
-                                and deviceDataArray[1] is not None
-                                and deviceDataArray[2] is not None):
-                            raise
-                        self.allDataDict[title + ":" +
-                                         nickname] = deviceDataArray
-                # Pickle the arrays and store them
-            pickle.dump(self.allDataDict, open(
-                os.path.join(self.location, str(self.loader)+'_NotifierSettings.config'), 'wb'))
-            self.alert.allDataDict = self.allDataDict
-            web.limitDict = self.allDataDict
-        except ValueError:
-            print("Enter only numbers into 'Minimum' and 'Maximum' fields.")
-            print("Data Not Saved")
-        except IOError as e:
-            print "Unable to save notifier config data:"
-            print e
-        except:
-            print("Minimum values cannot be greater than maximum values.")
-            print("Data Not Saved")
-        self.close()
+
+#        self.saveData()
+    def list_added(self, name):
+        self.alert.add_mailing_list(name)
+        web.alert_data.add_list(name)
+
+    def list_removed(self, name):
+        self.alert.remove_mailing_list(name)
+        web.alert_data.remove_list(name)
 
     def getDict(self):
         return self.alert.allDataDict
+    def email_changed(self, host, email, pwd):
+        web.telecomm.changeCredentials(host, email, pwd)
+
+    def close_cancel(self):
+        self.close()
+    def close_ok(self):
+        web.alert_data.save()
+        self.close()
+
+class LoginConfig(QtGui.QWidget):
+    email_credential_change_made = pyqtSignal(str, str, str)
+
+    def __init__(self, parent = None):
+        super(LoginConfig, self).__init__(parent)
+        layout = QtGui.QVBoxLayout()
+        self.setLayout(layout)
 
 
+        email = web.persistentData.persistentDataAccess(None,'Email', 'Address', default = None)
+        pwd = web.persistentData.persistentDataAccess(None,'Email', 'Password', default = None)
+        host = web.persistentData.persistentDataAccess(None,'Email', 'Host', default = None)
+
+        host_layout = QtGui.QHBoxLayout()
+        host_layout.addWidget(QtGui.QLabel("Host Address:"))
+        host_layout.addStretch(0)
+        self.host_input = QtGui.QLineEdit()
+        if(host and type(host) is str):
+            self.host_input.setText(host)
+        else:
+            self.host_input.setPlaceholderText("smtp.googlemail.com for GMail")
+        host_layout.addWidget(self.host_input)
+
+        username_layout = QtGui.QHBoxLayout()
+        username_layout.addWidget(QtGui.QLabel("Email Address:"))
+        username_layout.addStretch(0)
+        self.username_input = QtGui.QLineEdit()
+        if(email and type(email) is str):
+            self.username_input.setText(email)
+
+        username_layout.addWidget(self.username_input)
+
+        pwd_layout = QtGui.QHBoxLayout()
+        pwd_layout.addWidget(QtGui.QLabel("Email Password:"))
+        pwd_layout.addStretch(0)
+        self.pwd_input = QtGui.QLineEdit()
+        if(pwd and type(pwd) is str):
+            self.pwd_input.setText(pwd)
+        self.pwd_input.setEchoMode(QtGui.QLineEdit.Password)
+        pwd_layout.addWidget(self.pwd_input)
+
+        layout.addLayout(username_layout)
+        layout.addLayout(pwd_layout)
+        layout.addLayout(host_layout)
+
+        self.username_input.textEdited.connect(self.email_changed)
+        self.pwd_input.textEdited.connect(self.pwd_changed)
+        self.host_input.textEdited.connect(self.host_changed)
+
+        verify_pb = QtGui.QPushButton("Verify and save...")
+        verify_pb.clicked.connect(self.verify_email)
+        pb_layout = QtGui.QHBoxLayout()
+        pb_layout.addStretch(0)
+        pb_layout.addWidget(verify_pb)
+        layout.addLayout(pb_layout)
+        layout.addStretch(0)
+        warning_lbl = QtGui.QLabel("NOTE: These login credentials are NOT stored securely."
+                                      " Please only use a dedicated email address."
+                                      " DO NOT use an organizational email address.")
+        warning_lbl.setWordWrap(True)
+        layout.addWidget(warning_lbl)
+    def verify_email(self):
+        host = self.host_input.text()
+        email = self.username_input.text()
+        pwd = self.pwd_input.text()
+        success = web.telecomm.verify(host, email, pwd)
+        if(success):
+            self.email_credential_change_made.emit(host, email, pwd)
+        pass
+    def email_changed(self):
+        pass
+    def pwd_changed(self):
+        pass
+    def host_changed(self):
+        pass
 class AlertConfig(QtGui.QWidget):
+    list_change_made = pyqtSignal(str)
+    mailing_list_selected = pyqtSignal(str,str)
+    mailing_list_deselected = pyqtSignal(str, str)
     def __init__(self, location, loader, parent=None):
         super(AlertConfig, self).__init__(parent)
         # Configure the layout
+        main_layout = QtGui.QVBoxLayout()
         layout = QtGui.QGridLayout()
+        main_layout.addLayout(layout)
+        main_layout.addStretch(0)
         # where to find the notifier data
         self.location = location
         # Set the layout
-        self.setLayout(layout)
+        self.setLayout(main_layout)
         self.loader = loader
         self.mins = {}
         self.maxs = {}
         self.contacts = {}
         self.checkBoxes = {}
         self.allWidgetDict = {}
+        self.allDataDict = {}
         # Retreive the previous settings
-        self.openData()
+        #self.openData()
         # Set up font
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -170,12 +382,13 @@ class AlertConfig(QtGui.QWidget):
         maxlbl.setText("Maximum")
         layout.addWidget(maxlbl, 1, 5)
 
-        cnctlbl = QtGui.QLabel()
-        cnctlbl.setText("Contact (NAME1,NAME2,etc...)")
-        layout.addWidget(cnctlbl, 1, 7)
+        mailing_list_lbl = QtGui.QLabel()
+        mailing_list_lbl.setText("Mailing Lists")
+        layout.addWidget(mailing_list_lbl, 1, 7)
         # These are indexing variables
         z = 1
         x = 0
+        mailing_lists = web.alert_data.get_mailing_lists()
         # Go through and add all of the devices and their parameters to the
         # gui.
         for i in range(1, len(web.devices) + 1):
@@ -189,6 +402,7 @@ class AlertConfig(QtGui.QWidget):
             z = z + 1
             # Create all of the information fields and put the saved data in
             # them.
+            key_copies = []
             for y in range(1, len(web.devices[j].getFrame().getNicknames()) + 1):
                 paramName = web.devices[j].getFrame().getNicknames()[y - 1]
                 u = y - 1
@@ -196,26 +410,46 @@ class AlertConfig(QtGui.QWidget):
                     title = web.devices[j].getFrame().getTitle()
                     nickname = web.devices[j].getFrame().getNicknames()[u]
                     key = (title + ":" + nickname)
-                    if(key in self.allDataDict):
-                        for data in self.allDataDict[key]:
-                            # All widget dict holds the Qt objects
-                            self.allWidgetDict[key] = [QtGui.QCheckBox(),
-                                                       QtGui.QLineEdit(),
-                                                       QtGui.QLineEdit(),
-                                                       QtGui.QLineEdit()]
-                            self.allWidgetDict[key][0].setChecked(
-                                self.allDataDict[key][0])
-                            self.allWidgetDict[key][1].setText(
-                                str(self.allDataDict[key][1]))
-                            self.allWidgetDict[key][2].setText(
-                                str(self.allDataDict[key][2]))
-                            self.allWidgetDict[key][3].setText(
-                                str(self.allDataDict[key][3]))
-                    else:
-                        self.allWidgetDict[key] = [QtGui.QCheckBox(),
-                                                   QtGui.QLineEdit(),
-                                                   QtGui.QLineEdit(),
-                                                   QtGui.QLineEdit()]
+                    combo_box = MCheckableComboBox(color_scheme="light")
+                    key_copies.append(str("%s" % key))
+                    combo_box.activated.connect(partial(self.combo_box_item_clicked, key))
+                    combo_box.setSizePolicy(QtGui.QSizePolicy.Maximum,QtGui.QSizePolicy.Minimum)
+                    enabled_chkbx = QtGui.QCheckBox()
+                    min_lineedit = QtGui.QLineEdit()
+                    max_lineedit = QtGui.QLineEdit()
+
+                    maximum = web.alert_data.get_max(key)
+                    minimum = web.alert_data.get_min(key)
+
+                    if(maximum):
+                        max_lineedit.setText(str(maximum))
+                    if(minimum):
+                        min_lineedit.setText(str(minimum))
+
+                    min_lineedit.editingFinished.connect(partial(self.min_val_changed, key, min_lineedit.text))
+                    max_lineedit.editingFinished.connect(partial(self.max_val_changed, key, max_lineedit.text))
+                    enabled_chkbx.stateChanged.connect(partial(self.enable_state_changed, key))
+
+                    self.allWidgetDict[key] = [enabled_chkbx,
+                                               min_lineedit,
+                                               max_lineedit,
+                                               combo_box]
+                    enabled_chkbx.setChecked(web.alert_data.get_enabled(key))
+                    #min_lineedit.setText(web.alert_data.get_min(key))
+                    #max_lineedit.setText(web.alert_data.get_max(key))
+
+                    for list in mailing_lists.keys():
+                        combo_box.addItem(list)
+                        if key in mailing_lists[list]['Subscriptions']:
+
+                            combo_box.setChecked(combo_box.findText(list), True)
+                 #   self.allWidgetDict[key][3].setText(
+                 #       str(self.allDataDict[key][3]))
+                 #    else:
+                 #        self.allWidgetDict[key] = [QtGui.QCheckBox(),
+                 #                                   QtGui.QLineEdit(),
+                 #                                   QtGui.QLineEdit(),
+                 #                                   QtGui.QLineEdit()]
                     label = QtGui.QLabel()
                     # Add the new widgets
                     label.setText(paramName)
@@ -235,18 +469,324 @@ class AlertConfig(QtGui.QWidget):
                     # These are used for indexing
                     z = z + 1
                     x = x + 1
+    def add_mailing_list(self, str):
+        for key in self.allWidgetDict.keys():
+            #print self.allWidgetDict
+            self.allWidgetDict[key][3].addItem(str)
+    def remove_mailing_list(self, str):
+        for key in self.allWidgetDict.keys():
+            #print self.allWidgetDict
+            print key, str
+            self.allWidgetDict[key][3].removeItem(str)
+        print
+    def combo_box_item_clicked(self, key, index):
+        text = self.allWidgetDict[key][3].itemText(index)
 
-    def openData(self):
-        '''Retreive a user's previous settings.'''
+        checked = self.allWidgetDict[key][3].isChecked(index)
+        print "List changed:", key,  text,checked
+        if(checked):
+            self.mailing_list_selected.emit(text, key)
+        else:
+
+            self.mailing_list_deselected.emit(text, key)
+        #self.sync_backend_with_frontend()
+    def enable_state_changed(self, key, state):
+        print "enable clicked", key, state
+        web.alert_data.set_enabled(key, state)
+    def min_val_changed(self, key, text):
+        if(callable(text)):
+            text = text()
+        print "Min val changed", key, text
+       # if ('E' == text[-1] or 'e' == text[-1] or '-' == text[-1] or '.' == text[-1]):
+       #     return
+        text = str(text)
+        if (len(text.strip()) == 0):
+            val = ''
+        else:
+            try:
+                val = float(text)
+
+            except ValueError:
+
+                QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Minimum Value", "Minimum Value must be a number "
+                                                                                      "in one of the following forms:\n\n"
+                                                                                      "1234.5678\n"
+                                                                                      "1.24E56\n\n"
+                                                                                      "Changes not saved.",
+                                  QtGui.QMessageBox.Ok).exec_()
+                return
+        web.alert_data.set_min(key, val)
+
+    def max_val_changed(self, key, text):
+      #  if ('E' == text[-1] or 'e' == text[-1] or '-' == text[-1]):
+      #      return\
+        if (callable(text)):
+            text = text()
+        text = str(text)
+        if (len(text.strip()) == 0):
+            val = ''
+        else:
+            try:
+                val = float(text)
+
+            except ValueError:
+                QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid Maximum Value", "Maximum Value must be a number "
+                                                                                      "in one of the following forms:\n\n"
+                                                                                      "1234.5678\n"
+                                                                                      "1.24E56\n\n"
+                                                                                      "Changes not saved.",
+                                  QtGui.QMessageBox.Ok).exec_()
+                return
+        web.alert_data.set_max(key, val)
+
+    # def openData(self):
+    #     '''Retreive a user's previous settings.'''
+    #     try:
+    #         print "Starting notifier, looking for config file: ",str(self.loader)+'_NotifierSettings.config'
+    #         self.allDataDict = pickle.load(open(os.path.join(
+    #             self.location, str(self.loader)+'_NotifierSettings.config'), 'rb'))
+    #         NotifierGUI.allDataDict = self.allDataDict
+    #         print "Config Data Opened"
+    #
+    #     except:
+    #         #traceback.print_exc()
+    #         self.allDataDict = {}
+    #         print("No notifier config file found")
+    #     return self.allDataDict
+
+class MMailingLists(QtGui.QWidget):
+        mailing_list_added_sig = pyqtSignal(str)
+        mailing_list_removed_sig = pyqtSignal(str)
+        def __init__(self, parent=None):
+            '''Initialize the Notifier Gui'''
+            super(MMailingLists, self).__init__(parent)
+            self.main_v_box = QtGui.QVBoxLayout()
+            self.setLayout(self.main_v_box)
+            ml = web.alert_data.get_mailing_lists()
+            self.mailing_lists = {}
+            self.mailing_list_widgets = {}
+
+            self.mailing_period_label = QtGui.QLabel("Mailing Period:")
+            self.mailing_period_edit = QtGui.QLineEdit()
+            self.mailing_period_edit.setText(str(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "DisplayValue", default = 3)))
+            self.mailing_period_unit = QtGui.QComboBox()
+            self.mailing_period_unit.addItem("Days")
+            self.mailing_period_unit.addItem("Hours")
+            self.mailing_period_unit.addItem("Minutes")
+            self.mailing_period_unit.addItem("Seconds")
+            text_index = self.mailing_period_unit.findText(str(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "DisplayUnit", default = "Hours")))
+            if text_index != -1:
+                self.mailing_period_unit.setCurrentIndex(text_index)
+            self.mailing_period_layout = QtGui.QHBoxLayout()
+            self.mailing_period_layout.addWidget(self.mailing_period_label)
+            self.mailing_period_layout.addStretch(0)
+            self.mailing_period_layout.addWidget(self.mailing_period_edit)
+            self.mailing_period_layout.addWidget(self.mailing_period_unit)
+
+            self.main_v_box.addLayout(self.mailing_period_layout)
+
+            self.mailing_period_edit.editingFinished.connect(self.mailingPeriodEdited)
+            self.mailing_period_unit.activated.connect(self.mailingPeriodEdited)
+           # self.mailing_lists["list1"] = ["email1", "email2"]
+            #self.mailing_list_widgets["list1"] = MEditableList(self.mailing_lists["list1"])
+            # Create a new tab
+            self.tabWidget = QtGui.QTabWidget()
+            self.main_v_box.addWidget(self.tabWidget)
+            # Add list button
+            self.add_list_button_layout = QtGui.QHBoxLayout()
+            self.main_v_box.addLayout(self.add_list_button_layout)
+            self.add_list_button = QtGui.QPushButton("Add Mailing List...")
+            self.delete_list_button = QtGui.QPushButton("Delete Mailing List...")
+            self.add_list_button.clicked.connect(self.addList_gui)
+            self.delete_list_button.clicked.connect(self.deleteList_gui)
+            self.add_list_button_layout.addWidget(self.add_list_button)
+            self.add_list_button_layout.addWidget(self.delete_list_button)
+            self.add_list_button_layout.addStretch(0)
+            print "Notifier GUI mailing_lists", ml
+            for list in ml.keys():
+                self.addList(list)
+                print "Constructing",ml[list]
+                members = [member for member in ml[list]['Members']]
+                print "adding members", members
+                for member in members:
+                    print "\t adding member", member
+                    self.mailing_list_widgets[list].add_item(member, backend=True)
+        def addList_gui(self):
+            text, accept = QtGui.QInputDialog.getText(self, "Add Mailing List", "List name:")
+            if accept:
+                self.addList(text)
+                web.alert_data.add_list(text)
+            self.mailing_list_added_sig.emit(text)
+
+        def addList(self, listName):
+            listName = str(listName)
+            if(listName not in self.mailing_lists.keys()):
+                self.mailing_lists[listName] = {}
+            self.mailing_list_widgets[listName] = MEditableList(self.mailing_lists[listName])
+            self.tabWidget.addTab(self.mailing_list_widgets[listName], listName)
+
+            self.mailing_list_widgets[listName].item_added.connect(partial(web.alert_data.add_members, listName))
+            self.mailing_list_widgets[listName].item_removed.connect(partial(web.alert_data.remove_members, listName))
+
+        def deleteList_gui(self):
+            text, accept = QtGui.QInputDialog.getItem(self, "Add Mailing List", "Select the list to delete", self.mailing_lists.keys())
+            if accept:
+                self.deleteList(text)
+        def deleteList(self, listName):
+            listName = str(listName)
+            # find the correct tab
+            num_tabs = self.tabWidget.count()
+            #web.alert_data.remove_list(listName)
+            for tab_index in range(num_tabs):
+                if(self.tabWidget.tabText(tab_index) == listName):
+                    print "removing tab", listName
+                    #self.tabWidget.widget(tab_index).setParent(None)  # Delete widget
+                    self.tabWidget.removeTab(tab_index)
+                    del self.mailing_lists[listName]
+                    self.mailing_list_removed_sig.emit(listName)
+                    break
+
+        def mailingPeriodEdited(self, unit = None):
+            if type(unit) is int:
+                unit = self.mailing_period_unit.itemText(unit)
+            if not unit:
+                unit = self.mailing_period_unit.currentText()
+
+            unit = str(unit)
+            try:
+                value = float(self.mailing_period_edit.text())
+
+            except ValueError:
+                self.mailing_period_edit.clear()
+                QtGui.QMessageBox(QtGui.QMessageBox.Warning, "Invalid period", "Period Value must be a number "
+                                                                                      "in one of the following forms:\n\n"
+                                                                                      "1234.5678\n"
+                                                                                      "1.24E56\n\n"
+                                                                                      "Changes not saved.",
+                                  QtGui.QMessageBox.Ok).exec_()
+
+                return
+            web.persistentData.persistentDataAccess(unit, "NotifierInfo", "Mail_Settings", "DisplayUnit")
+            web.persistentData.persistentDataAccess(value, "NotifierInfo", "Mail_Settings", "DisplayValue")
+            if(unit == "Days"):
+                period_in_seconds = value * 60 * 60 * 24
+            elif(unit == "Hours"):
+                period_in_seconds = value * 60 * 60
+            elif(unit == "Minutes"):
+                period_in_seconds = value * 60
+            else:
+                period_in_seconds = value
+
+            web.alert_data.setMailingPeriod(period_in_seconds)
+
+class MEditableList(QtGui.QWidget):
+    item_added = pyqtSignal(str)
+    item_removed = pyqtSignal(str)
+    def __init__(self, elems, parent = None):
+        super(MEditableList, self).__init__(parent)
+        self.item_list = QtGui.QListWidget()
+        self.item_list.setStyleSheet(  "QListWidget::item {"
+                                     "border-style: solid  ;" 
+                                     "border-width:0.2px;" 
+                                     "border-color:black;" 
+                                     "background-color: rgb(255, 255, 255);"
+                                  "}"
+                                  "QListWidget::item:selected {"
+                                     "background-color: rgb(52, 73, 94);"
+                                     "border-style: none ;" 
+                                     "border-width:0.8px;" 
+                                  "}")
+        #item_list.setFlags(QtCore.Qt.ItemIsEditable)
+
+        main_v_box = QtGui.QVBoxLayout()
+        #main_v_box.addWidget(QtGui.QLabel("Mailing List:"))
+
+        main_v_box.addWidget(self.item_list)
+
+        list_item_layout = QtGui.QHBoxLayout()
+        #list_item_layout.addWidget(QtGui.QLabel("Test item"))
+
+        self.item_widget_labels = []
+        self.item_widget_edit_pbs = []
+        self.item_widget_remove_pbs = []
+        for elem in elems:
+            self.add_item(elem)
+
+        add_item_layout = QtGui.QHBoxLayout()
+        add_item_button = QtGui.QPushButton("Add...")
+        add_item_button.clicked.connect(self.__add_item)
+        add_item_layout.addWidget(add_item_button)
+
+        add_item_widget = QtGui.QWidget()
+        add_item_widget.setLayout(add_item_layout)
+
+        add_item_layout.addStretch(0)
+        #add_item_item = QtGui.QListWidgetItem()
+        #add_item_item.setSizeHint(add_item_widget.sizeHint())
+
+        #self.item_list.addItem(add_item_item)
+        #self.item_list.setItemWidget(add_item_item, add_item_widget)
+        main_v_box.addWidget(add_item_widget)
+
+        self.setLayout(main_v_box)
+    def get_items(self):
+        text = []
+        for label in self.item_widget_label:
+            text.append(label.text())
+        print "Editable list text:", text
+        return text
+    def __add_item(self, **kwargs):
+        text, accept = QtGui.QInputDialog.getText(self, "Add Entry...", "Email:")
+        if(accept):
+            self.add_item(text, **kwargs)
+
+    def add_item(self, text, **kwargs):
+
+        item_widget_label = QtGui.QLabel(text)
+
+        #item_widget_edit_pb = QtGui.QPushButton("Edit")
+        item_widget_remove_pb = QtGui.QPushButton("Remove")
+
+        #item_widget_edit_pb.clicked.connect(lambda x:self.edit_item(text))
+        item_widget_remove_pb.clicked.connect(partial(self.remove_item,text))
+
+        item_widget_label.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        #item_widget_edit_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        item_widget_remove_pb.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+
+        self.item_widget_labels.append(item_widget_label)
+        #self.item_widget_edit_pbs.append(item_widget_edit_pb)
+        self.item_widget_remove_pbs.append(item_widget_remove_pb)
+
+        item_widget_layout = QtGui.QHBoxLayout()
+        item_widget_layout.addWidget(item_widget_label)
+        item_widget_layout.addStretch(0)
+        #item_widget_layout.addWidget(item_widget_edit_pb)
+        item_widget_layout.addWidget(item_widget_remove_pb)
+
+
+        item_widget = QtGui.QWidget()
+        item_widget.setLayout(item_widget_layout)
+        item_widget.setSizePolicy(QtGui.QSizePolicy.Minimum,QtGui.QSizePolicy.Minimum)
+        item = QtGui.QListWidgetItem()
+        item.setSizeHint(item_widget.sizeHint())
+
+        item.setFlags(item.flags())
+        self.item_list.addItem(item)
+        self.item_list.setItemWidget(item, item_widget)
+
+        num_items = self.item_list.count()
+        self.item_list.insertItem(num_items - 1, item)
+        if(not kwargs.get("backend", False)):
+            self.item_added.emit(text)
+    def remove_item(self, item):
         try:
-            print "Starting notifier, looking for config file: ",str(self.loader)+'_NotifierSettings.config'
-            self.allDataDict = pickle.load(open(os.path.join(
-                self.location, str(self.loader)+'_NotifierSettings.config'), 'rb'))
-            NotifierGUI.allDataDict = self.allDataDict
-            print "Config Data Opened"
-
+            for index in range(self.item_list.count()):
+                #print "looking at index", index, self.item_list.itemWidget(self.item_list.item(index)).layout().itemAt(0).widget().text()
+                if(item == self.item_list.itemWidget(self.item_list.item(index)).layout().itemAt(0).widget().text()):
+                     self.item_list.takeItem(index)
+                     break;
+            self.item_removed.emit(item)
         except:
+            traceback.print_stack()
             traceback.print_exc()
-            self.allDataDict = {}
-            print("No notifier config file found")
-        return self.allDataDict

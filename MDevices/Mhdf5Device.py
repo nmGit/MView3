@@ -3,7 +3,7 @@ from MWeb import web
 import os
 from PyQt4 import QtCore, QtGui
 from MFileTree import MFileTree
-from dataChest import *
+#from dataChest import *
 from MGrapher import mGraph as MGrapher
 
 

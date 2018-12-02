@@ -30,8 +30,8 @@ from functools import partial
 import pyqtgraph as pg
 import numpy as np
 import time as tm
-from dateStamp import *
-from dataChest import *
+#from dateStamp import *
+#from dataChest import *
 from MCheckableComboBoxes import MCheckableComboBox
 from datetime import datetime
 import warnings
@@ -311,7 +311,7 @@ class mGraph(QtGui.QWidget):
         while len(self.curves) < len(columns_to_request) - 1:
             self.pen = pg.mkPen(cosmetic=True, width=2, color=(0, 0, 0))
             varNames = self.device.getParameters().keys()
-            print "varNames: ", varNames, i
+            #print "varNames: ", varNames, i
             self.curves.append(self.p.plot([0], pen=self.pen, name=varNames[i].replace('_', ' ')))
             i = i + 1
             self.generateColors()
