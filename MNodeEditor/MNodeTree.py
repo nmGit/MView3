@@ -116,7 +116,7 @@ class NodeTree:
         node.setTree(self)
         node.begin()
         self.nodes.append(node)
-        #self.node_added_signal.emit()
+        # self.node_added_signal.emit()
         return node
 
     def getNodes(self):

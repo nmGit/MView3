@@ -39,10 +39,10 @@ class NodeGui(QtGui.QDialog):
         self.backgroundBrush = QtGui.QBrush(QtGui.QColor(70, 80, 88))
         view.setBackgroundBrush(self.backgroundBrush)
 
-        for device in self.devices:
-            dn = MDeviceNode(device)
-            dn.begin()
-            self.scene.addItem(MNodeGraphicsItem(self, dn))
+        for node in tree.nodes:
+            #dn = MDeviceNode(device)
+            #dn.begin()
+            self.scene.addItem(MNodeGraphicsItem(self, node))
 
         # self.scene.addItem(MNode(device, self.scene, mode = 'output'))
         mainLayout.addWidget(view)

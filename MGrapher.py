@@ -187,7 +187,7 @@ class mGraph(QtGui.QWidget):
 
         self.timespan = 60 * 60# default 1 minute
 
-        self.device.addParameterSignal.connect(self.addComboBoxItem)
+        self.device.addParameterSignal.connect(self.parameter_added)
 
     def eventFilter(self, receiver, event):
         '''Filter out scroll events so that only pyqtgraph catches them'''
@@ -209,6 +209,12 @@ class mGraph(QtGui.QWidget):
             pen = pg.mkPen(cosmetic=True, width=2,
                            color=(self.r, self.g, self.b))
             curve.setPen(pen)
+    def parameter_added(self, name):
+        pass
+        # if(self.initialized):
+        #     print "MGrapher: Adding parameter"
+        #     #self.addComboBoxItem(name)
+        #     self.lineSelect.addItem(name, True)
 
     def initialize(self):
         dataset = self.device.getFrame().getDataChestWrapper()
@@ -218,9 +224,8 @@ class mGraph(QtGui.QWidget):
        # print "varNames:", varNames
 
         for i, var in enumerate(varNames):
-            #Qvar = QtCore.QString(var.replace('_',' '))
-            self.addComboBoxItem(var)
-            self.lineSelect.setChecked(i, True)
+             #Qvar = QtCore.QString(var.replace('_',' '))
+             self.lineSelect.addItem(var, True)
 
         self.initialized = True
 
@@ -228,9 +233,10 @@ class mGraph(QtGui.QWidget):
 
         self.setupUnits()
 
-    def addComboBoxItem(self, name):
-        self.lineSelect.addItem(name.replace('_', ' '))
-        self.lineSelect.setFont(self.dropdownFont)
+    def ___addComboBoxItem(self, name): # Depricated
+        pass
+        #self.lineSelect.addItem(name.replace('_', ' '))
+        #self.lineSelect.setFont(self.dropdownFont)
 
     def setupUnits(self):
 

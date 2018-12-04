@@ -44,7 +44,7 @@ class MNode(QObject):
         self.callAnchorAdded = False
 
     def begin(self,  *args,  **kwargs):
-        ''' Create a new node. Calls onBegin of 
+        ''' Create a new node. Calls onBegin of
        child if child has overridden onBegin().
    '''
         self.onBegin()
@@ -141,6 +141,7 @@ class MNode(QObject):
         return None
 
     def __str__(self):
+        #return "Unnamed Node"
         return self.title
 
     def setColor(self, r, g, b):

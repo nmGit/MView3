@@ -11,7 +11,7 @@ class runningAverage(MNode):
         #self.begin()
         self.window = 50
         self.data = []
-
+        self.setTitle("Running Average")
     def begin(self, *args, **kwargs):
         super(runningAverage, self).begin()
         self.input = self.addAnchor(name='data', type='input', data='float')

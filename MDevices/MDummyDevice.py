@@ -7,7 +7,7 @@ class MDummyDevice(MDevice):
         self.name = args[0]
         print "Initialize dummy device"
         self.input_params = []
-
+        self.blanks = {}
         # Give initial values
     def onBegin(self):
         pass
@@ -17,6 +17,7 @@ class MDummyDevice(MDevice):
             if self.getParameterType(param) == 'output':
                 self.input_params.append(param)
     def onAddParameter(self, *args, **kwargs):
+        self.blanks[args[0]] = kwargs.get("generate", False)
         self.setReading(args[0], 0)
         pass
 
@@ -24,5 +25,5 @@ class MDummyDevice(MDevice):
 
         for param in self.input_params:
             #print self.getReading(param)
-
-            self.setReading(param, self.getReading(param)+random.randint(-10,10))
+            if self.blanks[param]:
+                self.setReading(param, self.getReading(param)+random.randint(-10,10))
