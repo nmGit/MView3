@@ -35,10 +35,10 @@ class MCheckableComboBox(QtGui.QComboBox):
         item = self.model().item(index)
         item.setCheckState(
             QtCore.Qt.Checked if checked else QtCore.Qt.Unchecked)
-    def addItem(self, text):
+    def addItem(self, text, checked = False):
         QtGui.QComboBox.addItem(self, text)
         item = self.model().item(self.findText(text))
-        item.setCheckState(False)
+        item.setCheckState(checked)
     def removeItem(self, text):
         index = self.findText(text)
         item = self.model().item(index)
