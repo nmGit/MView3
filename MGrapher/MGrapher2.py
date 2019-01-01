@@ -178,7 +178,14 @@ class MGrapher2(QtGui.QWidget):
 
         self.timespan = 60 * 60# default 1 minute
 
-    def addCurve(self, name, units, data = [], indep_var = []):
+    def addCurve(self, name):
+        '''
+        addCurve
+        :param name: The name of this curve
+        :return: Curve id
+        '''
+
+
         if(len(indep_var) != len(data)):
             raise ValueError("Independent variable must be the same length as data. i.e.[indep_var1,indep_var2,...], [data1, data2]")
         #if(len(data[]))

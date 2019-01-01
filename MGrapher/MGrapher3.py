@@ -17,15 +17,16 @@
 __author__ = "Noah Meltzer"
 __copyright__ = "Copyright 2016, McDermott Group"
 __license__ = "GPL"
-__version__ = "2.0.2"
+__version__ = "3.0.0"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 import numpy as np
-
+from MWeb import web
 import sys
 import traceback
 from PyQt4 import QtGui, QtCore
+from MCurve import MCurve
 from functools import partial
 import pyqtgraph as pg
 import numpy as np
@@ -37,98 +38,131 @@ from datetime import datetime
 import warnings
 
 
-class MGrapher2(QtGui.QWidget):
+
+class MGrapher3(QtGui.QWidget):
     def __init__(self, parent=None, **kwargs):
+        '''
+        Initialize new grapher
+        :param parent: Parent
+        :param kwargs: title: title of the graph
+        '''
         QtGui.QWidget.__init__(self, parent)
-        self.title = "New Graph"
+        self.track = False
+        self.processRangeChanged = True
+        # Set the title
+        self.title = kwargs.get("title", None)
 
-        self.data = {}
-        # This sets up axis on which to plot.
-        self.hidden = False
-        data = None
+        pg.setConfigOption('background', web.color_scheme["dark"]["1st background"])
+        pg.setConfigOption('foreground', web.color_scheme["dark"]["black"])
 
-        self.lastValidTime = 60
 
-        pg.setConfigOption('background', (189, 195, 199))
-        pg.setConfigOption('foreground', (0, 0, 0))
 
-        self.frame = QtGui.QFrame(self)
-        frameLayout = QtGui.QVBoxLayout(self.frame)
-        self.frame.setFrameShape(QtGui.QFrame.Panel)
-        self.frame.setFrameShadow(QtGui.QFrame.Plain)
-        self.frame.setStyleSheet(".QFrame{background-color: rgb(70,80,88); "
-                                 "margin:0px; border:2px solid rgb(0, 0, 0);}")
+        self.mainFrame = QtGui.QFrame()
+        self.mainFrame.setStyleSheet("background-color:rgb(100,10,10)")
+        main_layout = QtGui.QVBoxLayout()
+
+
+
         self.win = pg.GraphicsWindow()
 
-        frameLayout.addWidget(self.win)
+        self.mainViewBox = pg.ViewBox()
+        self.mainViewBox.setMouseMode(self.mainViewBox.RectMode)
+        self.mainViewBox.installEventFilter(self)
 
-        self.v2 = pg.ViewBox()
-       # self.p = pg.PlotItem(title=self.title, axisItems={
-       #                           'bottom': TimeAxisItem(orientation='bottom')})
+        self.mainPlot = self.win.addPlot(title = self.title, axisItems={'bottom' : TimeAxisItem(orientation='bottom')}, viewBox=self.mainViewBox)
+        self.mainPlot.addLegend()
+        self.mainPlot.showGrid(x=True,y=True, alpha=0.5)
+        self.mainPlot.getViewBox().setMouseEnabled(True, True)
+        self.mainPlot.sigRangeChanged.connect(self.__range_changed)
+        self.mainPlot.scene().sigMouseMoved.connect(self.__mouse_moved)
+        pg.SignalProxy(self.mainPlot.scene().sigMouseMoved, rateLimit=60, slot=self.__mouse_moved)
 
-        self.v2.setMouseMode(self.v2.RectMode)
+        #self.mainPlot.setDownsampling(auto=True, mode='peak')
 
-        self.p = self.win.addPlot(title=self.title, axisItems={
-                                  'bottom': TimeAxisItem(orientation='bottom')}, viewBox = self.v2)
+        self.lr_pen = pg.mkPen(color=(20,20,20),style=QtCore.Qt.DashLine,width=2.5)
+        self.lr_hover_pen = pg.mkPen(color=(20,20,20), style=QtCore.Qt.DotLine,width=4.5)
+        self.linearRegionSelectorX = pg.LinearRegionItem([100,700], pg.LinearRegionItem.Vertical, None, self.lr_pen, None, self.lr_hover_pen)
+        self.linearRegionSelectorX.setZValue(10)
 
-        self.p.addLegend()
-        self.p.showGrid(x=True, y=True, alpha=0.5)
+        self.linearRegionSelectorY = pg.LinearRegionItem([100,700], pg.LinearRegionItem.Horizontal, None, self.lr_pen, None, self.lr_hover_pen)
+        self.linearRegionSelectorY.setZValue(10)
 
-        self.p.sigRangeChanged.connect(self.rangeChanged)
-        self.processRangeChangeSig = False
+        self.linearRegionPlotY = self.win.addPlot(axisItems={'bottom': TimeAxisItem(orientation='bottom')})
+        self.linearRegionPlotY.addItem(self.linearRegionSelectorY)
+        self.linearRegionPlotY.getViewBox().setMouseEnabled(False, True)
+        self.linearRegionPlotY.setPreferredHeight(200)
+        self.linearRegionPlotY.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Ignored)
+        # self.linearRegionPlotX.getViewBox().scaleBy(s=0.1,y=0.1)
+        self.linearRegionSelectorY.sigRegionChanged.connect(self.__update_plot_y)
 
-        pen = pg.mkPen(cosmetic=True, width=2, color=(
-            np.random.random() * 255, np.random.random() * 255, np.random.random() * 255))
-        self.textPen = QtGui.QPen()
+        self.win.nextRow()
+        self.linearRegionPlotX = self.win.addPlot(axisItems={'bottom' : TimeAxisItem(orientation='bottom')})
+        self.linearRegionPlotX.addItem(self.linearRegionSelectorX)
+        self.linearRegionPlotX.getViewBox().setMouseEnabled(True, False)
+        self.linearRegionPlotX.setPreferredWidth(200)
+        self.linearRegionPlotX.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Maximum)
+        #self.linearRegionPlotX.getViewBox().scaleBy(s=0.1,y=0.1)
+        self.linearRegionSelectorX.sigRegionChanged.connect(self.__update_plot_x)
 
-        self.curves = []
 
+
+        # Dictionary holding all keys
+        # {"Curve Name" : MCurve ...}
+        self.curves = {}
+        self.crosshair_pen = pg.mkPen(color=(150, 150, 180), style=QtCore.Qt.DotLine, width=2)
+        self.vLine = pg.InfiniteLine(angle=90, movable=False)
+        self.vLine.setZValue(-10)
+        self.vLine.setPen( self.crosshair_pen)
+        self.hLine = pg.InfiniteLine(angle=0, movable=False)
+        self.hLine.setZValue(-10)
+        self.hLine.setPen( self.crosshair_pen)
+        self.mainPlot.addItem(self.vLine, ignoreBounds=True)
+        self.mainPlot.addItem(self.hLine, ignoreBounds=True)
+
+        # add GUI elements
         self.setStyleSheet("QPushButton{\
-                    color:rgb(189,195, 199); \
-                    background:rgb(70, 80, 88)};\
-                    ")
-
+                           color:rgb(189,195, 199); \
+                           background:rgb(70, 80, 88)};\
+                           QFrame{\
+                           color:rgb(189,195, 199); \
+                           background:rgb(70, 80, 88)};")
         self.hideButton = QtGui.QPushButton("Hide Plot")
-        self.hideButton.clicked.connect(self.togglePlot)
+        self.hideButton.clicked.connect(self.__togglePlot)
         self.oneMinButton = QtGui.QPushButton("1 min")
         self.oneMinButton.clicked.connect(
-            partial(self.plot, start=60, autoRange=True))
+            partial(self.set_data_span,60))
         self.tenMinButton = QtGui.QPushButton("10 min")
         self.tenMinButton.clicked.connect(
-            partial(self.plot,  start=600, autoRange=True))
+            partial(self.set_data_span, 600))
         self.twoHrButton = QtGui.QPushButton("2 hr")
         self.twoHrButton.clicked.connect(
-            partial(self.plot, start=7200, autoRange=True))
+            partial(self.set_data_span, 7200))
         self.twelveHrButton = QtGui.QPushButton("12 hr")
         self.twelveHrButton.clicked.connect(
-            partial(self.plot,  start=43200, autoRange=True))
+            partial(self.set_data_span, 43200))
         self.threeDayButton = QtGui.QPushButton("3 day")
         self.threeDayButton.clicked.connect(
-            partial(self.plot, start=259200, autoRange=True))
+            partial(self.set_data_span, 259200))
         self.oneWkButton = QtGui.QPushButton("1 week")
         self.oneWkButton.clicked.connect(
-            partial(self.plot,  start=604800, autoRange=True))
-        self.allButton = QtGui.QPushButton("All Time")
-        self.allButton.clicked.connect(
-            partial(self.plot, start=None, autoRange=True))
+            partial(self.set_data_span, 604800))
+
         self.lineSelect = MCheckableComboBox()
-        self.lineSelect.setSizeAdjustPolicy(0)
+        self.lineSelect.itemChecked.connect(self.__show_curve)
+        self.lineSelect.itemUnChecked.connect(self.__hide_curve)
+        #self.lineSelect.setSizeAdjustPolicy(1)
+        self.lineSelect.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Maximum)
 
         self.autoscaleCheckBox = QtGui.QCheckBox("Auto Ranging")
         self.autoscaleCheckBox.setChecked(True)
-        self.autoscaleCheckBox.clicked.connect(self.plot)
+        self.autoscaleCheckBox.clicked.connect(partial(self.set_autorange, True))
         self.refreshColors = QtGui.QPushButton("Randomize Colors")
-        self.refreshColors.clicked.connect(self.generateColors)
-        self.setY100 = QtGui.QPushButton("Auto Y Axis")
-        self.setY100.clicked.connect(self.yAxTo100)
-        self.setX100 = QtGui.QPushButton("Auto X Axis")
-        self.setX100.clicked.connect(self.xAxTo100)
+        self.refreshColors.clicked.connect(self.generate_colors)
 
         buttonLayout1 = QtGui.QHBoxLayout()
         buttonLayout1.addWidget(self.hideButton)
         buttonLayout1.addStretch(0)
         buttonLayout1.addWidget(self.lineSelect)
-        self.lineSelect.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Maximum)
 
         buttonLayout2 = QtGui.QHBoxLayout()
         buttonLayout2.addWidget(self.oneMinButton)
@@ -137,15 +171,11 @@ class MGrapher2(QtGui.QWidget):
         buttonLayout2.addWidget(self.twelveHrButton)
         buttonLayout2.addWidget(self.threeDayButton)
         buttonLayout2.addWidget(self.oneWkButton)
-        buttonLayout2.addWidget(self.allButton)
+
         buttonLayout2.addStretch(0)
 
         buttonLayout3 = QtGui.QHBoxLayout()
         buttonLayout3.addWidget(self.autoscaleCheckBox)
-        # buttonLayout3.addWidget(self.lockYAx)
-        # buttonLayout3.addWidget(self.lockXAx)
-        buttonLayout3.addWidget(self.setY100)
-        buttonLayout3.addWidget(self.setX100)
         buttonLayout3.addWidget(self.refreshColors)
         buttonLayout3.addStretch(0)
 
@@ -156,190 +186,148 @@ class MGrapher2(QtGui.QWidget):
                                        ".QFrame{background-color: rgb(52, 73, 94); "
                                        "margin:0px; border:2px solid rgb(0, 0, 0);}")
 
-        self.dropdownFont = QtGui.QFont()
-        self.dropdownFont.setPointSize(12)
-        self.autoscaleCheckBox.setFont(self.dropdownFont)
-        self.refreshColors.setFont(self.dropdownFont)
-        self.setY100.setFont(self.dropdownFont)
-        self.setX100.setFont(self.dropdownFont)
-        self.initialized = False
 
-        mainLayout = QtGui.QVBoxLayout()
-        mainLayout.addLayout(buttonLayout1)
-        mainLayout.addLayout(buttonLayout2)
+        graph_layout = QtGui.QVBoxLayout()
+        graph_frame = QtGui.QFrame()
+        graph_frame.setLayout(graph_layout)
 
-        mainLayout.addWidget(self.frame)
-        frameLayout.addWidget(self.buttonFrame)
-        self.setLayout(mainLayout)
+        main_layout.addWidget(graph_frame)
+        graph_layout.addLayout(buttonLayout1)
+        graph_layout.addLayout(buttonLayout2)
+        graph_layout.addWidget(self.win)
+        self.mainFrame.setLayout(main_layout)
+        #mainLayout.addWidget(self.mainFrame)
 
-        self.installEventFilter(self)
-        self.togglePlot()
+        graph_layout.addWidget(self.buttonFrame)
+        self.setLayout(main_layout)
 
-
-        self.timespan = 60 * 60# default 1 minute
-
-    def addCurve(self, name):
+    def add_curve(self, name):
         '''
-        addCurve
-        :param name: The name of this curve
-        :return: Curve id
+        Add a curve to the graph
+        :param name: Name of the curve to be displayed in the legend
+        :return: Curve
         '''
-
-
-        if(len(indep_var) != len(data)):
-            raise ValueError("Independent variable must be the same length as data. i.e.[indep_var1,indep_var2,...], [data1, data2]")
-        #if(len(data[]))
+        curve = MCurve(self, name)
+        self.curves[name] = curve
         self.lineSelect.addItem(name, True)
 
-        yLabel = "Dependent Variable"
-        self.data[name] = {"Units" : units, "Data" : data, "Times" : indep_var}
-        axes = []
-        axes.append(self.p.getAxis('left'))
 
-        if units != None:
-            axes[-1].setLabel(text=str(yLabel + "(" + units + ")"))
+        return curve
+
+    def remove_curve(self, name):
+        '''
+        Remove a curve from the graph
+        :param name: Name of the curve to be removed from the graph
+        :return: True if success, False if fail
+        '''
+        pass
+
+    def get_plot(self):
+        return self.mainPlot
+    def get_linear_region_plot_x(self):
+        return self.linearRegionPlotX
+    def get_linear_region_plot_y(self):
+        return self.linearRegionPlotY
+    def track_waveform(self, track):
+        #self.mainPlot.setAutoPan(x=track)
+        self.track = track
+
+    def set_data_span(self, span):
+        '''
+        Set the range of data to be displayed. This does not change the window position,
+        rather it changes the width of the window.
+        :param span: Width of window in seconds
+        :return: Nothing
+        '''
+
+        if(self.track):
+            max_time = 0
+            for curve in self.curves:
+                curr_time = curve.dataBounds(1)[1]
+                if(curr_time > max_time):
+                    max_time = curr_time
+            current = max_time
         else:
-            axes[-1].setLabel(text=str(yLabel))
+            current = self.mainPlot.getViewBox().viewRange()[0][1]
 
-    def eventFilter(self, receiver, event):
-        '''Filter out scroll events so that only pyqtgraph catches them'''
-        if(event.type() == QtCore.QEvent.Wheel):
-            # print "scroll detected"
-            return True
-        else:
-            # print "scroll not detected"
-            return False
+        self.mainPlot.setXRange(current - span, current, padding=0)
 
-    def generateColors(self):
-        # print "RAINBOW COLORS!!"
+    def set_data_range(self, start, end, **kwargs):
+        '''
+        Set the plot range for the data
+        :param kwargs:
+        *start* : Include data from [start] seconds in the past
+        *end* : Stop including data after [end] seconds in the past.\
+                *None* indicates that the graphed data should be up to and including
+                the most recent data.
+        :return:
+        '''
+        autorange = kwargs.get("autorange", True)
+        self.mainPlot.setXRange(start, end, padding=0)
+
+    def set_autorange(self, true_if_autorange):
+
+        if(self.autoscaleCheckBox.isChecked()):
+            self.mainPlot.autoRange()
+            self.linearRegionPlotY.autoRange()
+            self.linearRegionPlotX.autoRange()
+
+    def generate_colors(self):
         for curve in self.curves:
+            self.curves[curve].random_color()
 
-            self.r = np.random.random() * 200
-            self.g = np.random.random() * 200
-            self.b = np.random.random() * 200
-
-            pen = pg.mkPen(cosmetic=True, width=2,
-                           color=(self.r, self.g, self.b))
-            curve.setPen(pen)
-
-
-
-    def addComboBoxItem(self, name):
-        self.lineSelect.addItem(name.replace('_', ' '))
-        self.lineSelect.setFont(self.dropdownFont)
-
-
-    def plot(self, **kwargs):
-            # print "plotting"
-       # traceback.print_stack()
-
-        if self.hidden:
-            return
-
-
-
-        time = kwargs.get('mode','default')
-        maxtime = kwargs.get('end', 'now')
-        self.timespan = kwargs.get('start', self.timespan)
-
-        autoRange = kwargs.get('autoRange', False)
-
-        # If time was specified, then autorange
-        #self.setupUnits()
-        mintime = 0
-        if time == 'range':
-            if maxtime == 'now':
-                maxtime = tm.time()
-            if mintime == 'all':
-                mintime = 0
-        elif time == 'default':
-            maxtime = tm.time()
-            mintime = maxtime - self.timespan
-            #mintime = maxtime - 60*60 # default 1 hour
-
-        elif type(time) is int:
-            maxtime = tm.time()
-            mintime = maxtime - time # default 1 hour
-
+    def __range_changed(self):
+        # Called when main plot is adjusted
+        #print "range changed"
+        self.processRangeChanged = False
         t1 = tm.time()
-
-
-        #print "data is",data
-        # if data == None:
-        #     print "no data!"
-        #     return
-        times = [col[0] for col in self.data.keys()]
-
-        i = 0
-        varNames = self.data.keys()
-        while len(self.curves) < len(varNames) - 1:
-            self.pen = pg.mkPen(cosmetic=True, width=2, color=(0, 0, 0))
-
-            #print "varNames: ", varNames, i
-            self.curves.append(self.p.plot([0], pen=self.pen, name=varNames[i].replace('_', ' ')))
-            i = i + 1
-            self.generateColors()
-
-        # TODO: Optimize  this
-        for i, col in enumerate(varNames): # Skip capture_time column
-            #print "len cols\ttimes", len(col), len(times)
-            if self.lineSelect.isChecked(i):
-                self.curves[i].setData(times, [d[i+1] for d in self.data[col]], antialias=False)
-                self.curves[i].setVisible(True)
-            else:
-                self.curves[i].setVisible(False)
-        if self.autoscaleCheckBox.isChecked():
-            try:
-                self.p.autoRange()
-                self.autoscaleCheckBox.setChecked(True)
-                self.processRangeChangeSig = False
-                self.processRangeChangeSig = True
-            except:
-                pass
+        self.__update_regionX()
+        self.__update_regionY()
         t2 = tm.time()
-
-
-       # print self.device, "time to plot:", t2 - t1
-
-    def rangeChanged(self):
+        self.processRangeChanged = True
+        #print "Time to update:", t2-t1
         pass
-        if self.processRangeChangeSig and self.autoscaleCheckBox.isChecked():
-             self.autoscaleCheckBox.setChecked(False)
-        # if self.lockYAx.isChecked():
-        #     self.yAxTo100()
-        #
-        # if self.lockXAx.isChecked():
-        #     self.xAxTo100()
 
-    def yAxTo100(self):
-        pass
-        #self.p.enableAutoRange(axis='y')
+    def __update_plot_y(self):
+        # Y region changed
+        # print "range changed, updating region plot"
+        # print "region", self.linearRegionSelectorX.getRegion()
 
-    def xAxTo100(self):
-        pass
-        #self.p.enableAutoRange(axis='x')
+        if(self.processRangeChanged):
+           # print "update plot y, process range", self.processRangeChanged
+            self.mainPlot.setYRange(*self.linearRegionSelectorY.getRegion(), padding=0)
 
-    def lockXAxisClicked(self):
+    def __update_plot_x(self):
+        # X region changed
+        #print "range changed, updating region plot"
+       # print "region", self.linearRegionSelectorX.getRegion()
+        if(self.processRangeChanged):
+            #print "update plot x, process range", self.processRangeChanged
+            self.mainPlot.setXRange(*self.linearRegionSelectorX.getRegion(), padding=0)
 
-        self.lockYAx.setChecked(False)
-        self.lockXAx.setChecked(True)
 
-        self.processRangeChangeSig = False
-        self.rangeChanged()
-        self.processRangeChangeSig = True
+    def __update_regionX(self):
+        #print "update region x"
+        #print "region changed, updating main plot"
+        #print "range",self.linearRegionPlotX.getViewBox().viewRange()
+        xregion=self.mainPlot.getViewBox().viewRange()[0]
+        self.linearRegionSelectorX.setRegion(xregion)
+        #yregion = self.linearRegionSelectorY.getRegion()
+        #spread = yregion[1] - yregion[0]
+        self.linearRegionPlotY.setXRange(*xregion, padding=0)
+        #self.linearRegionPlotY.setYRange(yregion[0]-spread * 0.66,yregion[1]+spread * 0.66, padding=0)
 
-    def lockYAxisClicked(self):
-        self.lockYAx.setChecked(True)
-        self.lockXAx.setChecked(False)
-        self.processRangeChangeSig = False
-        self.rangeChanged()
-        self.processRangeChangeSig = True
-
-    def show(self):
-        if self.hidden:
-            self.togglePlot()
-
-    def togglePlot(self):
+    def __update_regionY(self):
+        #print "update region y"
+        # print "region changed, updating main plot"
+        # print "range",self.linearRegionPlotX.getViewBox().viewRange()
+        yregion = self.mainPlot.getViewBox().viewRange()[1]
+        self.linearRegionSelectorY.setRegion(yregion)
+       # xregion = self.linearRegionSelectorX.getRegion()
+        #spread = xregion[1] - xregion[0]
+        self.linearRegionPlotX.setYRange(*yregion, padding=0)
+        #self.linearRegionPlotX.setXRange(xregion[0]-spread ** 2 * 0.66,xregion[1]+spread**2 * 0.66, padding=0)
+    def __togglePlot(self):
 
         if not self.hidden:
             self.win.hide()
@@ -357,6 +345,8 @@ class MGrapher2(QtGui.QWidget):
             self.buttonFrame.hide()
             self.frame.hide()
         elif self.hidden:
+            if self.device.getFrame().getDataChestWrapper() == None:
+                return
             self.win.show()
             self.oneMinButton.show()
             self.tenMinButton.show()
@@ -372,8 +362,26 @@ class MGrapher2(QtGui.QWidget):
             self.autoscaleCheckBox.show()
             self.buttonFrame.show()
             self.frame.show()
+    def __show_curve(self, curve):
+        print "Show curve", curve
+        curve = str(curve)
+        self.curves[curve].show()
+    def __hide_curve(self, curve):
+        print "Hide curve", curve
+        curve = str(curve)
+        self.curves[curve].hide()
+
+    def __mouse_moved(self,evt):
+        #print "mouse moved",evt
+        mousePoint = self.mainPlot.vb.mapSceneToView(evt)
+        mouseX = mousePoint.x()
+        mouseY = mousePoint.y()
+
+        self.vLine.setPos(mouseX)
+        self.hLine.setPos(mouseY)
 
 
+        pass
 class TimeAxisItem(pg.AxisItem):
     def __init__(self, *args, **kwargs):
         #  super().__init__(*args, **kwargs)
