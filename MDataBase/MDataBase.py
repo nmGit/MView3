@@ -92,10 +92,14 @@ class MDataBase:
         #print "args:", args
         #TODO: See if you can speed this up, particularly return astype(float)
         try:
-
-            field = [str("'"+column.replace(' ','_')+"'") for column in columns]
+            if columns != "*":
+                field = [str("'"+column.replace(' ','_')+"'") for column in columns]
+            else:
+                field = "*"
             table_name = table_name.replace(' ', '_')
-            table_name = "'" + table_name + "'"
+            #print "Table name before:", table_name
+            if table_name != "*":
+                table_name = "'" + table_name + "'"
             if args[0] == "last":
                 if type(field) is not list and field != '*':
                     raise ValueError('MDataBase: If arg is "last" then field must be a list of columns.')
@@ -113,14 +117,17 @@ class MDataBase:
             elif args[0] == "all":
                 if type(field) is not list and field != '*':
                     raise ValueError('MDataBase: If arg is "all" then field must be a list of columns.')
-
-                self.cursor.execute(
-                    "SELECT {cn} FROM {tn}".format(
-                        cn=str(fields).replace('[', '').replace(']', '').replace("'",''),
+               # print "TABLE name:", table_name
+                cmd =    "SELECT {cn} FROM {tn}".format(
+                        cn=str(field).replace('[', '').replace(']', '').replace("'",''),
                         tn=table_name.replace(" ", "_")
                     )
+                print cmd
+                self.cursor.execute(
+                    cmd
                 )
-                return self.cursor.fetchall()
+                data = self.cursor.fetchall()
+                return [d[0] for d in data]
 
             elif args[0] == "range":
                 if type(field) is not list and field != '*':
@@ -166,7 +173,11 @@ class MDataBase:
 
        # print table_name, "time to get columns:", t2-t1
         return r
-
+    def getTables(self):
+        self.cursor.execute(
+            "select name from sqlite_master where type = 'table';"
+        )
+        return [str(t[0]) for t in self.cursor.fetchall()]
     def findNonExistentColumn(self, table_name, columns):
         table_name = "'" + table_name + "'"
         existing_columns = self.getColumns(table_name)

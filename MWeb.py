@@ -62,3 +62,8 @@ class web:
     alert_data = None
 
     malert = None
+
+    color_scheme = {"dark": {"black":(0,0,0),
+                            "1st background" : (189, 195, 199),
+                             "2nd background" : (89, 95, 99)}
+    }

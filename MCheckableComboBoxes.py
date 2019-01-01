@@ -1,9 +1,11 @@
 from PyQt4 import QtGui, QtCore
 import sys
 import os
-
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 class MCheckableComboBox(QtGui.QComboBox):
+    itemChecked = pyqtSignal(str)
+    itemUnChecked = pyqtSignal(str)
     def __init__(self, **kwargs):
         super(MCheckableComboBox, self).__init__()
         self.view().pressed.connect(self.handleItemPressed)
@@ -20,8 +22,10 @@ class MCheckableComboBox(QtGui.QComboBox):
         item = self.model().itemFromIndex(index)
         if item.checkState() == QtCore.Qt.Checked:
             item.setCheckState(QtCore.Qt.Unchecked)
+            self.itemUnChecked.emit(item.text())
         else:
             item.setCheckState(QtCore.Qt.Checked)
+            self.itemChecked.emit(item.text())
 
     def isChecked(self, index):
         item = self.model().item(index)
@@ -36,9 +40,14 @@ class MCheckableComboBox(QtGui.QComboBox):
         item.setCheckState(
             QtCore.Qt.Checked if checked else QtCore.Qt.Unchecked)
     def addItem(self, text, checked = False):
-        QtGui.QComboBox.addItem(self, text)
+
+        QtGui.QComboBox.addItem(self,text)
         item = self.model().item(self.findText(text))
-        item.setCheckState(checked)
+        if checked:
+            checkstate = 2
+        else:
+            checkstate = 0
+        item.setCheckState(checkstate)
     def removeItem(self, text):
         index = self.findText(text)
         item = self.model().item(index)
