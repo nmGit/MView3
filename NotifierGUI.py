@@ -27,7 +27,7 @@ __status__ = "Beta"
 import sys
 
 from PyQt4 import QtCore, QtGui
-from MWeb import web
+import MWeb as web
 import inspect
 import cPickle as pickle
 import os
