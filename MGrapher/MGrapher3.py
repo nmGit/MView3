@@ -39,7 +39,7 @@ import warnings
 
 
 
-class MGrapher3(QtGui.QWidget):
+class MGrapher(QtGui.QWidget):
     def __init__(self, parent=None, **kwargs):
         '''
         Initialize new grapher
@@ -49,6 +49,7 @@ class MGrapher3(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.track = False
         self.processRangeChanged = True
+        self.installEventFilter(self)
         # Set the title
         self.title = kwargs.get("title", None)
 
@@ -119,6 +120,7 @@ class MGrapher3(QtGui.QWidget):
         self.mainPlot.addItem(self.vLine, ignoreBounds=True)
         self.mainPlot.addItem(self.hLine, ignoreBounds=True)
 
+        self.span = None
         # add GUI elements
         self.setStyleSheet("QPushButton{\
                            color:rgb(189,195, 199); \
@@ -155,7 +157,7 @@ class MGrapher3(QtGui.QWidget):
 
         self.autoscaleCheckBox = QtGui.QCheckBox("Auto Ranging")
         self.autoscaleCheckBox.setChecked(True)
-        self.autoscaleCheckBox.clicked.connect(partial(self.set_autorange, True))
+        self.autoscaleCheckBox.clicked.connect(self.set_autorange)
         self.refreshColors = QtGui.QPushButton("Randomize Colors")
         self.refreshColors.clicked.connect(self.generate_colors)
 
@@ -201,6 +203,8 @@ class MGrapher3(QtGui.QWidget):
         graph_layout.addWidget(self.buttonFrame)
         self.setLayout(main_layout)
 
+        self.set_data_span(60)
+        self.track_waveform(True)
     def add_curve(self, name):
         '''
         Add a curve to the graph
@@ -210,7 +214,7 @@ class MGrapher3(QtGui.QWidget):
         curve = MCurve(self, name)
         self.curves[name] = curve
         self.lineSelect.addItem(name, True)
-
+        curve.data_changed_sig.connect(self.__data_updated)
 
         return curve
 
@@ -231,7 +235,10 @@ class MGrapher3(QtGui.QWidget):
     def track_waveform(self, track):
         #self.mainPlot.setAutoPan(x=track)
         self.track = track
-
+        #print "tracking:", track
+        self.autoscaleCheckBox.setChecked(track)
+    def get_curves(self):
+        return self.curves
     def set_data_span(self, span):
         '''
         Set the range of data to be displayed. This does not change the window position,
@@ -240,17 +247,10 @@ class MGrapher3(QtGui.QWidget):
         :return: Nothing
         '''
 
-        if(self.track):
-            max_time = 0
-            for curve in self.curves:
-                curr_time = curve.dataBounds(1)[1]
-                if(curr_time > max_time):
-                    max_time = curr_time
-            current = max_time
-        else:
-            current = self.mainPlot.getViewBox().viewRange()[0][1]
 
-        self.mainPlot.setXRange(current - span, current, padding=0)
+
+        self.span = span
+
 
     def set_data_range(self, start, end, **kwargs):
         '''
@@ -265,12 +265,15 @@ class MGrapher3(QtGui.QWidget):
         autorange = kwargs.get("autorange", True)
         self.mainPlot.setXRange(start, end, padding=0)
 
-    def set_autorange(self, true_if_autorange):
-
+    def set_autorange(self):
+        self.linearRegionPlotY.autoRange()
+        self.linearRegionPlotX.autoRange()
         if(self.autoscaleCheckBox.isChecked()):
-            self.mainPlot.autoRange()
-            self.linearRegionPlotY.autoRange()
-            self.linearRegionPlotX.autoRange()
+            print "autoscale checked"
+            self.track_waveform(True)
+        else:
+            print "autoscale unchecked"
+            self.track_waveform(False)
 
     def generate_colors(self):
         for curve in self.curves:
@@ -281,8 +284,11 @@ class MGrapher3(QtGui.QWidget):
         #print "range changed"
         self.processRangeChanged = False
         t1 = tm.time()
+
+
         self.__update_regionX()
         self.__update_regionY()
+
         t2 = tm.time()
         self.processRangeChanged = True
         #print "Time to update:", t2-t1
@@ -327,6 +333,29 @@ class MGrapher3(QtGui.QWidget):
         #spread = xregion[1] - xregion[0]
         self.linearRegionPlotX.setYRange(*yregion, padding=0)
         #self.linearRegionPlotX.setXRange(xregion[0]-spread ** 2 * 0.66,xregion[1]+spread**2 * 0.66, padding=0)
+
+    def __data_updated(self, curve):
+        if (self.track):
+            max_time = 0
+            self.mainPlot.enableAutoRange(y=True, x=False)
+            for curve in self.curves:
+                curr_time = self.curves[curve].dataBounds(0)[1]
+
+                #print self.curves[curve].dataBounds(0)
+                if (curr_time > max_time):
+                    max_time = curr_time
+            current_x = max_time
+            self.linearRegionPlotY.autoRange()
+            self.linearRegionPlotX.autoRange()
+        else:
+            current_x = self.mainPlot.getViewBox().viewRange()[0][1]
+            self.mainPlot.enableAutoRange(y=False)
+
+        if (self.span == None):
+            self.mainPlot.autoRange()
+        elif(self.track):
+            self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
+        self.__range_changed()
     def __togglePlot(self):
 
         if not self.hidden:
@@ -382,6 +411,17 @@ class MGrapher3(QtGui.QWidget):
 
 
         pass
+    def mousePressEvent(self, QMouseEvent):
+        if(self.mainViewBox):
+            self.track_waveform(False)
+    def eventFilter(self, receiver, event):
+        '''Filter out scroll events so that only pyqtgraph catches them'''
+        if(event.type() == QtCore.QEvent.Wheel):
+            # print "scroll detected"
+            return True
+        else:
+            # print "scroll not detected"
+            return False
 class TimeAxisItem(pg.AxisItem):
     def __init__(self, *args, **kwargs):
         #  super().__init__(*args, **kwargs)
