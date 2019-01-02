@@ -1,14 +1,15 @@
 from PyQt4 import QtCore, QtGui
 
 from MDataBase.MDataBaseWrapper2 import MDataBaseWrapper2 as dbr
-from MGrapher.MGrapher3 import MGrapher3
+from MGrapher.MGrapher3 import MGrapher
 from MWeb import web
 from pyqtgraph.dockarea import *
 
 class MDataViewer(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MDataViewer, self).__init__(parent)
-        root = "C:\Users\Noah\Documents\scripts"
+        #root = "C:\Users\Noah\Documents\scripts"
+        root = ""
         self.setStyle(QtGui.QStyleFactory.create("plastique"))
 
         #self.splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
@@ -70,32 +71,27 @@ class MDataViewer(QtGui.QMainWindow):
         file_path = file_info.absoluteFilePath()
         print "\tSize: %d\n" \
               "\tAbsolute file path: %s bytes" % (file_info.size(), file_path)
-
-
-        #self.dock = QtGui.QDockWidget(file_path, self)
-        dock = Dock(file_path, size=(500, 300), closable=True)
-        self.area.addDock(dock, 'bottom')
-
-
-        #self.setStyleSheet("background-color:rgb(200,0,0);")
-        # self.main_layout.addWidget(self.dock)
-        #self.dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-
-        #self.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.dock)
-
-        self.graph = MGrapher3(self)
-        self.graph.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
-        self.graph.resize(self.size().width(), 0.9*self.size().height())
-        self.graph.setStyle(QtGui.QStyleFactory.create("plastique"))
-        #self.dock.setWidget(self.graph)
-        background_color = web.color_scheme["dark"]["2nd background"]
-        self.setStyleSheet("border-color:rgb(%d,%d,%d);"%(background_color[0],background_color[1], background_color[2]))
-        dock.addWidget(self.graph)
         if(self.db):
             self.db.close()
             del self.db
         self.db = dbr(file_path)
-        tables =  self.db.getTables()
+        if not self.db.isOpen():
+            print "\tNot a database"
+            return
+        dock = Dock(file_path, size=(500, 300), closable=True)
+        self.area.addDock(dock, 'bottom')
+
+        self.graph = MGrapher(self)
+        self.graph.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        self.graph.resize(self.size().width(), 0.9*self.size().height())
+        self.graph.setStyle(QtGui.QStyleFactory.create("plastique"))
+
+        background_color = web.color_scheme["dark"]["2nd background"]
+        self.setStyleSheet("border-color:rgb(%d,%d,%d);"%(background_color[0],background_color[1], background_color[2]))
+        dock.addWidget(self.graph)
+
+
+        tables = self.db.getTables()
         print tables
         data = []
         columns = []
