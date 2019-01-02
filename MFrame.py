@@ -80,7 +80,7 @@ class MFrame:
             "dataset":     self.dataSet,
             "channels":     {},
             "chest":      None,
-            "name":      self.serverTitle,
+            "name":      None,
             "lock_logging_settings": False
         }
 
