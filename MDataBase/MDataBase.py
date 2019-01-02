@@ -16,12 +16,19 @@ class MDataBase:
     def __init__(self, db_path):
         print "Connecting to database located at:", str(db_path)
         #traceback.print_stack()
-        self.conn = sqlite3.connect(str(db_path))
+        try:
+            self.conn = sqlite3.connect(str(db_path))
+            self.open = True
+        except:
+            self.open = False
+            return
         self.cursor = self.conn.cursor()
         self.commit_rate = 10 # commit every 300 writes
         self.writes_since_last_commit = 0
+    def isOpen(self):
+        return self.open
     def save(self, table_name, column_names, value_names):
-
+        table_name = table_name.replace("'", "")
         values = ["'"+str(v)+"'" if v != None else 'NULL' for v in value_names]
         values = ",".join(values)
 
@@ -48,7 +55,7 @@ class MDataBase:
             self.writes_since_last_commit += 1
            # print table_name, "writes since commit:", self.writes_since_last_commit
             if(self.writes_since_last_commit >= self.commit_rate):
-                #print table_name, "committing!"
+                print table_name, "committing!"
                 t1_1 = time.time()
                 self.conn.commit()
                 t2_1 = time.time()
@@ -65,6 +72,7 @@ class MDataBase:
     def commit_after_num_writes(self, rate):
         self.commit_rate = rate
     def create_table(self, column_names, column_qualifiers, table_name):
+        table_name = table_name.replace("'", "")
         table_name = "'" + table_name + "'"
         table_name = table_name.replace(" ", "_")
         column_tup = []
@@ -83,6 +91,7 @@ class MDataBase:
         )
 
     def does_table_exist(self, table_name):
+        table_name = table_name.replace("'", "")
         table_name = "'" + table_name + "'"
         table_name = table_name.replace(" ","_")
         self.cursor.execute("SELECT COUNT(*) FROM sqlite_master WHERE TYPE='table' AND NAME={tn}".format(tn=table_name))
@@ -97,6 +106,7 @@ class MDataBase:
             else:
                 field = "*"
             table_name = table_name.replace(' ', '_')
+            table_name = table_name.replace("'", "")
             #print "Table name before:", table_name
             if table_name != "*":
                 table_name = "'" + table_name + "'"
@@ -160,14 +170,15 @@ class MDataBase:
     def getColumns(self, table_name):
 
         table_name = table_name.replace(" ", "_")
+        table_name = table_name.replace("'", "")
         table_name = "'" + table_name + "'"
         t1 = time.time()
-        self.cursor.execute(
-            "PRAGMA"
-            "   table_info({tn})".format(
+        cmd =  "PRAGMA"\
+            "   table_info({tn});".format(
                 tn = table_name
             )
-        )
+        print "command:", cmd
+        self.cursor.execute(cmd)
         t2 = time.time()
         r = [i[1].encode('ascii') for i in self.cursor.fetchall()]
 
@@ -179,7 +190,9 @@ class MDataBase:
         )
         return [str(t[0]) for t in self.cursor.fetchall()]
     def findNonExistentColumn(self, table_name, columns):
+        table_name = table_name.replace("'", "")
         table_name = "'" + table_name + "'"
+
         existing_columns = self.getColumns(table_name)
         for column in columns:
             if column in existing_columns:
@@ -189,14 +202,16 @@ class MDataBase:
         return None
 
     def addColumn(self, table_name, column, type):
+        table_name = table_name.replace("'", "")
         table_name = table_name.replace(" ", "_")
-        table_name = "'" + table_name + "'"
         column = column.replace(" ", "_")
-        self.cursor.execute(
-            "ALTER TABLE '{tn}' ADD '{cn}' {ct}".format(tn = table_name,
+        cmd =  "ALTER TABLE '{tn}' ADD '{cn}' {ct}".format(tn = table_name,
                                                         cn = column,
                                                         ct = type)
-        )
+        try:
+            self.cursor.execute(cmd)
+        except:
+            raise IOError("SQL Command Fail: "+cmd)
         print self.cursor.fetchall()
     def saveState(self):
         pass
