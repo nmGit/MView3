@@ -44,7 +44,7 @@ class MPersistentData:
     def saveState(self):
        # traceback.print_stack()
         # print self.persistentDataDict
-        print "Pickling and saving data to file..."
+        #print "Pickling and saving data to file..."
         # print self.persistentDataDict
         pickle.dump(self.persistentDataDict, open(
             os.path.join(self.location, self.name), 'wb'))
@@ -54,7 +54,7 @@ class MPersistentData:
 
         self.persistentDataDict = pickle.load(
             open(os.path.join(self.location, self.name), 'rb'))
-        print "Loading persistent data from %s%s" % (self.location, self.persistentDataDict)
+       # print "Loading persistent data from %s%s" % (self.location, self.persistentDataDict)
     def getDict(self):
         return self.persistentDataDict
     def persistentDataAccess(self, val, *args, **kwargs):
