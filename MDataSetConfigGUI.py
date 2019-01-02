@@ -225,11 +225,13 @@ class DataSetSettings(QtGui.QWidget):
             name = dir[-1]
             print "New log location for", str(device), "is",location
             print "\t Database name is", name
+            print "The full path is ", location + '\\' + name
             device.getFrame().DataLoggingInfo()['name'] = name
             device.getFrame().DataLoggingInfo()['location'] = location
+            device.configureDataLogging()
  #           print "MDataset config thread",int(QThread.currentThreadId())
 #            device.db_params_updated_signal.emit(device.getFrame().DataLoggingInfo()['name'])
-            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + '\\' + name)
+            #device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + '\\' + name)
 
         else:
             dir = QtGui.QFileDialog.getExistingDirectory(self, "Save Data In...",
@@ -245,8 +247,8 @@ class DataSetSettings(QtGui.QWidget):
                     device.getFrame().DataLoggingInfo()['name'] = time.strftime("%Y_%B_%d")
                     device.getFrame().DataLoggingInfo()['location'] = location
                     self.configGui.advancedSettingsWidget.locationLabels[i].setText(location)
-                    device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(
-                        device.getFrame().DataLoggingInfo()['name'])
+                    device.configureDataLogging()
+
         grid.itemAtPosition(row, 1).widget().setText(location + "\\" + name)
         # else:
             # print "DATA_CHEST_ROOT Directory must be a parent directory of datalogging location."
