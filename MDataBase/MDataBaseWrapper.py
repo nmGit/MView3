@@ -77,16 +77,16 @@ class MDataBaseWrapper(QThread):
             if not self.db.save(str(self.device), columns, rows):
                 if not self.db.does_table_exist(str(self.device)):
                     # The first column is the time accurate to milliseconds. Making
-                    # these entries unique enures that there can be no two measurements
+                    # these entries unique ensures that there can be no two measurements
                     # taken at the same time. More importantly, it speeds up indexing.
                     print "Database table not found. Creating one..."
                     column_types = ['REAL UNIQUE']
                     column_types.extend(['REAL','TEXT']*len(columns))
-                    print "column types",column_types
+                    #print "column types",column_types
                     self.db.create_table(columns, column_types, str(self.device))
                 elif self.db.findNonExistentColumn(str(self.device), columns) is not None:
                     col_to_add = self.db.findNonExistentColumn(str(self.device), columns)
-                    print "Adding column to database:", col_to_add
+                    #print "Adding column to database:", col_to_add
                     self.db.addColumn(str(self.device), col_to_add, 'REAL')
             t2 = time.time()
            # print self.device, "time to save:", t2 - t1
