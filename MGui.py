@@ -181,8 +181,6 @@ class MGui(QtGui.QMainWindow):
     def stop(self):
         '''Stop MView.'''
         print "Shutting down MView."
-
-        # print "all devices:", web.devices
         try:
             web.alert_data.save()
         except:
