@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore
 from MWeb import web
-import MGrapher
+from MGrapher.MGrapher3 import MGrapher
 from MReadout import MReadout
 import math
 from functools import partial
@@ -120,7 +120,7 @@ class MDeviceContainerWidget(QtGui.QFrame):
         yPos = len(self.nicknames)
         grid.addLayout(self.topHBox, yPos + 1, 0, yPos + 1, 3)
         if device.getFrame().isPlot():
-            self.dc = MGrapher.mGraph(device)
+            self.dc = MGrapher()
             yPos = len(self.nicknames) + 2
             device.getFrame().setPlot(self.dc)
             grid.addWidget(self.dc, yPos, 0, yPos, 3)
@@ -212,7 +212,17 @@ class MDeviceContainerWidget(QtGui.QFrame):
 
             # print "device container: device:", self.device
             t1 = time.time()
-            self.device.getFrame().getPlot().plot(time='default')
+            plot = self.device.getFrame().getPlot()
+            curves = self.device.getFrame().getPlot().get_curves()
+            for y, key in enumerate(self.device.getParameters()):
+               # self.device.set_data(self.device.get_independent_data()[key], self.device.get_dependent_data()[key])
+
+                if(key in curves):
+                    data = self.device.getData(key)
+                    #print "data size:", len(data[0]), len(data[1])
+                    curves[key].set_data(*data)
+                else:
+                    plot.add_curve(key)
             t2 = time.time()
            # print str(self.device), "Time to update device container:", t2 - t1
         if not frame.isError():
