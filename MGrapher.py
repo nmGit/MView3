@@ -35,7 +35,7 @@ import time as tm
 from MCheckableComboBoxes import MCheckableComboBox
 from datetime import datetime
 import warnings
-
+from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore
 
 class mGraph(QtGui.QWidget):
     def __init__(self, device, parent=None, **kwargs):
@@ -229,6 +229,7 @@ class mGraph(QtGui.QWidget):
         self.setupUnits()
 
     def addComboBoxItem(self, name):
+        print "Mgrapher adding combobox item from", threading.currentThread()
         self.lineSelect.addItem(name.replace('_', ' '))
         self.lineSelect.setFont(self.dropdownFont)
 
