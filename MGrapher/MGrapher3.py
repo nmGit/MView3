@@ -130,6 +130,8 @@ class MGrapher(QtGui.QWidget):
                            background:rgb(70, 80, 88)};")
         self.hideButton = QtGui.QPushButton("Hide Plot")
         self.hideButton.clicked.connect(self.__togglePlot)
+        self.hidden = False
+
         self.oneMinButton = QtGui.QPushButton("1 min")
         self.oneMinButton.clicked.connect(
             partial(self.set_data_span,60))
@@ -202,9 +204,10 @@ class MGrapher(QtGui.QWidget):
 
         graph_layout.addWidget(self.buttonFrame)
         self.setLayout(main_layout)
-
+        self.__togglePlot()
         self.set_data_span(60)
         self.track_waveform(True)
+
     def add_curve(self, name):
         '''
         Add a curve to the graph
@@ -239,6 +242,8 @@ class MGrapher(QtGui.QWidget):
         self.autoscaleCheckBox.setChecked(track)
     def get_curves(self):
         return self.curves
+    def visible(self):
+        return not self.hidden
     def set_data_span(self, span):
         '''
         Set the range of data to be displayed. This does not change the window position,
@@ -251,6 +256,9 @@ class MGrapher(QtGui.QWidget):
 
         self.span = span
 
+    def get_time_range(self):
+       # print self.mainPlot.getViewBox().viewRange()
+        return self.mainPlot.getViewBox().viewRange()[0]
 
     def set_data_range(self, start, end, **kwargs):
         '''
@@ -268,6 +276,7 @@ class MGrapher(QtGui.QWidget):
     def set_autorange(self):
         self.linearRegionPlotY.autoRange()
         self.linearRegionPlotX.autoRange()
+        self.mainPlot.enableAutoRange(x=True)
         if(self.autoscaleCheckBox.isChecked()):
             print "autoscale checked"
             self.track_waveform(True)
@@ -278,7 +287,8 @@ class MGrapher(QtGui.QWidget):
     def generate_colors(self):
         for curve in self.curves:
             self.curves[curve].random_color()
-
+    def getWidth(self):
+        return self.width()
     def __range_changed(self):
         # Called when main plot is adjusted
         #print "range changed"
@@ -337,25 +347,39 @@ class MGrapher(QtGui.QWidget):
     def __data_updated(self, curve):
         if (self.track):
             max_time = 0
-            self.mainPlot.enableAutoRange(y=True, x=False)
+            #self.mainPlot.enableAutoRange(y=True, x=False)
+
             for curve in self.curves:
-                curr_time = self.curves[curve].dataBounds(0)[1]
+                curr_time = self.curves[curve].getData()[0][-1]
+
 
                 #print self.curves[curve].dataBounds(0)
                 if (curr_time > max_time):
                     max_time = curr_time
             current_x = max_time
+
+            mins = []
+            maxs = []
+            for curve in self.curves:
+                maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
+                mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
+            maximum = max(maxs)
+            minimum = min(i for i in mins if i is not None)
+
+            #print "Min max", mins, maxs
+            self.mainPlot.setYRange(minimum, maximum)
+            self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
             self.linearRegionPlotY.autoRange()
             self.linearRegionPlotX.autoRange()
         else:
             current_x = self.mainPlot.getViewBox().viewRange()[0][1]
-            self.mainPlot.enableAutoRange(y=False)
+            #self.mainPlot.enableAutoRange(y=False)
 
         if (self.span == None):
-            self.mainPlot.autoRange()
-        elif(self.track):
-            self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
+            self.mainPlot.enableAutoRange(x = True)
+
         self.__range_changed()
+
     def __togglePlot(self):
 
         if not self.hidden:
@@ -366,16 +390,13 @@ class MGrapher(QtGui.QWidget):
             self.twelveHrButton.hide()
             self.threeDayButton.hide()
             self.oneWkButton.hide()
-            self.allButton.hide()
             self.lineSelect.hide()
             self.hideButton.setText("Show Plot")
             self.hidden = True
             self.autoscaleCheckBox.hide()
             self.buttonFrame.hide()
-            self.frame.hide()
+            #self.mainFrame.hide()
         elif self.hidden:
-            if self.device.getFrame().getDataChestWrapper() == None:
-                return
             self.win.show()
             self.oneMinButton.show()
             self.tenMinButton.show()
@@ -383,14 +404,12 @@ class MGrapher(QtGui.QWidget):
             self.twelveHrButton.show()
             self.threeDayButton.show()
             self.oneWkButton.show()
-            self.allButton.show()
-            self.plot(time='default')
             self.lineSelect.show()
             self.hideButton.setText("Hide Plot")
             self.hidden = False
             self.autoscaleCheckBox.show()
             self.buttonFrame.show()
-            self.frame.show()
+            #self.mainFrame.show()
     def __show_curve(self, curve):
         print "Show curve", curve
         curve = str(curve)
