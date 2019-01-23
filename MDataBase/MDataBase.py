@@ -55,7 +55,7 @@ class MDataBase:
             self.writes_since_last_commit += 1
            # print table_name, "writes since commit:", self.writes_since_last_commit
             if(self.writes_since_last_commit >= self.commit_rate):
-                print table_name, "committing!"
+                #print table_name, "committing!"
                 t1_1 = time.time()
                 self.conn.commit()
                 t2_1 = time.time()
