@@ -1,21 +1,23 @@
 from PyQt4 import QtCore, QtGui
 
-from MDataBase.MDataBaseWrapper2 import MDataBaseWrapper2 as dbr
+from MDataBase.MSQLiteDataBaseWrapper import MSQLiteDataBaseWrapper as dbr
 from MGrapher.MGrapher3 import MGrapher
 from MWeb import web
 from pyqtgraph.dockarea import *
+import os
 
-class MDataViewer(QtGui.QMainWindow):
+class MDataViewer(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MDataViewer, self).__init__(parent)
         #root = "C:\Users\Noah\Documents\scripts"
-        root = ""
+        root = "C:\\Users\\Noah\\Documents\\scripts"
         self.setStyle(QtGui.QStyleFactory.create("plastique"))
 
         #self.splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
         self.splitter = QtGui.QSplitter()
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setChildrenCollapsible(False)
+       # self.setCentralWidget(self.splitter)
         #self.main_layout = self.splitter
         #self.setLayout(self.main_layout)
         # self.setStyleSheet(".QFrame{\
@@ -44,16 +46,29 @@ class MDataViewer(QtGui.QMainWindow):
         self.area = DockArea()
         self.splitter.addWidget(self.area)
 
-       # self.main_frame = QtGui.QFrame(self)
+        self.main_layout = QtGui.QVBoxLayout()
+
+        #self.main_frame = QtGui.QFrame(self)
         #self.main_frame.setLayout(self.main_layout)
+        bckgrnd = web.color_scheme["dark"]["4th background"]
+        self.setStyleSheet("QFrame{"
+                           "margin:0px; "
+                           "border:2px solid rgb(0, 0, 0); "
+                           "background-color:rgb(%d,%d,%d)}" % (bckgrnd[0], bckgrnd[1], bckgrnd[2]))
+        self.main_layout.addWidget(self.splitter)
+        self.setLayout(self.main_layout)
         #self.main_frame.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
 
-        self.setCentralWidget(self.splitter)
+#        self.setCentralWidget(self.splitter)
 
 #        self.area.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
         self.colView.setMinimumHeight(0.1*self.size().height())
         self.colView.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
-
+        bckgrnd = web.color_scheme["dark"]["2nd background"]
+        self.colView.setStyleSheet("QFrame{"
+                           "margin:0.4em; "
+                           "border:0.1em solid rgb(0, 0, 0); "
+                           "background-color:rgb(%d,%d,%d)}" % (bckgrnd[0], bckgrnd[1], bckgrnd[2]))
         self.splitter.setStretchFactor(1, 1000)
         self.splitter.setStretchFactor(2, 1)
         self.splitter.setStyleSheet("QSplitter::handle\
@@ -72,12 +87,13 @@ class MDataViewer(QtGui.QMainWindow):
         print "\tSize: %d\n" \
               "\tAbsolute file path: %s bytes" % (file_info.size(), file_path)
         if(self.db):
-            self.db.close()
+            self.db.stop()
             del self.db
-        self.db = dbr(file_path)
-        if not self.db.isOpen():
-            print "\tNot a database"
+        if os.path.isfile(file_path):
+            self.db = dbr(file_path)
+        else:
             return
+
         dock = Dock(file_path, size=(500, 300), closable=True)
         self.area.addDock(dock, 'bottom')
 
@@ -86,8 +102,7 @@ class MDataViewer(QtGui.QMainWindow):
         self.graph.resize(self.size().width(), 0.9*self.size().height())
         self.graph.setStyle(QtGui.QStyleFactory.create("plastique"))
 
-        background_color = web.color_scheme["dark"]["2nd background"]
-        self.setStyleSheet("border-color:rgb(%d,%d,%d);"%(background_color[0],background_color[1], background_color[2]))
+
         dock.addWidget(self.graph)
 
 
@@ -98,11 +113,12 @@ class MDataViewer(QtGui.QMainWindow):
         times = []
         for table in tables:
             columns.append(self.db.getVariables(table))
-            times.append(self.db.query(table, ["capture_time"], "all"))
+            times.append(self.db.submit_query(table, ["capture_time"], "all"))
             for column in columns[-1]:
-                data.append(self.db.query(table,[column],"all"))
+                data.append(self.db.submit_query(table,[column],"all"))
                 curve = self.graph.add_curve(column)
                 curve.set_data(times[-1], data[-1])
+                print "Adding", times[-1], data[-1]
 
 if __name__ == '__main__':
 
