@@ -29,6 +29,8 @@ from MDataBase.MSQLiteDataBaseWrapper import MSQLiteDataBaseWrapper
 from MWeb import web
 import traceback
 import time
+import threading
+import sys
 
 
 class MDevice(QThread):
@@ -118,7 +120,9 @@ class MDevice(QThread):
       by emitting an update signal
    '''
         if self.container != None:
+           # if self.container.readyToUpdate():
             self.updateSignal.emit()
+
 
     def addButton(self, *args):
         pass
@@ -184,6 +188,7 @@ class MDevice(QThread):
             self.device_data_lock.release()
         else:
             raise ValueError("Independent data and dependent data must be the same length")
+        #print self, "size of independent is", sys.getsizeof(self.independent_data), "sizeof dependent is", sys.getsizeof(self.dependent_data)
     def getData(self, key):
         self.device_data_lock.acquire()
         # Create a copy of the data. Otherwise lists are passed as pointers.
@@ -280,14 +285,14 @@ class MDevice(QThread):
         self.datachest.db_done_loading.connect(self.__read_all_data_from_file)
         self.frame.DataLoggingInfo()['chest'] = self.datachest
     def __read_all_data_from_file(self):
-        print "reading all data from file"
+        #print "reading all data from file"
        # print "before:", self.independent_data, self.dependent_data
         indep = self.datachest.submit_query(str(self), ["capture_time"], "all")
         for param in self.getParameters().keys():
             dep = self.datachest.submit_query(str(self), [param], "all")
             self.setData(param, indep, dep)
             #print param, "data size2:", len(self.independent_data[param]), len(self.dependent_data[param])
-        print "after:", self.independent_data, self.dependent_data
+        #print "after:", self.independent_data, self.dependent_data
 
 
     def onBegin(self):
@@ -333,8 +338,8 @@ class MDevice(QThread):
 
         :param readings: Type: list
 
-   '''
-
+       '''
+        pass
         # readings = self.frame.getReadings()
         # print "set readings called"
         # traceback.print_stack()
@@ -455,6 +460,7 @@ class MDevice(QThread):
         There is also a MDevice.Mframe.setRefreshRate()
         function with which the refresh rate can be configured.
         '''
+        #self.currentThread().setPriority(QtCore.QThread.IdlePriority)
         if self.log_enabled == False:
             for p in self.getParameters():
                 self.disableDataLogging(p)
@@ -497,8 +503,37 @@ class MDevice(QThread):
 
             if web.gui != None and web.gui.MAlert != None:
                 web.gui.MAlert.monitorReadings(self)
-
+           # print "Requesting container update from", threading.currentThread()
             self.updateContainer()
+            #
+            #
+            # t1_plot = time.time()
+            # if self.getFrame().isPlot() and self.getFrame().getPlot() != None:
+            #         #self.device.getFrame().getDataSet() != None and\
+            #
+            #     # print "device container: device:", self.device
+            #
+            #     plot = self.getFrame().getPlot()
+            #     curves = self.getFrame().getPlot().get_curves()
+            #     t1_setdata = time.time()
+            #     for y, key in enumerate(self.getParameters()):
+            #        # self.device.set_data(self.device.get_independent_data()[key], self.device.get_dependent_data()[key])
+            #
+            #         if(key in curves):
+            #             data = self.getData(key)
+            #             #print "data size:", len(data[0]), len(data[1])
+            #
+            #             curves[key].set_data(*data)
+            #
+            #         else:
+            #             plot.add_curve(key)
+            #     t2_plot = time.time()
+            #
+            #     print "time to plot:", t2_plot - t1_plot, "from", threading.currentThread()
+            #
+
+
+
             #t2 = time.time()
             #print self, "time to run:", t2 - t1
             if self.keepGoing:
