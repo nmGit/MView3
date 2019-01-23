@@ -20,6 +20,7 @@ class DataSetConfigGUI(QtGui.QDialog):
         atexit.register(self.saveState)
 
         # Save initial state just in case changes are canceled
+
         self.initialStates = []
         for device in web.devices:
             self.initialStates.append(
@@ -30,8 +31,11 @@ class DataSetConfigGUI(QtGui.QDialog):
         self.advancedSettingsWidget = DataSetSettings(self, advanced=True)
         self.simpleSettingsWidget = DataSetSettings(self, advanced=False)
 
+        self.main_scroll_area = QtGui.QScrollArea()
+
         mainTabWidget.addTab(self.simpleSettingsWidget, "Basic")
-        mainTabWidget.addTab(self.advancedSettingsWidget, "Advanced")
+        self.main_scroll_area.setWidget(self.advancedSettingsWidget)
+        mainTabWidget.addTab(self.main_scroll_area, "Advanced")
 
         # Create the main layout for the GUI.
         mainLayout = QtGui.QVBoxLayout()
