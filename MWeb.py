@@ -20,12 +20,9 @@ __version__ = "1.0.1"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-import traceback
-import inspect
-import MPersistentData
+
 import sys
-import NotifierGUI
-#from NotifierGUI import Notifier
+
 sys.dont_write_bytecode = True
 #189, 195, 199
 
@@ -65,5 +62,7 @@ class web:
 
     color_scheme = {"dark": {"black":(0,0,0),
                             "1st background" : (189, 195, 199),
-                             "2nd background" : (89, 95, 99)}
+                             "2nd background" : (89, 95, 99),
+                             "3rd background":(52, 73, 94),
+                             "4th background": (52, 94,73)}
     }
