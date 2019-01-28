@@ -11,7 +11,6 @@ __status__ = "Beta"
 from MDataBase import MDataBase
 
 from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore
-from MWeb import web
 import Queue
 
 class MSQLiteDataBaseWrapper(QThread):
@@ -45,10 +44,17 @@ class MSQLiteDataBaseWrapper(QThread):
 
 
     def getVariables(self, table_name):
-        return self.db.getColumns(str(table_name))[2::2]
+        self.table = table_name
+        self.request_queue.put("variables")
+        resp = self.response_queue.get()
+        return resp
 
     def getUnits(self):
-        cols = self.db.getColumns(str(self.device))[3::2]
+        self.table = table_name
+        self.request_queue.put("units")
+        resp = self.response_queue.get()
+        return resp
+
 
     def openDb(self, log_path):
         self.db = MDataBase(log_path)
@@ -66,11 +72,23 @@ class MSQLiteDataBaseWrapper(QThread):
                 print "processing", request_type
                 self.query_return = self.__query(self.table, self.fields, *self.args)
                 self.response_queue.put(self.query_return)
+            elif(request_type == "tables"):
+                self.query_return = self.db.getTables()
+                self.response_queue.put(self.query_return)
+            elif(request_type == "variables"):
+                self.query_return = self.db.getColumns(str(self.table))[2::2]
+                self.response_queue.put(self.query_return)
+            elif(request_type == "units"):
+                self.query_return = self.db.getColumns(str(self.table))[3::2]
+                self.response_queue.put(self.query_return)
+            elif(request_type == "stop"):
+                return
             self.request_type = None
         self.db.closeDataSet()
 
     def stop(self):
         self.keep_going = False
+        self.request_queue.put("stop")
         self.wait()
 
     def insert(self, table, columns, rows):
@@ -134,9 +152,6 @@ class MSQLiteDataBaseWrapper(QThread):
         self.table = table
         self.fields = fields
         self.args = args
-        self.request_type = "query"
-        #self.request_processed.disconnect()
-        #self.request_processed.connect(callback)
         self.request_queue.put("query")
         resp = self.response_queue.get()
         print "got query response"
@@ -156,14 +171,21 @@ class MSQLiteDataBaseWrapper(QThread):
         Get a list of all tables in the database
         :return: List of tables
         '''
-        return self.db.getTables()
 
+        self.request_queue.put("tables")
+        print "getting tables"
+        resp = self.response_queue.get()
+        print "got tables", resp
+        return resp
     def isOpen(self):
         '''
         Is there a database open
         :return: bool
         '''
-        return self.db.isOpen()
+        if(self.db is not None and self.db.isOpen()):
+            return True
+        else:
+            return False
 
     def configure_data_sets(self):
         pass
