@@ -49,9 +49,11 @@ class MGrapher(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
         self.track = False
         self.processRangeChanged = True
+        self.mousePressed = False
         self.installEventFilter(self)
         # Set the title
         self.title = kwargs.get("title", None)
+        self.liveMode = kwargs.get("live_mode", True)
 
         pg.setConfigOption('background', web.color_scheme["dark"]["1st background"])
         pg.setConfigOption('foreground', web.color_scheme["dark"]["black"])
@@ -65,10 +67,11 @@ class MGrapher(QtGui.QWidget):
 
 
         self.win = pg.GraphicsWindow()
+        #self.win.installEventFilter(self)
 
         self.mainViewBox = pg.ViewBox()
         self.mainViewBox.setMouseMode(self.mainViewBox.RectMode)
-        self.mainViewBox.installEventFilter(self)
+        #self.mainViewBox.installEventFilter(self)
 
         self.mainPlot = self.win.addPlot(title = self.title, axisItems={'bottom' : TimeAxisItem(orientation='bottom')}, viewBox=self.mainViewBox)
         self.mainPlot.addLegend()
@@ -76,6 +79,7 @@ class MGrapher(QtGui.QWidget):
         self.mainPlot.getViewBox().setMouseEnabled(True, True)
         self.mainPlot.sigRangeChanged.connect(self.__range_changed)
         self.mainPlot.scene().sigMouseMoved.connect(self.__mouse_moved)
+        self.mainPlot.scene().installEventFilter(self)
         pg.SignalProxy(self.mainPlot.scene().sigMouseMoved, rateLimit=60, slot=self.__mouse_moved)
 
         #self.mainPlot.setDownsampling(auto=True, mode='peak')
@@ -121,6 +125,8 @@ class MGrapher(QtGui.QWidget):
         self.mainPlot.addItem(self.hLine, ignoreBounds=True)
 
         self.span = None
+        self.last_y_max = 0
+        self.last_y_min = 0
         # add GUI elements
         self.setStyleSheet("QPushButton{\
                            color:rgb(189,195, 199); \
@@ -208,6 +214,7 @@ class MGrapher(QtGui.QWidget):
         self.set_data_span(60)
         self.track_waveform(True)
 
+
     def add_curve(self, name):
         '''
         Add a curve to the graph
@@ -289,6 +296,15 @@ class MGrapher(QtGui.QWidget):
             self.curves[curve].random_color()
     def getWidth(self):
         return self.width()
+
+    def show_plot(self):
+        if self.hidden:
+            self.__togglePlot()
+
+    def hide_plot(self):
+        if not self.hidden:
+            self.__togglePlot()
+
     def __range_changed(self):
         # Called when main plot is adjusted
         #print "range changed"
@@ -300,6 +316,9 @@ class MGrapher(QtGui.QWidget):
         self.__update_regionY()
 
         t2 = tm.time()
+
+
+
         self.processRangeChanged = True
         #print "Time to update:", t2-t1
         pass
@@ -345,32 +364,39 @@ class MGrapher(QtGui.QWidget):
         #self.linearRegionPlotX.setXRange(xregion[0]-spread ** 2 * 0.66,xregion[1]+spread**2 * 0.66, padding=0)
 
     def __data_updated(self, curve):
-        if (self.track):
-            max_time = 0
-            #self.mainPlot.enableAutoRange(y=True, x=False)
 
-            for curve in self.curves:
-                curr_time = self.curves[curve].getData()[0][-1]
+        max_time = 0
+        #self.mainPlot.enableAutoRange(y=True, x=False)
+
+        for curve in self.curves:
+            curr_time = self.curves[curve].getData()[0][-1]
 
 
-                #print self.curves[curve].dataBounds(0)
-                if (curr_time > max_time):
-                    max_time = curr_time
-            current_x = max_time
+            #print self.curves[curve].dataBounds(0)
+            if (curr_time > max_time):
+                max_time = curr_time
+        current_x = max_time
 
-            mins = []
-            maxs = []
-            for curve in self.curves:
-                maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
-                mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
-            maximum = max(maxs)
+        mins = []
+        maxs = []
+        for curve in self.curves:
+            maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
+            mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
+        print [current_x - self.span, current_x],"mins", mins, "maxs", maxs
+
+        # if the window has moved out of bounds of original data bounds, then None is returned and we do not want to
+        # rescale
+        # TODO Can't tell if the above is a bug or not
+        if maxs[0] != None:
+            maximum = max(i for i in maxs if i is not None)
             minimum = min(i for i in mins if i is not None)
 
-            #print "Min max", mins, maxs
-            self.mainPlot.setYRange(minimum, maximum)
-            self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
-            self.linearRegionPlotY.autoRange()
-            self.linearRegionPlotX.autoRange()
+            if (self.track):
+                #print "Min max", mins, maxs
+                self.mainPlot.setYRange(minimum, maximum)
+                self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
+                self.linearRegionPlotY.autoRange()
+                self.linearRegionPlotX.autoRange()
         else:
             current_x = self.mainPlot.getViewBox().viewRange()[0][1]
             #self.mainPlot.enableAutoRange(y=False)
@@ -378,7 +404,6 @@ class MGrapher(QtGui.QWidget):
         if (self.span == None):
             self.mainPlot.enableAutoRange(x = True)
 
-        self.__range_changed()
 
     def __togglePlot(self):
 
@@ -430,16 +455,39 @@ class MGrapher(QtGui.QWidget):
 
 
         pass
-    def mousePressEvent(self, QMouseEvent):
+    def __mainPlot_mousePressEvent(self):
+        print "win mouse pressed"
+        self.mousePressed = True
         if(self.mainViewBox):
             self.track_waveform(False)
+
+    def __mainPlot_mouseReleaseEvent(self):
+        # Need curves to refresh themselves when range changes if there is no periodic update occurring.
+        # Periodic updates occur in a real-time data viewing context
+        # It is safe to assume that any time a mouse release event fires, the user has been interacting with
+        # the plot and it should be refreshed
+        print "win mouse released"
+        self.mousePressed = False
+        if not self.liveMode:
+            for curve in self.curves.keys():
+                self.curves[curve].refresh()
+
     def eventFilter(self, receiver, event):
         '''Filter out scroll events so that only pyqtgraph catches them'''
+       # print "Event:", event, "on", object
         if(event.type() == QtCore.QEvent.Wheel):
             # print "scroll detected"
             return True
-        else:
+        elif(event.type() == QtCore.QEvent.GraphicsSceneMousePress):
+            print "Graphics scene mouse Press"
+            self.__mainPlot_mousePressEvent()
+            return False
+        elif(event.type() == QtCore.QEvent.GraphicsSceneMouseRelease):
+            print "Graphics scene mouse Release"
+            self.__mainPlot_mouseReleaseEvent()
             # print "scroll not detected"
+            return False
+        else:
             return False
 class TimeAxisItem(pg.AxisItem):
     def __init__(self, *args, **kwargs):
