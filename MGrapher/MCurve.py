@@ -30,6 +30,9 @@ class MCurve(QObject):
         self.linear_selector_curve_x.setPen(pen)
         self.linear_selector_curve_y.setPen(pen)
 
+    def refresh(self):
+        self.set_data(self.independent, self.dependent)
+
     def set_data(self, independent, dependent):
         '''
         Set the independent and dependent variables.
