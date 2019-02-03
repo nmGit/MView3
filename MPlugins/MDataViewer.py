@@ -97,7 +97,8 @@ class MDataViewer(QtGui.QWidget):
         dock = Dock(file_path, size=(500, 300), closable=True)
         self.area.addDock(dock, 'bottom')
 
-        self.graph = MGrapher(self)
+        self.graph = MGrapher(self, live_mode=False)
+        self.graph.show_plot()
         self.graph.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         self.graph.resize(self.size().width(), 0.9*self.size().height())
         self.graph.setStyle(QtGui.QStyleFactory.create("plastique"))
@@ -107,7 +108,7 @@ class MDataViewer(QtGui.QWidget):
 
 
         tables = self.db.getTables()
-        print tables
+        print "Tables are:", tables
         data = []
         columns = []
         times = []
@@ -118,7 +119,7 @@ class MDataViewer(QtGui.QWidget):
                 data.append(self.db.submit_query(table,[column],"all"))
                 curve = self.graph.add_curve(column)
                 curve.set_data(times[-1], data[-1])
-                print "Adding", times[-1], data[-1]
+                #print "Adding", times[-1], data[-1]
 
 if __name__ == '__main__':
 
