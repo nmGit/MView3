@@ -24,12 +24,14 @@ import cPickle as pickle
 import traceback
 import os
 import sys
+import pprint
 sys.dont_write_bytecode = True
 
 
 class MPersistentData:
 
     persistentDataDict = {}
+    pp = pprint.PrettyPrinter(indent = 1)
 
     def __init__(self,name):
 
@@ -54,7 +56,8 @@ class MPersistentData:
 
         self.persistentDataDict = pickle.load(
             open(os.path.join(self.location, self.name), 'rb'))
-       # print "Loading persistent data from %s%s" % (self.location, self.persistentDataDict)
+        print "Loading persistent data from %s" % self.location
+        self.pp.pprint(self.persistentDataDict)
     def getDict(self):
         return self.persistentDataDict
     def persistentDataAccess(self, val, *args, **kwargs):
