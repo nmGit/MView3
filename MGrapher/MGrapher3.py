@@ -279,18 +279,35 @@ class MGrapher(QtGui.QWidget):
         '''
         autorange = kwargs.get("autorange", True)
         self.mainPlot.setXRange(start, end, padding=0)
+    def get_absolute_data_range_x(self):
+        mins = []
+        maxs = []
+
+        for curve in self.curves:
+            maxs.append(self.curves[curve].getData()[0][-1])
+            mins.append(self.curves[curve].getData()[0][0])
+
+        print "absolute min", min(mins), "max", max(maxs)
+        return [min(mins), max(maxs)]
 
     def set_autorange(self):
         self.linearRegionPlotY.autoRange()
         self.linearRegionPlotX.autoRange()
-        self.mainPlot.enableAutoRange(x=True)
+        #self.mainPlot.enableAutoRange(x=True)
+
         if(self.autoscaleCheckBox.isChecked()):
             print "autoscale checked"
             self.track_waveform(True)
+
+            self.mainPlot.setXRange(*self.get_absolute_data_range_x())
+            self.mainPlot.enableAutoRange(x=True)
+
         else:
             print "autoscale unchecked"
             self.track_waveform(False)
+            self.mainPlot.enableAutoRange(x=False)
 
+        self.__redraw_curves()
     def generate_colors(self):
         for curve in self.curves:
             self.curves[curve].random_color()
@@ -379,10 +396,12 @@ class MGrapher(QtGui.QWidget):
 
         mins = []
         maxs = []
+
+
         for curve in self.curves:
             maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
             mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
-        print [current_x - self.span, current_x],"mins", mins, "maxs", maxs
+        #print [current_x - self.span, current_x],"mins", mins, "maxs", maxs
 
         # if the window has moved out of bounds of original data bounds, then None is returned and we do not want to
         # rescale
@@ -468,15 +487,21 @@ class MGrapher(QtGui.QWidget):
         # the plot and it should be refreshed
         print "win mouse released"
         self.mousePressed = False
+        self.__redraw_curves()
+
+    def __redraw_curves(self):
         if not self.liveMode:
             for curve in self.curves.keys():
                 self.curves[curve].refresh()
-
+    paints = 0
+    def paintEvent(self, QPaintEvent):
+        self.paints += 1
+        print ("Graph paint event number %d!" % self.paints)
     def eventFilter(self, receiver, event):
         '''Filter out scroll events so that only pyqtgraph catches them'''
        # print "Event:", event, "on", object
         if(event.type() == QtCore.QEvent.Wheel):
-            # print "scroll detected"
+            print "scroll detected"
             return True
         elif(event.type() == QtCore.QEvent.GraphicsSceneMousePress):
             print "Graphics scene mouse Press"
