@@ -12,6 +12,8 @@ from MDataBase import MDataBase
 
 from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore
 import Queue
+from datetime import datetime
+import time
 
 class MSQLiteDataBaseWrapper(QThread):
     db_request_sem = QSemaphore(1)
@@ -58,14 +60,21 @@ class MSQLiteDataBaseWrapper(QThread):
 
     def openDb(self, log_path):
         self.db = MDataBase(log_path)
+
+
+
     def run(self):
         print "Starting SQLite thread:", self.log_path
         self.openDb(self.log_path)
         self.db_done_loading.emit()
+        last_request_time = time.time()
         while(self.keep_going):
 
             request_type = self.request_queue.get()
 
+            #print datetime.utcfromtimestamp(float(time.time())).strftime("%x %X"), ": received %s request" %request_type
+            #print "\t Last request was %f seconds ago" % (time.time()-last_request_time)
+            last_request_time = time.time()
             if(request_type == "insert"):
                 self.__sql_insert(self.table, self.columns, self.rows)
             elif(request_type == "query"):
@@ -82,7 +91,7 @@ class MSQLiteDataBaseWrapper(QThread):
                 self.query_return = self.db.getColumns(str(self.table))[3::2]
                 self.response_queue.put(self.query_return)
             elif(request_type == "stop"):
-                return
+                break
             self.request_type = None
         self.db.closeDataSet()
 
