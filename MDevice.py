@@ -30,6 +30,8 @@ from MWeb import web
 import traceback
 import time
 import threading
+import csv
+import os
 import sys
 
 
@@ -49,6 +51,7 @@ class MDevice(QThread):
     updateSignal = pyqtSignal()
     addParameterSignal = pyqtSignal(str)
     device_data_lock = QSemaphore(1)
+    loading_data_lock = QSemaphore(1)
     lock = threading.Lock()
 
 
@@ -150,22 +153,49 @@ class MDevice(QThread):
         self.units.append(units)
     def setData(self, key, indep, dep):
         if (key not in self.independent_data.keys()):
+            self.device_data_lock.acquire()
+
             self.independent_data[key] = []
             self.dependent_data[key] = []
-        if (type(indep) is list):
+            self.device_data_lock.release()
+
+        if (type(indep) is list and type(dep) is list):
+
             indep_copy = [x for x in indep]
-            if (type(dep) is list and len(dep) == len(indep_copy)):
-                dep_copy = [x for x in dep]
+            dep_copy = [x for x in dep]
+            indep_copy_len = len(indep_copy)
+            dep_copy_len = len(dep_copy)
+            if (dep_copy_len == indep_copy_len):
+
                 # Ok to add
                 self.device_data_lock.acquire()
+
                 self.independent_data[key]= indep_copy
                 self.dependent_data[key] = dep_copy
                 self.device_data_lock.release()
+
             else:
-                raise ValueError("Independent data and dependent data must be the same length")
+                traceback.print_exc()
+                self.location = os.path.dirname(traceback.extract_stack()[0][0])
+
+                with open(self.location+'\\misaligned.csv', 'wb') as csvfile:
+                    filewriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                    maxrows = max(len(indep_copy), len(dep_copy))
+                    # the extra row will display error
+
+                    indep_copy.append("ERROR!")
+                    dep_copy.append("ERROR!")
+                    for row in range(maxrows):
+                        filewriter.writerow([indep_copy[row], dep_copy[row]])
+                raise ValueError("Independent data and dependent data must be the same length, independent length: %d,"
+                                 " dependent length, %d. saved error csv in %s"  %(indep_copy_len, dep_copy_len, self.location))
+
         elif (type(dep) != list):
+            print "Error dependent is not a list:",dep
+            traceback.print_exc()
             raise ValueError("Independent data and dependent data must be lists")
     def addData(self, key, indep, dep):
+        #self.device_data_lock.acquire()
         if (key not in self.independent_data.keys()):
             self.independent_data[key] = []
             self.dependent_data[key] = []
@@ -178,6 +208,7 @@ class MDevice(QThread):
                 self.independent_data[key].extend(indep_copy)
                 self.dependent_data[key].extend(dep_copy)
                 self.device_data_lock.release()
+
             else:
                 raise ValueError("Independent data and dependent data must be the same length")
         elif(type(dep) != list):
@@ -259,7 +290,7 @@ class MDevice(QThread):
         #self.callQuery()
 
     def configureDataLogging(self):
-
+        self.loading_data_lock.acquire()
         self.frame.DataLoggingInfo()[
             'lock_logging_settings'] = self.lockLoggingSettings
         if self.defaultLogLocation != None:
@@ -276,6 +307,8 @@ class MDevice(QThread):
         if location == None or filename == None:
             self.log(False)
             print self, "Could not initialize logging"
+            self.loading_data_lock.release()
+
             return
         if(self.datachest):
             self.datachest.stop()
@@ -283,14 +316,19 @@ class MDevice(QThread):
         print "Configuring logging for", self, "at", location+'\\'+filename
         self.datachest = MSQLiteDataBaseWrapper(location+'\\'+filename)
         self.datachest.db_done_loading.connect(self.__read_all_data_from_file)
+
         self.frame.DataLoggingInfo()['chest'] = self.datachest
+
     def __read_all_data_from_file(self):
         #print "reading all data from file"
        # print "before:", self.independent_data, self.dependent_data
         indep = self.datachest.submit_query(str(self), ["capture_time"], "all")
         for param in self.getParameters().keys():
             dep = self.datachest.submit_query(str(self), [param], "all")
-            self.setData(param, indep, dep)
+            if(indep != None and dep != None):
+                self.setData(param, indep, dep)
+
+        self.loading_data_lock.release()
             #print param, "data size2:", len(self.independent_data[param]), len(self.dependent_data[param])
         #print "after:", self.independent_data, self.dependent_data
 
@@ -467,6 +505,8 @@ class MDevice(QThread):
         else:
             if (self.frame.getDataChestWrapper() == None):
                 self.configureDataLogging()
+                self.loading_data_lock.acquire()
+                self.loading_data_lock.release()
         while True:
             #t1 = time.time()
             self.query()
@@ -491,10 +531,11 @@ class MDevice(QThread):
                         columns = ["capture_time"]
                         rows = [tm]
                         for param in self.getParameters().keys():
-                            columns.append(param)
-                            columns.append("unit_"+param)
-                            rows.append(self.getReading(param))
-                            rows.append(self.getUnit(param))
+                            if(self.isDataLoggingEnabled(param)):
+                                columns.append(param)
+                                columns.append("unit_"+param)
+                                rows.append(self.getReading(param))
+                                rows.append(self.getUnit(param))
                         if(self.datachest.isRunning()):
                             self.datachest.insert(str(self), columns, rows)
 
