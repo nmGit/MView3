@@ -11,6 +11,7 @@ import sqlite3
 from datetime import date
 import time
 import traceback
+import numpy as np
 
 class MDataBase:
     def __init__(self, db_path):
@@ -137,7 +138,8 @@ class MDataBase:
                     cmd
                 )
                 data = self.cursor.fetchall()
-                return [d[0] for d in data]
+                #print data
+                return [d[0] if d[0] != None else np.nan for d in data]
 
             elif args[0] == "range":
                 if type(field) is not list and field != '*':
