@@ -259,8 +259,6 @@ class MGrapher(QtGui.QWidget):
         :return: Nothing
         '''
 
-
-
         self.span = span
 
     def get_time_range(self):
@@ -279,6 +277,7 @@ class MGrapher(QtGui.QWidget):
         '''
         autorange = kwargs.get("autorange", True)
         self.mainPlot.setXRange(start, end, padding=0)
+
     def get_absolute_data_range_x(self):
         mins = []
         maxs = []
@@ -287,7 +286,7 @@ class MGrapher(QtGui.QWidget):
             maxs.append(self.curves[curve].getData()[0][-1])
             mins.append(self.curves[curve].getData()[0][0])
 
-        print "absolute min", min(mins), "max", max(maxs)
+       # print "absolute min", min(mins), "max", max(maxs)
         return [min(mins), max(maxs)]
 
     def set_autorange(self):
@@ -308,9 +307,11 @@ class MGrapher(QtGui.QWidget):
             self.mainPlot.enableAutoRange(x=False)
 
         self.__redraw_curves()
+
     def generate_colors(self):
         for curve in self.curves:
             self.curves[curve].random_color()
+
     def getWidth(self):
         return self.width()
 
@@ -382,43 +383,26 @@ class MGrapher(QtGui.QWidget):
 
     def __data_updated(self, curve):
 
-        max_time = 0
-        #self.mainPlot.enableAutoRange(y=True, x=False)
-
-        for curve in self.curves:
-            curr_time = self.curves[curve].getData()[0][-1]
-
-
-            #print self.curves[curve].dataBounds(0)
-            if (curr_time > max_time):
-                max_time = curr_time
-        current_x = max_time
-
+        current_x = tm.time()
         mins = []
         maxs = []
 
-
-        for curve in self.curves:
-            maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
-            mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
-        #print [current_x - self.span, current_x],"mins", mins, "maxs", maxs
-
-        # if the window has moved out of bounds of original data bounds, then None is returned and we do not want to
-        # rescale
-        # TODO Can't tell if the above is a bug or not
-        if maxs[0] != None:
+        #print "minumum:", minimum, "maximum:", maximum
+        if (self.track):
+            #print "Min max", mins, maxs
+            # Zoom so that the x axis is in the right range. This will also load the curve data into memory.
+            self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
+            # Once the x range is correct, we can find the Y range given the data on the plot.
+            for curve in self.curves:
+                maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
+                mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
             maximum = max(i for i in maxs if i is not None)
             minimum = min(i for i in mins if i is not None)
-
-            if (self.track):
-                #print "Min max", mins, maxs
-                self.mainPlot.setYRange(minimum, maximum)
-                self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
-                self.linearRegionPlotY.autoRange()
-                self.linearRegionPlotX.autoRange()
-        else:
-            current_x = self.mainPlot.getViewBox().viewRange()[0][1]
-            #self.mainPlot.enableAutoRange(y=False)
+            # Set the y range
+            self.mainPlot.setYRange(minimum, maximum)
+            # Set the linear region plots to autorage
+            self.linearRegionPlotY.autoRange()
+            self.linearRegionPlotX.autoRange()
 
         if (self.span == None):
             self.mainPlot.enableAutoRange(x = True)
@@ -496,7 +480,7 @@ class MGrapher(QtGui.QWidget):
     paints = 0
     def paintEvent(self, QPaintEvent):
         self.paints += 1
-        print ("Graph paint event number %d!" % self.paints)
+        #print ("Graph paint event number %d!" % self.paints)
     def eventFilter(self, receiver, event):
         '''Filter out scroll events so that only pyqtgraph catches them'''
        # print "Event:", event, "on", object
