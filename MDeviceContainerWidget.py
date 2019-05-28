@@ -237,7 +237,7 @@ class MDeviceContainerWidget(QtGui.QFrame):
     def update(self):
         #QThread.currentThread().setPriority(QtCore.QThread.LowestPriority)
         #self.done_updating_semaphore.acquire()
-        print "updating container from",threading.currentThread()
+        #print "updating container from",threading.currentThread()
         if( not isinstance(threading.current_thread(), threading._MainThread)):
             print "ERROR"
             traceback.print_exc()
