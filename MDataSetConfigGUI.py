@@ -20,6 +20,7 @@ class DataSetConfigGUI(QtGui.QDialog):
         atexit.register(self.saveState)
 
         # Save initial state just in case changes are canceled
+
         self.initialStates = []
         for device in web.devices:
             self.initialStates.append(
@@ -30,8 +31,11 @@ class DataSetConfigGUI(QtGui.QDialog):
         self.advancedSettingsWidget = DataSetSettings(self, advanced=True)
         self.simpleSettingsWidget = DataSetSettings(self, advanced=False)
 
+        self.main_scroll_area = QtGui.QScrollArea()
+
         mainTabWidget.addTab(self.simpleSettingsWidget, "Basic")
-        mainTabWidget.addTab(self.advancedSettingsWidget, "Advanced")
+        self.main_scroll_area.setWidget(self.advancedSettingsWidget)
+        mainTabWidget.addTab(self.main_scroll_area, "Advanced")
 
         # Create the main layout for the GUI.
         mainLayout = QtGui.QVBoxLayout()
@@ -181,14 +185,14 @@ class DataSetSettings(QtGui.QWidget):
                 currentLoc = device.getFrame().DataLoggingInfo()['location']
                 print "currentLoc:", currentLoc
                 newLoc = currentLoc.split('\\')
-                print "newLocation3:", newLoc
+               # print "newLocation3:", newLoc
                 # If the folder we are in is in the format 'MM_DD_YY', then
                 # Assume MView created it and we should back out and create a
                 # new folder.
                 r = re.compile('.{2}_.{2}_.{2}')
                 if r.match(newLoc[-1]):
                     newLoc = newLoc[:-1:]
-                print "newLocation2:", newLoc
+                #print "newLocation2:", newLoc
                 newLoc.append(newFolder)
                 print "newLocation:", newLoc
                 newLoc = "\\".join([str(dir) for dir in newLoc])
@@ -225,11 +229,13 @@ class DataSetSettings(QtGui.QWidget):
             name = dir[-1]
             print "New log location for", str(device), "is",location
             print "\t Database name is", name
+            print "The full path is ", location + '\\' + name
             device.getFrame().DataLoggingInfo()['name'] = name
             device.getFrame().DataLoggingInfo()['location'] = location
+            device.configureDataLogging()
  #           print "MDataset config thread",int(QThread.currentThreadId())
 #            device.db_params_updated_signal.emit(device.getFrame().DataLoggingInfo()['name'])
-            device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + '\\' + name)
+            #device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(location + '\\' + name)
 
         else:
             dir = QtGui.QFileDialog.getExistingDirectory(self, "Save Data In...",
@@ -245,8 +251,8 @@ class DataSetSettings(QtGui.QWidget):
                     device.getFrame().DataLoggingInfo()['name'] = time.strftime("%Y_%B_%d")
                     device.getFrame().DataLoggingInfo()['location'] = location
                     self.configGui.advancedSettingsWidget.locationLabels[i].setText(location)
-                    device.getFrame().DataLoggingInfo()['chest'].db_params_updated_signal.emit(
-                        device.getFrame().DataLoggingInfo()['name'])
+                    device.configureDataLogging()
+
         grid.itemAtPosition(row, 1).widget().setText(location + "\\" + name)
         # else:
             # print "DATA_CHEST_ROOT Directory must be a parent directory of datalogging location."

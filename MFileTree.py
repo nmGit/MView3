@@ -52,7 +52,7 @@ class MFileTree(QtGui.QTreeView):
     def fileSelected(self):
         index = self.selectedIndexes()[0]
         crawler = index.model().itemFromIndex(index)
-        print "Selected item:", crawler
+        #print "Selected item:", crawler
         self.callback(crawler)
 
     def setCallback(self, callback):

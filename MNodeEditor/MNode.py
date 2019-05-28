@@ -98,7 +98,7 @@ class MNode(QObject):
                              type=type, data=suggestedData)  # adds itself
         anchor.propagateData(propagate)
         self.anchors.append(anchor)
-        print "adding anchor: ", anchor.param, anchor.type
+        #print "adding anchor: ", anchor.param, anchor.type
         self.MNodeAnchorAddedSignal.emit(str(anchor.param), str(anchor.type))
         self.anchorAdded(anchor, **kwargs)
 

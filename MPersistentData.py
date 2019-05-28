@@ -24,15 +24,17 @@ import cPickle as pickle
 import traceback
 import os
 import sys
+import pprint
 sys.dont_write_bytecode = True
 
 
 class MPersistentData:
 
     persistentDataDict = {}
+    pp = pprint.PrettyPrinter(indent = 1)
 
     def __init__(self,name):
-        # print "Loading persistent data..."
+
         self.location = os.path.dirname(traceback.extract_stack()[0][0])
 
         self.name = str(name)+'_mview.config'
@@ -44,7 +46,7 @@ class MPersistentData:
     def saveState(self):
        # traceback.print_stack()
         # print self.persistentDataDict
-        print "Pickling and saving data to file..."
+        #print "Pickling and saving data to file..."
         # print self.persistentDataDict
         pickle.dump(self.persistentDataDict, open(
             os.path.join(self.location, self.name), 'wb'))
@@ -54,8 +56,10 @@ class MPersistentData:
 
         self.persistentDataDict = pickle.load(
             open(os.path.join(self.location, self.name), 'rb'))
-        # print self.persistentDataDict
-
+        print "Loading persistent data from %s" % self.location
+        self.pp.pprint(self.persistentDataDict)
+    def getDict(self):
+        return self.persistentDataDict
     def persistentDataAccess(self, val, *args, **kwargs):
         # print "h1"
         # traceback.print_exc()

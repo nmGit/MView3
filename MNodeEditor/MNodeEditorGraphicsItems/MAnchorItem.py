@@ -30,7 +30,7 @@ from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 class MAnchorItem(QtGui.QFrame):
     def __init__(self, graphicsNode, anchor, parent=None, *args, **kwargs):
         QtGui.QFrame.__init__(self, parent)
-        print "Adding anchor"
+        #print "Adding anchor"
 
         self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding,QtGui.QSizePolicy.MinimumExpanding)
 

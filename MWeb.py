@@ -20,10 +20,9 @@ __version__ = "1.0.1"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-import traceback
-import inspect
-import MPersistentData
+
 import sys
+
 sys.dont_write_bytecode = True
 #189, 195, 199
 
@@ -54,3 +53,16 @@ class web:
     nodeFilenames = []
     nodes = []
     persistentData = None
+
+    notifier_email_address = None
+    notifier_email_pwd = None
+    alert_data = None
+
+    malert = None
+
+    color_scheme = {"dark": {"black":(0,0,0),
+                            "1st background" : (189, 195, 199),
+                             "2nd background" : (89, 95, 99),
+                             "3rd background":(52, 73, 94),
+                             "4th background": (52, 94,73)}
+    }
