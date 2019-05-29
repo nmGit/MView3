@@ -5,6 +5,7 @@ class MDummyDevice(MDevice):
     def __init__(self, *args, **kwargs):
         super(MDummyDevice, self).__init__(*args, **kwargs)
         self.name = args[0]
+        self.last = 0.0
         print "Initialize dummy device"
         self.input_params = []
 
@@ -24,5 +25,8 @@ class MDummyDevice(MDevice):
 
         for param in self.input_params:
             #print self.getReading(param)
-
-            self.setReading(param, self.getReading(param)+random.randint(-10,10))
+            if random.randint(0,9) > 7:
+                self.setReading(param, None)
+            else:
+                self.last = self.last + random.randint(-10,10) + float(random.randint(-10,10))/10.0
+                self.setReading(param, self.last)

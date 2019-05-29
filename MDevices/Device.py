@@ -339,8 +339,9 @@ class Device(MDevice):
                                 # precisions.append(self.settingPrecisions[i])
                     else:
                         try:
-                            self.setReading(name, reading)
-                            self.setUnit(name, "")
+                            if(reading != None):
+                                self.setReading(name, reading)
+                                self.setUnit(name, "")
                             # precisions.append(self.precisions[i])
                         except:
                             print("Problem with readings, type '%s' "

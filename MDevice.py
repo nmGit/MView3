@@ -415,7 +415,8 @@ class MDevice(QThread):
         self.frame.disableRange()
 
     def setReading(self, parameter, reading):
-        self.frame.setReading(parameter, reading)
+        if reading != None:
+            self.frame.setReading(parameter, reading)
 
     def setMailingLists(self, lists):
         self.notifier_mailing_lists = lists
