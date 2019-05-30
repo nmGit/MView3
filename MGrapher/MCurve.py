@@ -53,6 +53,8 @@ class MCurve(QObject):
         :param dependent: Dependent vector
         :return:
         '''
+        
+        dependent = [reading if reading != None else np.nan for reading in dependent]
         if (not isinstance(threading.current_thread(), threading._MainThread)):
             print "ERROR"
             traceback.print_exc()
