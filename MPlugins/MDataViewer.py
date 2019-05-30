@@ -10,7 +10,7 @@ class MDataViewer(QtGui.QWidget):
     def __init__(self, parent=None, **kwargs):
         super(MDataViewer, self).__init__(parent)
         #root = "C:\Users\Noah\Documents\scripts"
-        root = "C:\\Users\\Noah\\Documents\\scripts"
+        root = ""
         self.setStyle(QtGui.QStyleFactory.create("plastique"))
         self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         #self.splitter = QtGui.QSplitter(QtCore.Qt.Vertical)
