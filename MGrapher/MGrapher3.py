@@ -59,6 +59,7 @@ class MGrapher(QtGui.QWidget):
         pg.setConfigOption('foreground', web.color_scheme["dark"]["black"])
 
 
+        self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.MinimumExpanding)
 
         self.mainFrame = QtGui.QFrame()
         self.mainFrame.setStyleSheet("background-color:rgb(100,10,10)")

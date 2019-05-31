@@ -30,13 +30,17 @@ class MDataViewer(QtGui.QWidget):
         self.model.setRootPath(root)
         self.model.setFilter(QtCore.QDir.AllEntries | QtCore.QDir.NoDotAndDotDot)
         self.colView = QtGui.QColumnView()
-        self.colView.setResizeGripsVisible(False)
+        #self.colView.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+
+        self.colView.setResizeGripsVisible(True)
 
         self.colView.setModel(self.model)
         self.colView.setRootIndex(self.model.index(root))
         self.colView.clicked.connect(self.item_selected)
-        #self.colView.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         self.splitter.addWidget(self.colView)
+       
+        self.colView.setMaximumHeight(self.colView.height())
+        #self.colView.resize(1000,1000)
         #self.splitter.setStretchFactor(0,1)
         self.setWindowTitle("Data Viewer")
         
@@ -44,9 +48,9 @@ class MDataViewer(QtGui.QWidget):
         self.db = None
 
         self.area = DockArea()
-        self.area.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
+        #self.area.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
         self.splitter.addWidget(self.area)
-        self.splitter.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        #self.splitter.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         self.main_layout = QtGui.QVBoxLayout()
 
         #self.main_frame = QtGui.QFrame(self)
@@ -63,15 +67,15 @@ class MDataViewer(QtGui.QWidget):
 #        self.setCentralWidget(self.splitter)
 
      
-        self.colView.setMinimumHeight(0.1*self.size().height())
-        self.colView.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        #self.colView.setMinimumHeight(0.1*self.size().height())
+        #self.colView.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         bckgrnd = web.color_scheme["dark"]["2nd background"]
         self.colView.setStyleSheet("QFrame{"
                            "margin:0.4em; "
                            "border:0.1em solid rgb(0, 0, 0); "
                            "background-color:rgb(%d,%d,%d)}" % (bckgrnd[0], bckgrnd[1], bckgrnd[2]))
-        #self.splitter.setStretchFactor(1, 2)
-        #self.splitter.setStretchFactor(2, 1)
+        self.splitter.setStretchFactor(0, 2)
+        self.splitter.setStretchFactor(1, 1)
         self.splitter.setStyleSheet("QSplitter::handle\
         {\
             border: 0.2em dotted rgb(150, 150, 180);\
@@ -80,9 +84,9 @@ class MDataViewer(QtGui.QWidget):
       #  self.resize(500, 500)
        # self.area.resize(500,500)
        # self.splitter.resize(500,500)
-        max_height = kwargs.get("max_height",None)
-        if max_height != None:
-            self.setMaximumHeight(max_height)
+        #max_height = kwargs.get("max_height",None)
+        #if max_height != None:
+        #    self.setMaximumHeight(max_height)
 
     def item_selected(self, index):
 
@@ -93,9 +97,12 @@ class MDataViewer(QtGui.QWidget):
               "\tAbsolute file path: %s bytes" % (file_info.size(), file_path)
         if(self.db):
             self.db.stop()
-            del self.db
+            #del self.db
         if os.path.isfile(file_path):
-            self.db = dbr(file_path)
+            try:
+                self.db = dbr(file_path)
+            except:
+                print("Failed to open file %s" % file_path)
         else:
             return
 
@@ -113,11 +120,12 @@ class MDataViewer(QtGui.QWidget):
         
         dock.addWidget(self.graph)
         #self.graph.resi
-        #self.graph.resize(self.graph.width(), self.graph.width())
-        #dock.setSizePolicy( QtGui.QSizePolicy.Maximum,  QtGui.QSizePolicy.Maximum)
+        #self.graph.resize(500, 500)
+        self.graph.setSizePolicy( QtGui.QSizePolicy.Preferred,  QtGui.QSizePolicy.Preferred)
         #dock.setStretch(self.graph.width(), self.graph.width())
         #dock.resize(500,300)
         self.area.addDock(dock, 'bottom')
+        #self.area.setSizePolicy( QtGui.QSizePolicy.Maximum,  QtGui.QSizePolicy.Maximum)
         tables = self.db.getTables()
         print "Tables are:", tables
         data = []

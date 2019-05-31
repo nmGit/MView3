@@ -48,51 +48,63 @@ class MSQLiteDataBaseWrapper(QThread):
     def getVariables(self, table_name):
         self.table = table_name
         self.request_queue.put("variables")
-        resp = self.response_queue.get()
+        # Block with timeout of 1 second
+        resp = self.response_queue.get(True, 1)
         return resp
 
     def getUnits(self):
         self.table = table_name
         self.request_queue.put("units")
-        resp = self.response_queue.get()
+        # Block with timeout of 1 second
+        resp = self.response_queue.get(True, 1)
         return resp
 
 
     def openDb(self, log_path):
         self.db = MDataBase(log_path)
-
+        if self.db.isOpen():
+            return True
+        else:
+            return False
 
 
     def run(self):
         print "Starting SQLite thread:", self.log_path
-        self.openDb(self.log_path)
+        if self.openDb(self.log_path):
+            pass
+        else:
+            raise TypeError("File could not be opened: %s" % self.log_path)
         self.db_done_loading.emit()
         last_request_time = time.time()
         while(self.keep_going):
+            try:
+                request_type = self.request_queue.get()
 
-            request_type = self.request_queue.get()
-
-            #print datetime.utcfromtimestamp(float(time.time())).strftime("%x %X"), ": received %s request" %request_type
-            #print "\t Last request was %f seconds ago" % (time.time()-last_request_time)
-            last_request_time = time.time()
-            if(request_type == "insert"):
-                self.__sql_insert(self.table, self.columns, self.rows)
-            elif(request_type == "query"):
-                print "processing", request_type
-                self.query_return = self.__query(self.table, self.fields, *self.args)
-                self.response_queue.put(self.query_return)
-            elif(request_type == "tables"):
-                self.query_return = self.db.getTables()
-                self.response_queue.put(self.query_return)
-            elif(request_type == "variables"):
-                self.query_return = self.db.getColumns(str(self.table))[2::2]
-                self.response_queue.put(self.query_return)
-            elif(request_type == "units"):
-                self.query_return = self.db.getColumns(str(self.table))[3::2]
-                self.response_queue.put(self.query_return)
-            elif(request_type == "stop"):
-                break
-            self.request_type = None
+                #print datetime.utcfromtimestamp(float(time.time())).strftime("%x %X"), ": received %s request" %request_type
+                #print "\t Last request was %f seconds ago" % (time.time()-last_request_time)
+                last_request_time = time.time()
+                if(request_type == "insert"):
+                    self.__sql_insert(self.table, self.columns, self.rows)
+                elif(request_type == "query"):
+                    print "processing", request_type
+                    self.query_return = self.__query(self.table, self.fields, *self.args)
+                    self.response_queue.put(self.query_return)
+                elif(request_type == "tables"):
+                    self.query_return = self.db.getTables()
+                    self.response_queue.put(self.query_return)
+                elif(request_type == "variables"):
+                    self.query_return = self.db.getColumns(str(self.table))[2::2]
+                    self.response_queue.put(self.query_return)
+                elif(request_type == "units"):
+                    self.query_return = self.db.getColumns(str(self.table))[3::2]
+                    self.response_queue.put(self.query_return)
+                elif(request_type == "stop"):
+                    break
+                self.request_type = None
+            except:
+                print("ERROR: Something went wrong with the database!")
+                return
+                #raise RuntimeError("Something went wrong with the Database")
         self.db.closeDataSet()
 
     def stop(self):
@@ -162,7 +174,7 @@ class MSQLiteDataBaseWrapper(QThread):
         self.fields = fields
         self.args = args
         self.request_queue.put("query")
-        resp = self.response_queue.get()
+        resp = self.response_queue.get(True, 1)
         print "got query response"
         return resp
 
@@ -183,7 +195,7 @@ class MSQLiteDataBaseWrapper(QThread):
 
         self.request_queue.put("tables")
         print "getting tables"
-        resp = self.response_queue.get()
+        resp = self.response_queue.get(True, 1)
         print "got tables", resp
         return resp
     def isOpen(self):

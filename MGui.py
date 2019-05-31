@@ -51,9 +51,16 @@ class MGui(QtGui.QMainWindow):
     # All layouts for each device.
     grids = []
     # The main vertical box layout for the GUI.
-    mainVBox = [QtGui.QVBoxLayout()]
+    mainVSplitters = []
+    leftVBox = QtGui.QVBoxLayout()
+    rightVBox = QtGui.QVBoxLayout()
     # The main horizontal box layout for the GUI.
-    mainHBox = QtGui.QHBoxLayout()
+    mainSplitter = QtGui.QSplitter()
+    mainLeftFrame = QtGui.QFrame()
+    mainLeftFrame.setLayout(leftVBox)
+    mainRightFrame = QtGui.QFrame()
+    mainRightFrame.setLayout(rightVBox)
+
     # The titles of all devices.
     titles = []
     # The dataset for each device.
@@ -71,7 +78,8 @@ class MGui(QtGui.QMainWindow):
     font.setWeight(50)
     font.setKerning(True)
     # The staring column to put tiles in.
-    VBoxColumn = 0
+    VSplitterColumn = 0
+    
     # Used to allow query to keep calling itself.
     keepGoing = True
     #MAlert = None
@@ -99,10 +107,10 @@ class MGui(QtGui.QMainWindow):
         self.showMaximized()
 
         # Make GUI area scrollable.
-        self.main_widget = QtGui.QWidget()
-        self.main_widget.setLayout(self.mainHBox)
+        #self.main_widget = QtGui.QWidget()
+        #self.main_widget.setLayout(self.mainSplitter)
         self.scrollArea = QtGui.QScrollArea()
-        self.scrollArea.setWidget(self.main_widget)
+        self.scrollArea.setWidget(self.mainSplitter)
         self.scrollArea.setWidgetResizable(True)
         self.setCentralWidget(self.scrollArea)
 
@@ -159,13 +167,18 @@ class MGui(QtGui.QMainWindow):
         self.frameSizePolicy.setHorizontalPolicy(QtGui.QSizePolicy.Preferred)
 
         # Configure the layouts.
-        self.mainVBox.append(QtGui.QVBoxLayout())
-        self.mainVBox.append(QtGui.QVBoxLayout())
-        self.mainHBox.addLayout(self.mainVBox[0])
-        self.mainHBox.addLayout(self.mainVBox[1])
-        self.mainVBox[0].setAlignment(QtCore.Qt.AlignTop)
-        self.mainVBox[1].setAlignment(QtCore.Qt.AlignTop)
-
+        self.mainVSplitters.append(QtGui.QSplitter(QtCore.Qt.Vertical))
+        self.mainVSplitters.append(QtGui.QSplitter(QtCore.Qt.Vertical))
+        self.leftVBox.addWidget(self.mainVSplitters[0])
+        self.leftVBox.addStretch(0)
+        self.rightVBox.addWidget(self.mainVSplitters[1])
+        self.rightVBox.addStretch(0)
+        self.mainLeftFrame.setLayout(self.leftVBox)
+        self.mainRightFrame.setLayout(self.rightVBox)
+        #self.mainVSplitters[0].setAlignment(QtCore.Qt.AlignTop)
+        #self.mainVSplitters[1].setAlignment(QtCore.Qt.AlignTop)
+        self.mainSplitter.addWidget(self.mainLeftFrame)
+        self.mainSplitter.addWidget(self.mainRightFrame)
         # Which column are we adding a tile to next.
         #devices = web.devices
 
@@ -198,24 +211,24 @@ class MGui(QtGui.QMainWindow):
 
     def addDevice(self, device):
         if self.started:
-            if self.VBoxColumn == 0:
-                self.VBoxColumn = 1
+            if self.VSplitterColumn == 0:
+                self.VSplitterColumn = 1
             else:
-                self.VBoxColumn = 0
+                self.VSplitterColumn = 0
 
             container = MDeviceContainerWidget(device, self)
             self.deviceWidgets.append(container)
-            self.mainVBox[self.VBoxColumn].addWidget(container)
+            self.mainVSplitters[self.VSplitterColumn].addWidget(container)
         else:
             self.devices.append(device)
 
     def addWidget(self, widget):
         if self.started:
-            if self.VBoxColumn == 0:
-                self.VBoxColumn = 1
+            if self.VSplitterColumn == 0:
+                self.VSplitterColumn = 1
             else:
-                self.VBoxColumn = 0
-            self.mainVBox[self.VBoxColumn].addWidget(widget)
+                self.VSplitterColumn = 0
+            self.mainVSplitters[self.VSplitterColumn].addWidget(widget)
             widget.show()
         else:
             self.widgetsToAdd.append(widget)
