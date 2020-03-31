@@ -229,7 +229,7 @@ class Device(MDevice):
                                        actual_button[1])(actual_button[3], context=self.ctx)
                     # If just the setting needs to be run.
                     else:
-                        print "actual button:", actual_button
+                        #print "actual button:", actual_button
                         resp = getattr(self.deviceServer, actual_button[1])(
                             context=self.ctx)
             # Otherwise if there is no warning message, do not make
@@ -339,8 +339,9 @@ class Device(MDevice):
                                 # precisions.append(self.settingPrecisions[i])
                     else:
                         try:
-                            self.setReading(name, reading)
-                            self.setUnit(name, "")
+                            if(reading != None):
+                                self.setReading(name, reading)
+                                self.setUnit(name, "")
                             # precisions.append(self.precisions[i])
                         except:
                             print("Problem with readings, type '%s' "

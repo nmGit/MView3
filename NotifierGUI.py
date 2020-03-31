@@ -63,8 +63,8 @@ class Notifier:
             self.lists[str(mailinglist)]["Members"].extend(members)
         else:
             self.lists[str(mailinglist)]["Members"].append(str(members))
-        print("added members", members)
-        self.pp.pprint(self.lists)
+        #print "added members", members
+        #self.pp.pprint(self.lists)
     def get_members(self, list):
         return self.lists[str(list)]["Members"]
     def get_members_of_list(self, list):
@@ -83,7 +83,7 @@ class Notifier:
             print("is not array")
             subscription_keys = str(subscription_keys)
             self.lists[mailinglist]["Subscriptions"].append(str(subscription_keys))
-        self.pp.pprint(self.lists)
+        #self.pp.pprint(self.lists)
     def get_subscribers(self, key):
         subs = []
         mailing = web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mailing", default={})
@@ -101,7 +101,7 @@ class Notifier:
     def remove_list(self, list):
         list = str(list)
         del self.lists[list]
-        self.pp.pprint(self.lists)
+        #self.pp.pprint(self.lists)
 
     def remove_members(self, list, members):
         list = str(list)
@@ -113,7 +113,7 @@ class Notifier:
             members = str(members)
             index = self.lists[list]["Members"].index(str(members))
             del self.lists[list]["Members"][index]
-        self.pp.pprint(self.lists)
+        #self.pp.pprint(self.lists)
 
     def remove_subscription(self, list, subscriptions):
         list = str(list)
@@ -124,7 +124,7 @@ class Notifier:
         else:
             index = self.lists[list]["Subscriptions"].index(str(subscriptions))
             del self.lists[list]["Subscriptions"][index]
-        self.pp.pprint(self.lists)
+        #self.pp.pprint(self.lists)
 
     def set_enabled(self, key, state):
 

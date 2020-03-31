@@ -80,7 +80,7 @@ class MFrame:
             "dataset":     self.dataSet,
             "channels":     {},
             "chest":      None,
-            "name":      self.serverTitle,
+            "name":      None,
             "lock_logging_settings": False
         }
 
@@ -135,12 +135,15 @@ class MFrame:
                              + "\nreadings: " + str(readings) + "\n"
                              + "Available Parameters: " + str(self.parameters.keys()))
         for i, key in enumerate(self.parameters.keys()):
-            self.setReading(key, readings[i])
+            if(readings[i] != None):
+                self.setReading(key, readings[i])
 
         # pprint(self.parameters)
     def setReading(self, name, reading):
         # traceback.print_stack()
         # print "name in MFrame:", name, reading
+        if(reading == None):
+            return
         try:
             self.parameters[name]['reading'] = reading
         except:
