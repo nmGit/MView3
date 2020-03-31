@@ -179,7 +179,7 @@ class DataSetSettings(QtGui.QWidget):
                 newFolder = time.strftime('%x').replace(' ', '_')
                 newFolder = newFolder.replace('/', '_')
                 currentLoc = device.getFrame().DataLoggingInfo()['location']
-                print "currentLoc:", currentLoc
+                print("currentLoc:", currentLoc)
                 newLoc = currentLoc.split('\\')
                # print "newLocation3:", newLoc
                 # If the folder we are in is in the format 'MM_DD_YY', then
@@ -190,7 +190,7 @@ class DataSetSettings(QtGui.QWidget):
                     newLoc = newLoc[:-1:]
                 #print "newLocation2:", newLoc
                 newLoc.append(newFolder)
-                print "newLocation:", newLoc
+                print("newLocation:", newLoc)
                 newLoc = "\\".join([str(dir) for dir in newLoc])
                 device.getFrame().DataLoggingInfo()['location'] = newLoc
 
@@ -206,7 +206,7 @@ class DataSetSettings(QtGui.QWidget):
                     self.configGui.advancedSettingsWidget.locationLabels[i].setText(
                         location+'\\'+name)
             except:
-                print "ERROR:", device
+                print ("ERROR:", device)
                 traceback.print_exc()
 
         grid.itemAtPosition(0, 1).widget().setText(location)
@@ -223,8 +223,8 @@ class DataSetSettings(QtGui.QWidget):
             dir = os.path.abspath(dir).rsplit('\\')
             location = '\\'.join(dir[0:-1])
             name = dir[-1]
-            print "New log location for", str(device), "is",location
-            print "\t Database name is", name
+            print ("New log location for", str(device), "is",location)
+            print ("\t Database name is", name)
             device.getFrame().DataLoggingInfo()['name'] = name
             device.getFrame().DataLoggingInfo()['location'] = location
  #           print "MDataset config thread",int(QThread.currentThreadId())

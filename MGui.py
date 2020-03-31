@@ -22,7 +22,7 @@ __status__ = "Beta"
 
 import sys
 sys.dont_write_bytecode = True
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 from NotifierGUI import NotifierGUI, Notifier
 from MConfigGui import ConfigGui
@@ -42,7 +42,7 @@ class MGui(QtGui.QMainWindow):
     print("#############################################")
     loader = str(__main__.__file__).replace("\\","/").split('/')[-1]
     loader = loader[:loader.index('.py')]
-    print "Loader:", loader
+    print ("Loader:", loader)
     web.persistentData = MPersistentData(loader)
     # Holds the Qlabels that label the parameters.
     parameters = [[]]
@@ -180,13 +180,13 @@ class MGui(QtGui.QMainWindow):
 
     def stop(self):
         '''Stop MView.'''
-        print "Shutting down MView."
+        print ("Shutting down MView.")
 
         # print "all devices:", web.devices
         try:
             web.alert_data.save()
         except:
-            print "Failed to save notifier data."
+            print("Failed to save notifier data.")
         for device in web.devices:
             # print "stopping", str(device)
             device.stop()

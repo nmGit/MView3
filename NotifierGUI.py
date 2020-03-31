@@ -26,14 +26,14 @@ __status__ = "Beta"
 """
 import sys
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 import MWeb as web
 import inspect
 import cPickle as pickle
 import os
 import inspect
 import traceback
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 from MCheckableComboBoxes import MCheckableComboBox
 import pprint
 sys.dont_write_bytecode = True
@@ -63,7 +63,7 @@ class Notifier:
             self.lists[str(mailinglist)]["Members"].extend(members)
         else:
             self.lists[str(mailinglist)]["Members"].append(str(members))
-        print "added members", members
+        print("added members", members)
         self.pp.pprint(self.lists)
     def get_members(self, list):
         return self.lists[str(list)]["Members"]
@@ -75,12 +75,12 @@ class Notifier:
 
     def add_subscription(self, mailinglist, subscription_keys):
         mailinglist = str(mailinglist)
-        print "adding subscriptions", subscription_keys
+        print("adding subscriptions", subscription_keys)
         if type(subscription_keys) is list:
-            print "is array"
+            print("is array")
             self.lists[mailinglist]["Subscriptions"].extend(subscription_keys)
         else:
-            print "is not array"
+            print("is not array")
             subscription_keys = str(subscription_keys)
             self.lists[mailinglist]["Subscriptions"].append(str(subscription_keys))
         self.pp.pprint(self.lists)
@@ -160,10 +160,10 @@ class Notifier:
     #     print "get members:",self.lists
     #     return self.lists[list]['Members']
     def open(self):
-        print "opening notifier data"
-        print "---------------------------------------------------------"
+        print("opening notifier data")
+        print("---------------------------------------------------------")
         self.pp.pprint(web.persistentData.getDict())
-        print "---------------------------------------------------------"
+        print("---------------------------------------------------------")
 
         self.setMailingPeriod(web.persistentData.persistentDataAccess(None, "NotifierInfo", "Mail_Settings", "Period", default = 3 * 60 * 60))
         # limits = web.persistentData.getDict()['NotifierInfo']['Limits']
@@ -172,19 +172,19 @@ class Notifier:
             return
         else:
             saved_state = saved_state.get('Mailing', {})
-        print "saved state", saved_state
+        print("saved state", saved_state)
 
         for list in saved_state.keys():
             subscriptions = saved_state[list]['Subscriptions']
             members = saved_state[list]['Members']
-            print "saved members:", members
-            print "saved subscriptions:", subscriptions
+            print("saved members:", members)
+            print("saved subscriptions:", subscriptions)
             self.add_list(list)
             self.add_members(list, members)
             self.add_subscription(list, subscriptions)
-        print "done opening notifier data", self.lists
+        print("done opening notifier data", self.lists)
     def save(self):
-        print "saving notifier data"
+        print("saving notifier data")
         if 'NotifierInfo' not in web.persistentData.getDict().keys():
             web.persistentData.getDict()['NotifierInfo'] = {'Mailing': {}, 'Limits': {}}
         web.persistentData.getDict()['NotifierInfo']['Mailing'] = self.lists
@@ -476,14 +476,14 @@ class AlertConfig(QtGui.QWidget):
     def remove_mailing_list(self, str):
         for key in self.allWidgetDict.keys():
             #print self.allWidgetDict
-            print key, str
+            print(key, str)
             self.allWidgetDict[key][3].removeItem(str)
         print
     def combo_box_item_clicked(self, key, index):
         text = self.allWidgetDict[key][3].itemText(index)
 
         checked = self.allWidgetDict[key][3].isChecked(index)
-        print "List changed:", key,  text,checked
+        print("List changed:", key,  text,checked)
         if(checked):
             self.mailing_list_selected.emit(text, key)
         else:
@@ -491,12 +491,12 @@ class AlertConfig(QtGui.QWidget):
             self.mailing_list_deselected.emit(text, key)
         #self.sync_backend_with_frontend()
     def enable_state_changed(self, key, state):
-        print "enable clicked", key, state
+        print("enable clicked", key, state)
         web.alert_data.set_enabled(key, state)
     def min_val_changed(self, key, text):
         if(callable(text)):
             text = text()
-        print "Min val changed", key, text
+        print("Min val changed", key, text)
        # if ('E' == text[-1] or 'e' == text[-1] or '-' == text[-1] or '.' == text[-1]):
        #     return
         text = str(text)
@@ -602,14 +602,14 @@ class MMailingLists(QtGui.QWidget):
             self.add_list_button_layout.addWidget(self.add_list_button)
             self.add_list_button_layout.addWidget(self.delete_list_button)
             self.add_list_button_layout.addStretch(0)
-            print "Notifier GUI mailing_lists", ml
+            print("Notifier GUI mailing_lists", ml)
             for list in ml.keys():
                 self.addList(list)
-                print "Constructing",ml[list]
+                print("Constructing",ml[list])
                 members = [member for member in ml[list]['Members']]
-                print "adding members", members
+                print("adding members", members)
                 for member in members:
-                    print "\t adding member", member
+                    print("\t adding member", member)
                     self.mailing_list_widgets[list].add_item(member, backend=True)
         def addList_gui(self):
             text, accept = QtGui.QInputDialog.getText(self, "Add Mailing List", "List name:")
@@ -639,7 +639,7 @@ class MMailingLists(QtGui.QWidget):
             #web.alert_data.remove_list(listName)
             for tab_index in range(num_tabs):
                 if(self.tabWidget.tabText(tab_index) == listName):
-                    print "removing tab", listName
+                    print("removing tab", listName)
                     #self.tabWidget.widget(tab_index).setParent(None)  # Delete widget
                     self.tabWidget.removeTab(tab_index)
                     del self.mailing_lists[listName]
@@ -733,7 +733,7 @@ class MEditableList(QtGui.QWidget):
         text = []
         for label in self.item_widget_label:
             text.append(label.text())
-        print "Editable list text:", text
+        print("Editable list text:", text)
         return text
     def __add_item(self, **kwargs):
         text, accept = QtGui.QInputDialog.getText(self, "Add Entry...", "Email:")

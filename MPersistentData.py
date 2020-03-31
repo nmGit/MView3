@@ -39,16 +39,16 @@ class MPersistentData:
         try:
             self.restoreState()
         except:
-            print "No config file found, will make a new one."
+            print("No config file found, will make a new one.")
 
     def saveState(self):
        # traceback.print_stack()
         # print self.persistentDataDict
-        print "Pickling and saving data to file..."
+        print("Pickling and saving data to file...")
         # print self.persistentDataDict
         pickle.dump(self.persistentDataDict, open(
             os.path.join(self.location, self.name), 'wb'))
-        print "data pickled and saved."
+        print("data pickled and saved.")
 
     def restoreState(self):
 
