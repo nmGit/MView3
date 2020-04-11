@@ -1,9 +1,22 @@
 import sys
+import traceback
+
+sys._excepthook = sys.excepthook
+def exception_hook(exctype, value, tb):
+
+
+    traceback.print_tb(tb)
+    print(exctype, value, tb)
+#    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+sys.excepthook = exception_hook
 
 sys.dont_write_bytecode = True
+
+print("importing mgui")
 import MGui  # Handles all gui operations. Independent of labrad.
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 from MDevices.MDummyDevice import MDummyDevice
 from MDevices.MVirtualDevice import MVirtualDevice
 from MDevices.Mhdf5Device import Mhdf5Device
@@ -11,10 +24,15 @@ from MDevices.Mhdf5Device import Mhdf5Device
 # import grapher as alexGrapher
 from MNodeEditor.MNodes import runningAverage
 from MNodeEditor import MNodeTree
-from CustomMViewTiles.tetris import tetris
 
 from MNodeEditor.MNodes import MDeviceNode
 
+sys._excepthook = sys.excepthook
+def exception_hook(exctype, value, traceback):
+    print(exctype, value, traceback)
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(0)
+sys.excepthook = exception_hook
 
 class mViewer:
     gui = None
@@ -22,7 +40,7 @@ class mViewer:
 
     def __init__(self, parent=None):
         # Establish a connection to labrad
-
+        print("here")
         self.gui = MGui.MGui()
 
         self.dd1 = MDummyDevice("Dummy 1")
@@ -52,14 +70,12 @@ class mViewer:
         self.dd2.begin()
         self.gui.addDevice(self.dd2)
 
-        self.gui.addWidget(tetris())
-
         self.gui.addWidget(QtGui.QLabel("HI"))
         self.gui.setRefreshRate(0.5)
         self.gui.startGui('Test Gui')
 
 
-# In phython, the main class's __init__() IS NOT automatically called
+# In python, the main class's __init__() IS NOT automatically called
 
 viewer = mViewer()
 viewer.__init__()

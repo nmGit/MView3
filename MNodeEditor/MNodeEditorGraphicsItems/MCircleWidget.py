@@ -1,6 +1,6 @@
-from PyQt4 import QtCore,QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-class MCircleWidget(QtGui.QWidget):
+class MCircleWidget(QtWidgets.QWidget):
 
 
     def __init__(self, parent = 0):

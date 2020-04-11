@@ -25,8 +25,8 @@ import numpy as np
 from MWeb import web
 import sys
 import traceback
-from PyQt4 import QtGui, QtCore
-from MCurve import MCurve
+from PyQt5 import QtGui, QtCore, QtWidgets
+from .MCurve import MCurve
 from functools import partial
 import pyqtgraph as pg
 import numpy as np
@@ -39,7 +39,7 @@ import warnings
 
 
 
-class MGrapher(QtGui.QWidget):
+class MGrapher(QtWidgets.QWidget):
     def __init__(self, parent=None, **kwargs):
         '''
         Initialize new grapher
@@ -296,14 +296,14 @@ class MGrapher(QtGui.QWidget):
         #self.mainPlot.enableAutoRange(x=True)
 
         if(self.autoscaleCheckBox.isChecked()):
-            print "autoscale checked"
+            print("autoscale checked")
             self.track_waveform(True)
 
             self.mainPlot.setXRange(*self.get_absolute_data_range_x())
             self.mainPlot.enableAutoRange(x=True)
 
         else:
-            print "autoscale unchecked"
+            print("autoscale unchecked")
             self.track_waveform(False)
             self.mainPlot.enableAutoRange(x=False)
 
@@ -395,10 +395,17 @@ class MGrapher(QtGui.QWidget):
             self.mainPlot.setXRange(current_x - self.span, current_x, padding=0)
             # Once the x range is correct, we can find the Y range given the data on the plot.
             for curve in self.curves:
-                maxs.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1])
-                mins.append(self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0])
-            maximum = max(i for i in maxs if i is not None)
-            minimum = min(i for i in mins if i is not None)
+                max_ = self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[1]
+                if max_ is not None:
+                    maxs.append(max_)
+
+                min_ = self.curves[curve].dataBounds(1, 1, [current_x - self.span, current_x])[0]
+                if min_ is not None:
+                    mins.append(min_)
+
+            maximum = np.nanmax(maxs)
+
+            minimum = np.nanmin(mins)
             # Set the y range
             self.mainPlot.setYRange(minimum, maximum)
             # Set the linear region plots to autorage
@@ -440,11 +447,11 @@ class MGrapher(QtGui.QWidget):
             self.buttonFrame.show()
             #self.mainFrame.show()
     def __show_curve(self, curve):
-        print "Show curve", curve
+        print("Show curve", curve)
         curve = str(curve)
         self.curves[curve].show()
     def __hide_curve(self, curve):
-        print "Hide curve", curve
+        print("Hide curve", curve)
         curve = str(curve)
         self.curves[curve].hide()
 
@@ -460,7 +467,7 @@ class MGrapher(QtGui.QWidget):
 
         pass
     def __mainPlot_mousePressEvent(self):
-        print "win mouse pressed"
+        print("win mouse pressed")
         self.mousePressed = True
         if(self.mainViewBox):
             self.track_waveform(False)
@@ -470,7 +477,7 @@ class MGrapher(QtGui.QWidget):
         # Periodic updates occur in a real-time data viewing context
         # It is safe to assume that any time a mouse release event fires, the user has been interacting with
         # the plot and it should be refreshed
-        print "win mouse released"
+        print("win mouse released")
         self.mousePressed = False
         self.__redraw_curves()
 
@@ -486,14 +493,14 @@ class MGrapher(QtGui.QWidget):
         '''Filter out scroll events so that only pyqtgraph catches them'''
        # print "Event:", event, "on", object
         if(event.type() == QtCore.QEvent.Wheel):
-            print "scroll detected"
+            print("scroll detected")
             return True
         elif(event.type() == QtCore.QEvent.GraphicsSceneMousePress):
-            print "Graphics scene mouse Press"
+            print ("Graphics scene mouse Press")
             self.__mainPlot_mousePressEvent()
             return False
         elif(event.type() == QtCore.QEvent.GraphicsSceneMouseRelease):
-            print "Graphics scene mouse Release"
+            print("Graphics scene mouse Release")
             self.__mainPlot_mouseReleaseEvent()
             # print "scroll not detected"
             return False

@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pyqueue
+Version: 2.0.0
+Summary: A declarative python library for generating and submittingjobs to different queueing systems e.g. Slurm, Torque, etc.
+Home-page: https://github.com/RowleyGroup/pyqueue
+Author: Mohamad Mohebifar
+Author-email: mmohebifar@mun.ca
+License: GNU GPL (3.0)
+Description: UNKNOWN
+Platform: UNKNOWN

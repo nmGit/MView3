@@ -1,9 +1,7 @@
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import (QApplication, QColumnView, QFileSystemModel,
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtGui import (QApplication, QColumnView, QFileSystemModel,
                          QSplitter, QTreeView)
-from PyQt4.QtCore import QDir, Qt
-import sys
-from MGrapher import mGraph as MGrapher
+from PyQt5.QtCore import QDir, Qt
 
 
 class MFileTree(QtGui.QTreeView):

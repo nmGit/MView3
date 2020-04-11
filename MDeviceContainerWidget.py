@@ -1,16 +1,14 @@
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import pyqtSignal, QSemaphore
+from PyQt5 import QtGui, QtCore
 from MWeb import web
 from MGrapher.MGrapher3 import MGrapher
 from MReadout import MReadout
 import math
 from functools import partial
 import traceback
-from pprint import pprint
 import numpy as np
 import time
 import threading
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore, SIGNAL
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore
 
 class MDeviceContainerWidget(QtGui.QFrame):
     done_updating_semaphore = QSemaphore(1)
@@ -239,7 +237,7 @@ class MDeviceContainerWidget(QtGui.QFrame):
         #self.done_updating_semaphore.acquire()
         #print "updating container from",threading.currentThread()
         if( not isinstance(threading.current_thread(), threading._MainThread)):
-            print "ERROR"
+            print("ERROR")
             traceback.print_exc()
             raise RuntimeError("Cannot update device container from outside the main thread")
         # It is possible for update signals to be sent more often than update can run.

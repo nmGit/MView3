@@ -20,13 +20,10 @@ __version__ = "0.0.1"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-from PyQt4 import QtGui, QtCore
-from MAnchorItem import MAnchorItem
-from MAnchorPortOpenSlotItem import MAnchorPortOpenSlotItem
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from PyQt5 import QtGui, QtCore, QtWidgets
+from .MAnchorItem import MAnchorItem
 
-
-class MNodeGraphicsItem(QtGui.QGraphicsObject):
+class MNodeGraphicsItem(QtWidgets.QGraphicsObject):
     parent = None
     node_editor = None
     title = None
@@ -48,7 +45,7 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable, True)
         self.setFlag(QtGui.QGraphicsItem.ItemIsFocusable, True)
-        self.setAcceptsHoverEvents(True)
+        self.setAcceptHoverEvents(True)
 
         self.node_editor.scene.addItem(self)
         self.setScene(self.node_editor.scene)
@@ -71,7 +68,7 @@ class MNodeGraphicsItem(QtGui.QGraphicsObject):
         pProxy = QtGui.QGraphicsProxyWidget(self)
         pProxy.setWidget(self.nodeFrame)
        # self.node_editor.scene.addItem(pProxy)
-        print "parent's anchors",self.parent.getAnchors()
+        print("parent's anchors",self.parent.getAnchors())
         for anchor in self.parent.getAnchors():
             pass
             self.addAnchor(anchor)

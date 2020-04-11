@@ -21,7 +21,7 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
 
 
 class MReadout(QtGui.QWidget):

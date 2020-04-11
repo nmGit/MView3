@@ -25,7 +25,7 @@ from email.mime.text import MIMEText
 import MPopUp
 import traceback
 from MWeb import web
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 class MMail:
     """Very simple email client."""
@@ -50,7 +50,7 @@ class MMail:
 
         except:
             MPopUp.PopUp("Notifier failed to login to email.\n\n" + traceback.format_exc(1)).exec_()
-            traceback.print_exc()
+            #traceback.print_exc()
 
         # Send the email.
        # 'smtp.googlemail.com'
@@ -108,10 +108,10 @@ class MMail:
         # Send the email.
         #print "Body:\n", Body
         email_text = "From: %s\nTo: %s\nSubject: %s\n\n%s" % (From, ", ".join(To), Subject, Body)
-        print "Sending email with text:"
-        print "-------------------------------------------"
-        print email_text
-        print "-------------------------------------------"
+        print ("Sending email with text:")
+        print ("-------------------------------------------")
+        print (email_text)
+        print ("-------------------------------------------")
 
         try:
             self.smtpObj.sendmail(From, To, email_text)

@@ -1,7 +1,6 @@
-from PyQt4 import QtCore, QtGui, Qt
-from MNodeEditor.MPipe import MPipe
-from MCircleWidget import MCircleWidget
-from MPipeItem import MPipeGraphicsItem
+from PyQt5 import QtCore
+from .MCircleWidget import MCircleWidget
+from .MPipeItem import MPipeGraphicsItem
 
 
 

@@ -1,19 +1,15 @@
-import MNodeEditor
-import MAnchor
-import MNodeTree
-
+from .MNodeEditor import NodeGui
+from .MNodeTree import NodeTree
 from MWeb import web
-
-from MNodes.MDeviceNode import MDeviceNode
 
 
 class MNodeEditorHandler:
     def __init__(self):
         # Create a nodeTree
-        self.nodeTree = MNodeTree.NodeTree()
+        self.nodeTree = NodeTree()
 
         # Create a nodeEditor GUI window
-        self.nodeEditor = MNodeEditor.NodeGui(web.devices, self.nodeTree)
+        self.nodeEditor = NodeGui(web.devices, self.nodeTree)
 #        self.scene = self.nodeTree.getScene()
 
         # Create a new node to represent each device in the node tree

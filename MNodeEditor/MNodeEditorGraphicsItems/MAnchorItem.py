@@ -21,15 +21,14 @@ __version__ = "0.0.1"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-from PyQt4 import QtGui, QtCore, Qt
+from PyQt5 import QtGui, QtCore, QtWidgets
 from MWeb import web
 from MReadout import MReadout
-import MAnchorPortItem
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from .MAnchorPortItem import MAnchorPortItem
 
-class MAnchorItem(QtGui.QFrame):
+class MAnchorItem(QtWidgets.QFrame):
     def __init__(self, graphicsNode, anchor, parent=None, *args, **kwargs):
-        QtGui.QFrame.__init__(self, parent)
+        QtWidgets.QFrame.__init__(self, parent)
         #print "Adding anchor"
 
         self.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding,QtGui.QSizePolicy.MinimumExpanding)
@@ -70,7 +69,7 @@ class MAnchorItem(QtGui.QFrame):
         self.lcd.setStyleSheet("color:rgb(189, 195, 199);\n")
         self.anchorLayout.addWidget(self.lcd)
 
-        label = QtCore.QString(str(anchor))
+        label = str(anchor)
         self.font = QtGui.QFont()
         self.font.setPointSize(10)
 
@@ -94,7 +93,7 @@ class MAnchorItem(QtGui.QFrame):
 
         self.anchorLayout.insertStretch(2)
 
-        self.port = MAnchorPortItem.MAnchorPortItem(self, anchor)
+        self.port = MAnchorPortItem(self, anchor)
         if(anchor.getType() == 'input'):
             self.anchorLayout.insertWidget(0, self.port)
         else:

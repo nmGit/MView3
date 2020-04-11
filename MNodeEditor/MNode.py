@@ -22,10 +22,10 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 
-from MAnchor import MAnchor
+from .MAnchor import MAnchor
 import traceback
 from MWeb import web
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 
 class MNode(QObject):

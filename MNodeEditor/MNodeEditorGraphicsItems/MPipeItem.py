@@ -20,10 +20,10 @@ __version__ = "0.0.1"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 
 
-class MPipeGraphicsItem(QtGui.QGraphicsPathItem):
+class MPipeGraphicsItem(QtWidgets.QGraphicsPathItem):
     def __init__(self, pipe, startAnchorGraphicsItem, endAnchorGraphicsItem, scene, parent=None):
         QtGui.QGraphicsPathItem.__init__(self, parent)
         self.scene = scene

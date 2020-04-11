@@ -20,7 +20,7 @@ __version__ = "1.0.1"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-import cPickle as pickle
+import pickle
 import traceback
 import os
 import sys
@@ -56,7 +56,7 @@ class MPersistentData:
 
         self.persistentDataDict = pickle.load(
             open(os.path.join(self.location, self.name), 'rb'))
-        print "Loading persistent data from %s" % self.location
+        print("Loading persistent data from %s" % self.location)
         self.pp.pprint(self.persistentDataDict)
     def getDict(self):
         return self.persistentDataDict

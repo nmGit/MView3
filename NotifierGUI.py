@@ -26,10 +26,10 @@ __status__ = "Beta"
 """
 import sys
 
-from PyQt5 import QtCore, QtGui
-import MWeb as web
+from PyQt5 import QtCore, QtGui, QtWidgets
+from MWeb import web
 import inspect
-import cPickle as pickle
+
 import os
 import inspect
 import traceback
@@ -190,7 +190,7 @@ class Notifier:
         web.persistentData.getDict()['NotifierInfo']['Mailing'] = self.lists
        # web.persistentData.getDict()['NotifierInfo']['Limits'] = limits
 
-class NotifierGUI(QtGui.QDialog):
+class NotifierGUI(QtWidgets.QDialog):
 
     def __init__(self, loader, parent=None):
         '''Initialize the Notifier Gui'''
@@ -267,7 +267,7 @@ class NotifierGUI(QtGui.QDialog):
         web.alert_data.save()
         self.close()
 
-class LoginConfig(QtGui.QWidget):
+class LoginConfig(QtWidgets.QWidget):
     email_credential_change_made = pyqtSignal(str, str, str)
 
     def __init__(self, parent = None):
@@ -342,7 +342,7 @@ class LoginConfig(QtGui.QWidget):
         pass
     def host_changed(self):
         pass
-class AlertConfig(QtGui.QWidget):
+class AlertConfig(QtWidgets.QWidget):
     list_change_made = pyqtSignal(str)
     mailing_list_selected = pyqtSignal(str,str)
     mailing_list_deselected = pyqtSignal(str, str)
@@ -554,7 +554,7 @@ class AlertConfig(QtGui.QWidget):
     #         print("No notifier config file found")
     #     return self.allDataDict
 
-class MMailingLists(QtGui.QWidget):
+class MMailingLists(QtWidgets.QWidget):
         mailing_list_added_sig = pyqtSignal(str)
         mailing_list_removed_sig = pyqtSignal(str)
         def __init__(self, parent=None):
@@ -679,7 +679,7 @@ class MMailingLists(QtGui.QWidget):
 
             web.alert_data.setMailingPeriod(period_in_seconds)
 
-class MEditableList(QtGui.QWidget):
+class MEditableList(QtWidgets.QWidget):
     item_added = pyqtSignal(str)
     item_removed = pyqtSignal(str)
     def __init__(self, elems, parent = None):

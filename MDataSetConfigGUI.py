@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 import os
 from MWeb import web
 from functools import partial
@@ -8,11 +8,10 @@ from MPopUp import PopUp
 import atexit
 import time
 import re
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
 
 
-class DataSetConfigGUI(QtGui.QDialog):
+class DataSetConfigGUI(QtWidgets.QDialog):
     """Allows user to create custom data logs."""
 
     def __init__(self, parent=None):
@@ -93,7 +92,7 @@ class DataSetConfigGUI(QtGui.QDialog):
         self.close()
 
 
-class DataSetSettings(QtGui.QWidget):
+class DataSetSettings(QtWidgets.QWidget):
     def __init__(self, configGui, parent=None,  **kwargs):
         super(DataSetSettings, self).__init__(parent)
         isAdvanced = kwargs.get('advanced', False)
@@ -224,12 +223,12 @@ class DataSetSettings(QtGui.QWidget):
             name = device.getFrame().DataLoggingInfo()['name']
             dir = QtGui.QFileDialog.getSaveFileName(self, "Save New Data Set...",
                                                     open_to, "")
-            dir = os.path.abspath(dir).rsplit('\\')
+            dir = os.path.abspath(dir[0]).rsplit('\\')
             location = '\\'.join(dir[0:-1])
             name = dir[-1]
-            print "New log location for", str(device), "is",location
-            print "\t Database name is", name
-            print "The full path is ", location + '\\' + name
+            print ("New log location for", str(device), "is",location)
+            print ("\t Database name is", name)
+            print ("The full path is ", location + '\\' + name)
             device.getFrame().DataLoggingInfo()['name'] = name
             device.getFrame().DataLoggingInfo()['location'] = location
             device.configureDataLogging()

@@ -21,8 +21,8 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 
-from PyQt4 import QtGui, QtCore
-from MPipe import MPipe
+from PyQt5 import QtGui, QtCore
+from .MPipe import MPipe
 from MWeb import web
 import time
 from functools import partial
