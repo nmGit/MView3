@@ -1,9 +1,9 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 import sys
 import os
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
 
-class MCheckableComboBox(QtGui.QComboBox):
+class MCheckableComboBox(QtWidgets.QComboBox):
     itemChecked = pyqtSignal(str)
     itemUnChecked = pyqtSignal(str)
     def __init__(self, **kwargs):

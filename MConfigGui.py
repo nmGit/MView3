@@ -21,12 +21,12 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 import traceback
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 from MWeb import web
 
 
-class ConfigGui(QtGui.QDialog):
+class ConfigGui(QtWidgets.QDialog):
     """
     Allows the user to configure the refresh rates for plots, devices
     and LCD numbers.
@@ -57,7 +57,7 @@ class ConfigGui(QtGui.QDialog):
         okButton.clicked.connect(self.close)
 
 
-class refreshRateContents(QtGui.QWidget):
+class refreshRateContents(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(refreshRateContents, self).__init__(parent)
 
@@ -100,7 +100,7 @@ class refreshRateContents(QtGui.QWidget):
             traceback.print_exc()
 
 
-class devRefRateConfig(QtGui.QWidget):
+class devRefRateConfig(QtWidgets.QWidget):
     def __init__(self, device, parent=None):
         super(devRefRateConfig, self).__init__(parent)
 

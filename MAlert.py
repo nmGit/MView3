@@ -33,12 +33,12 @@ import time
 import sys
 from MWeb import web
 sys.dont_write_bytecode = True
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
-import Queue
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+import queue
 
 class MAlert(QThread):
 
-    mail_queue = Queue.Queue()
+    mail_queue = queue.Queue()
     queuedMail = {}
     def __init__(self):
         super(MAlert, self).__init__()
@@ -169,7 +169,7 @@ class MAlert(QThread):
                             str("\n".join(messages))
                         )
                     except:
-                        print "Mailing failed!"
+                        print("Mailing failed!")
                     list_and_messages[mailing_list]["Messages"] = []
 
                     for key in self.queuedMail[mailing_list].keys():

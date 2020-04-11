@@ -6,7 +6,7 @@ class MDummyDevice(MDevice):
         super(MDummyDevice, self).__init__(*args, **kwargs)
         self.name = args[0]
         self.last = 0.0
-        print "Initialize dummy device"
+        print("Initialize dummy device")
         self.input_params = []
 
         # Give initial values

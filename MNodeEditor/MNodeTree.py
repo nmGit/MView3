@@ -21,14 +21,12 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 
-from MPipe import MPipe
+from .MPipe import MPipe
 import os
 import sys
 import inspect
 from glob import glob
 from MWeb import web
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
-
 
 class NodeTree:
     scene = None
@@ -104,7 +102,7 @@ class NodeTree:
                 anchor.parentNode().pipeConnected(anchor, pipe)
 
             anchor.connect(pipe)
-        except ValueError, e:
+        except ValueError as e:
             # print "ERROR:",e
             self.deletePipe(self.pipes[-1])
 

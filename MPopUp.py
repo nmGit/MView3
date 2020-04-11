@@ -20,10 +20,10 @@ __version__ = "2.0.2"
 __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class PopUp(QtGui.QDialog):
+class PopUp(QtWidgets.QDialog):
     """Small class for a popup window which displays a message
     and allows the user to select OK or Cancel."""
     # Property 'consent' holds the user's decision.

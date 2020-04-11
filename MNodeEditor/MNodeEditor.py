@@ -1,19 +1,14 @@
-from PyQt4 import QtGui, QtCore
-import sys
-import time
-import gc
-from functools import partial
-from MNodes.MDeviceNode import MDeviceNode
-from MNodes.MCompare import MCompare
-from MNodes.MCompare import MCompare
-from MNodeEditorGraphicsItems.MNodeItem import MNodeGraphicsItem
+from PyQt5 import QtGui, QtWidgets
+from .MNodes.MDeviceNode import MDeviceNode
+
+from .MNodeEditorGraphicsItems.MNodeItem import MNodeGraphicsItem
 from MWeb import web
 import importlib
 import inspect
 app = QtGui.QApplication([])
 
 
-class NodeGui(QtGui.QDialog):
+class NodeGui(QtWidgets.QDialog):
     pipes = []
     scene = None
 

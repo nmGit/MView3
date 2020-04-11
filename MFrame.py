@@ -387,7 +387,7 @@ class MFrame:
         try:
             return self.parameters[name]
         except:
-            print "Problem getting parameters for", name, ", could not find parameters."
+            print("Problem getting parameters for", name, ", could not find parameters.")
 
     def getParameters(self):
         return self.parameters

@@ -1,10 +1,11 @@
 import numpy as np
 import pyqtgraph as pg
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
-from PyQt4 import QtGui
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
+from PyQt5 import QtGui
 import time
 import threading
 import traceback
+from typing import List
 class MCurve(QObject):
     data_changed_sig = pyqtSignal(str)
 
@@ -13,14 +14,14 @@ class MCurve(QObject):
 
         self.plot = plot
         self.name = name
-        self.curve = self.plot.get_plot().plot([0], name=name.replace('_',' '), antialias=False)
+        self.curve = self.plot.get_plot().plot([0], name=name.replace('_',' '), antialias=True)
         self.pen = pg.mkPen(cosmetic=True, width=2)
         self.curve.setPen(self.pen)
         self.linear_selector_curve_x = self.plot.get_linear_region_plot_x().plot([0], antialias=False)
         self.linear_selector_curve_y = self.plot.get_linear_region_plot_y().plot([0], antialias=False)
         self.random_color()
-        self.independent = [np.nan]
-        self.dependent = [np.nan]
+        self.independent : List[float] = [np.nan]
+        self.dependent : List[float] = [np.nan]
 
 
 
@@ -53,10 +54,28 @@ class MCurve(QObject):
         :param dependent: Dependent vector
         :return:
         '''
-        
+
+        if(not all(isinstance(y,(int,float)) for y in independent)):
+            bad_type = 'unknown'
+            for e in independent:
+                if(type(e) is not float and type(e) is not int):
+                    bad_type = type(e)
+                    break
+
+            raise TypeError("Curve data must be int or float, independent is %s" % str(bad_type))
+
+        if(not all(isinstance(y,(int,float)) for y in dependent)):
+            bad_type = 'unknown'
+            for e in dependent:
+                if (type(e) is not float and type(e) is not int):
+                    bad_type = type(e)
+                    break
+
+            raise TypeError("Curve data must be int or float, dependent is %s" % str(bad_type))
+
         dependent = [reading if reading != None else np.nan for reading in dependent]
         if (not isinstance(threading.current_thread(), threading._MainThread)):
-            print "ERROR"
+            print("ERROR")
             traceback.print_exc()
             raise RuntimeError("Cannot update curve from outside the main thread")
         #traceback.print_stack()
@@ -99,7 +118,7 @@ class MCurve(QObject):
         chopped_dependent = dependent[start_index:end_index]
 
         #print "chopped" ,chopped_dependent, chopped_independent
-        self.range_select_subsample = (len(chopped_independent) / self.plot.getWidth()) + 1
+        self.range_select_subsample = (int(len(chopped_independent) / self.plot.getWidth())+1) * 2
 
         chopped_independent_sub = chopped_independent[0:-1:self.range_select_subsample]
         chopped_dependent_sub = chopped_dependent[0:-1:self.range_select_subsample]

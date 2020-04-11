@@ -24,12 +24,6 @@ __status__ = "Beta"
 from MNodeEditor.MNode import MNode
 from MNodeEditor.MAnchor import MAnchor
 import traceback
-from PyQt4 import QtCore, QtGui
-from functools import partial
-import numpy as np
-import time
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread
-
 
 class MDeviceNode(MNode):
 

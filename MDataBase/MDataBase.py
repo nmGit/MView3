@@ -15,7 +15,7 @@ import numpy as np
 
 class MDataBase:
     def __init__(self, db_path):
-        print "Connecting to database located at:", str(db_path)
+        print("Connecting to database located at:", str(db_path))
         #traceback.print_stack()
         try:
             self.conn = sqlite3.connect(str(db_path))
@@ -80,7 +80,7 @@ class MDataBase:
         for i,c in enumerate(column_names):
             column_tup.append("'"+str(c)+"' "+str(column_qualifiers[i]))
         columns = ",".join(column_tup)
-        print "Creating table:", table_name, "with columns:", columns
+        print("Creating table:", table_name, "with columns:", columns)
         self.cursor.execute(
              "CREATE TABLE {tn}("
              "   PK INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -133,7 +133,7 @@ class MDataBase:
                         cn=str(field).replace('[', '').replace(']', '').replace("'",''),
                         tn=table_name.replace(" ", "_")
                     )
-                print cmd
+                print(cmd)
                 self.cursor.execute(
                     cmd
                 )
@@ -168,7 +168,7 @@ class MDataBase:
                 #         t2=args[3]))
 
         except sqlite3.Error as e:
-            print "An error occurred:", e.args[0]
+            print("An error occurred:", e.args[0])
     def getColumns(self, table_name):
 
         table_name = table_name.replace(" ", "_")
@@ -179,10 +179,10 @@ class MDataBase:
             "   table_info({tn});".format(
                 tn = table_name
             )
-        print "command:", cmd
+        print ("command:", cmd)
         self.cursor.execute(cmd)
         t2 = time.time()
-        r = [i[1].encode('ascii') for i in self.cursor.fetchall()]
+        r = [i[1] for i in self.cursor.fetchall()]
 
        # print table_name, "time to get columns:", t2-t1
         return r
@@ -194,6 +194,7 @@ class MDataBase:
     def findNonExistentColumn(self, table_name, columns):
         table_name = table_name.replace("'", "")
         table_name = "'" + table_name + "'"
+        #table_name = bytearray(table_name, 'ascii')
 
         existing_columns = self.getColumns(table_name)
         for column in columns:
@@ -214,7 +215,7 @@ class MDataBase:
             self.cursor.execute(cmd)
         except:
             raise IOError("SQL Command Fail: "+cmd)
-        print self.cursor.fetchall()
+        print (self.cursor.fetchall())
     def saveState(self):
         pass
     def restoreState(self):

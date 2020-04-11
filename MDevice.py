@@ -21,8 +21,7 @@ __maintainer__ = "Noah Meltzer"
 __status__ = "Beta"
 
 from MFrame import MFrame
-from PyQt4 import QtCore
-from PyQt4.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore
+from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QThread, QSemaphore
 import threading
 from MDataBase.MDataBase import MDataBase
 from MDataBase.MSQLiteDataBaseWrapper import MSQLiteDataBaseWrapper
@@ -32,6 +31,7 @@ import time
 import threading
 import csv
 import os
+from typing import Dict
 import sys
 
 
@@ -87,8 +87,8 @@ class MDevice(QThread):
         self.settingResultIndices = []
         self.notifier_mailing_lists = []
         self.doneLoading = False
-        self.independent_data = {}
-        self.dependent_data = {}
+        self.independent_data : Dict[str, float] = {}
+        self.dependent_data  : Dict[str, float] = {}
 
 
         #self.memory_tracker = tracker.SummaryTracker()
@@ -152,6 +152,25 @@ class MDevice(QThread):
         self.nicknames.append(name)
         self.units.append(units)
     def setData(self, key, indep, dep):
+
+        if (not all(isinstance(y, (int, float)) for y in indep)):
+            bad_type = 'unknown'
+            for e in indep:
+                if (type(e) is not float and type(e) is not int):
+                    bad_type = type(e)
+                    break
+
+            raise TypeError("Device data must be int or float, independent is %s" % str(bad_type))
+
+        if (not all(isinstance(y, (int, float)) for y in dep)):
+            bad_type = 'unknown'
+            for e in dep:
+                if (type(e) is not float and type(e) is not int):
+                    bad_type = type(e)
+                    break
+
+            raise TypeError("Device data must be int or float, dependent is %s" % str(bad_type))
+
         if (key not in self.independent_data.keys()):
             self.device_data_lock.acquire()
 
@@ -191,15 +210,37 @@ class MDevice(QThread):
                                  " dependent length, %d. saved error csv in %s"  %(indep_copy_len, dep_copy_len, self.location))
 
         elif (type(dep) != list):
-            print "Error dependent is not a list:",dep
+            print("Error dependent is not a list:",dep)
             traceback.print_exc()
             raise ValueError("Independent data and dependent data must be lists")
     def addData(self, key, indep, dep):
         #self.device_data_lock.acquire()
+
+
+
         if (key not in self.independent_data.keys()):
             self.independent_data[key] = []
             self.dependent_data[key] = []
         if(type(indep) is list):
+
+            if (not all(isinstance(y, (int, float)) for y in indep)):
+                bad_type = 'unknown'
+                for e in indep:
+                    if (type(e) is not float and type(e) is not int):
+                        bad_type = type(e)
+                        break
+
+                raise TypeError("Device data must be int or float, independent is %s" % str(bad_type))
+
+            if (not all(isinstance(y, (int, float)) for y in dep)):
+                bad_type = 'unknown'
+                for e in dep:
+                    if (type(e) is not float and type(e) is not int):
+                        bad_type = type(e)
+                        break
+
+                raise TypeError("Device data must be int or float, dependent is %s" % str(bad_type))
+
             indep_copy = [x for x in indep]
             if(type(dep) is list and len(dep) == len(indep_copy)):
                 dep_copy = [x for x in dep]
@@ -213,6 +254,11 @@ class MDevice(QThread):
                 raise ValueError("Independent data and dependent data must be the same length")
         elif(type(dep) != list):
 
+            if (type(dep) is not float and type(dep) is not int):
+                raise TypeError("Device data must be int or float, dependent is %s" % str(type(dep)))
+            if (type(indep) is not float and type(indep) is not int):
+                raise TypeError("Device data must be int or float, independent is %s" % str(type(indep)))
+
             self.device_data_lock.acquire()
             self.independent_data[key].append(indep)
             self.dependent_data[key].append(dep)
@@ -225,7 +271,7 @@ class MDevice(QThread):
         # Create a copy of the data. Otherwise lists are passed as pointers.
         indep = self.independent_data[key]
         dep = self.dependent_data[key]
-        data = [[x for x in indep], [x for x in dep]]
+        data = [[x for x in indep], [y for y in dep]]
         self.device_data_lock.release()
         return data
 
@@ -306,14 +352,14 @@ class MDevice(QThread):
         filename = self.frame.DataLoggingInfo()['name']
         if location == None or filename == None:
             self.log(False)
-            print self, "Could not initialize logging"
+            print(self, "Could not initialize logging")
             self.loading_data_lock.release()
 
             return
         if(self.datachest):
             self.datachest.stop()
             del self.datachest
-        print "Configuring logging for", self, "at", location+'\\'+filename
+        print("Configuring logging for", self, "at", location+'\\'+filename)
         self.datachest = MSQLiteDataBaseWrapper(location+'\\'+filename)
         self.datachest.db_done_loading.connect(self.__read_all_data_from_file)
 
@@ -342,7 +388,7 @@ class MDevice(QThread):
 
     def loaded(self):
 
-        print self, "loaded."
+        print(self, "loaded.")
         self.onLoad()
         self.doneLoading = True
 
@@ -543,8 +589,8 @@ class MDevice(QThread):
                 except:
                     traceback.print_exc()
 
-            if web.gui != None and web.gui.MAlert != None:
-                web.gui.MAlert.monitorReadings(self)
+            if web.gui != None and web.malert != None:
+                web.malert.monitorReadings(self)
            # print "Requesting container update from", threading.currentThread()
             self.updateContainer()
             #
@@ -656,7 +702,7 @@ class MDevice(QThread):
         for nickname in self.getFrame().getNicknames():
             if channels == None or nickname not in channels.keys():
                 channels = self.getFrame().DataLoggingInfo()['channels']
-                print "Error when retreiving logged channels in config file, restoring to", channels
+                print("Error when retreiving logged channels in config file, restoring to", channels)
         if dataname is None:
             dataname = self.getFrame().getTitle()
 
