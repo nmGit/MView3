@@ -1,3 +1,6 @@
 [submodule "MWindow"]
 	path = MWindow
 	url = ../MWindow.git
+[submodule "pyqtgraph"]
+	path = pyqtgraph
+	url = ../../pyqtgraph/pyqtgraph.git
