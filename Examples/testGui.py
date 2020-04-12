@@ -1,5 +1,6 @@
 import sys
 import traceback
+import os
 
 sys._excepthook = sys.excepthook
 def exception_hook(exctype, value, tb):
@@ -14,7 +15,9 @@ sys.excepthook = exception_hook
 sys.dont_write_bytecode = True
 
 print("importing mgui")
-import MGui  # Handles all gui operations. Independent of labrad.
+print('__file__={0:<35} | __name__={1:<20} | __package__={2:<20}'.format(__file__, __name__, str(__package__)))
+print(os.getcwd())
+from MGui import MGui  # Handles all gui operations. Independent of labrad.
 
 from PyQt5 import QtCore, QtGui
 from MDevices.MDummyDevice import MDummyDevice

@@ -22,6 +22,7 @@ __status__ = "Beta"
 
 import sys
 sys.dont_write_bytecode = True
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 from NotifierGUI import NotifierGUI, Notifier
